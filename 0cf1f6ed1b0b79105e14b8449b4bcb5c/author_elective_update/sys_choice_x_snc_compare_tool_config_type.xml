@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="type" table="x_snc_compare_tool_config" version="3">
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>type</element>
+            <name>x_snc_compare_tool_config</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:21:27</sys_created_on>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>type</sys_name>
+            <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+            <sys_update_name>sys_choice_x_snc_compare_tool_config_type</sys_update_name>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-11 18:21:27</sys_updated_on>
+        </sys_choice_set>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Local to Local (One)</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>100</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:21:27</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-11 18:26:12</sys_updated_on>
+            <value>local_local_one</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>type</element>
+            <hint/>
+            <inactive>true</inactive>
+            <label>Local to Local (List)</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>200</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:23:19</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>3</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-21 05:20:22</sys_updated_on>
+            <value>local_local_list</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Local (History)</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>300</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-12 07:56:09</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-12 07:56:09</sys_updated_on>
+            <value>local_history</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Local to Remote (One)</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>400</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:22:57</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>5</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-12 07:55:51</sys_updated_on>
+            <value>local_remote_one</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Local to Remote (List)</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>500</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:27:15</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>3</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-12 07:55:44</sys_updated_on>
+            <value>local_remote_list</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Local to Remote (Count)</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>600</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:27:28</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>3</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-12 07:55:40</sys_updated_on>
+            <value>local_remote_count</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Remote to Remote (One)</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>700</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:27:48</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>3</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-12 07:55:38</sys_updated_on>
+            <value>remote_remote_one</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Remote to Remote (List)</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>800</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:27:56</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>2</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-12 07:55:34</sys_updated_on>
+            <value>remote_remote_list</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>type</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Remote to Remote (Count)</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>900</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:28:08</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>3</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-12 07:55:31</sys_updated_on>
+            <value>remote_remote_count</value>
+        </sys_choice>
+    </sys_choice>
+</record_update>

@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_compare_tool.CompareTool</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Compare Tool&#13;
+ServiceNow Customer Outcomes, Tom Hauri</description>
+        <name>CompareTool</name>
+        <script><![CDATA[var CompareTool = Class.create();
+CompareTool.prototype = {
+	initialize: function (sCompareId, sNumber, sType, sOutputFormat, sOutputFilter, sRecordLeftId, sRecordRightId, sKeyType, sKeyFields, sOutputFields, sTableLeft, sTableRight, sConnectionAliasLeftId, sConnectionAliasRightId, sFilterCondition, sStatus, oReturn) {
+		this.bShowCompareCharCodeInLog = false;
+		this.sCompareId = sCompareId;
+		this.sNumber = sNumber;
+		this.sType = sType; // local_local_one, local_local_list, local_history, local_remote_one, local_remote_list, local_remote_count, remote_remote_one, remote_remote_list, remote_remote_count
+		this.aType = sType.split('_');
+		this.sOutputFormat = sOutputFormat; // screen, attach_csv
+		this.sOutputFilter = sOutputFilter; // diff, left, right, diffonly, all
+		this.sRecordLeftId = sRecordLeftId;
+		this.sRecordRightId = sRecordRightId;
+		this.sKeyType = sKeyType; // sys_id, filter_condition, key_fields
+		this.sKeyFields = sKeyFields;
+		this.sOutputFields = sOutputFields;
+		this.sTableLeft = sTableLeft;
+		this.sTableRight = sTableRight;
+		this.sConnectionAliasLeftId = sConnectionAliasLeftId;
+		this.sConnectionAliasRightId = sConnectionAliasRightId;
+		this.sFilterCondition = sFilterCondition;
+		this.bConnectionLeft = false;
+		this.bConnectionRight = false;
+		this.sStatus = sStatus; // complete, running, error
+		this.oReturn = oReturn;
+		this.oReturn['__status'] = 'success';
+		this.oReturn['sType'] = this.sType;
+		this.oReturn['sOutputFormat'] = this.sOutputFormat;
+		this.oReturn['bValid'] = true;
+		this.oReturn['sHTML'] = '';
+		this.oReturn['sURL'] = '';
+		this.oReturn['sMessage'] = '';
+		this.oReturn['sTitle'] = '';
+		this.oReturn['bRefresh'] = false;
+		if ((this.sConnectionAliasLeftId) || (this.sConnectionAliasRightId)) {
+			this._CompareToolAPI = new x_snc_compare_tool.CompareToolAPI(this.sConnectionAliasLeftId, this.sConnectionAliasRightId, this.sCompareId, this.oReturn);
+			this.bConnectionLeft = this._CompareToolAPI.bConnectionLeft;
+			this.bConnectionRight = this._CompareToolAPI.bConnectionRight;
+		} // if connection alias
+		//gs.debug('x_snc_compare_tool.CompareTool.initialize sCompareId: ' + this.sCompareId + ' sNumber: ' + this.sNumber + ' sType: ' + this.sType + ' sOutputFormat: ' + this.sOutputFormat + ' sOutputFilter: ' + this.sOutputFilter + ' sRecordLeftId: ' + this.sRecordLeftId + ' sRecordRightId: ' + this.sRecordRightId + ' sKeyType: ' + this.sKeyType + ' sKeyFields: ' + this.sKeyFields + ' sOutputFields: ' + this.sOutputFields + ' sTableLeft: ' + this.sTableLeft + ' sTableRight: ' + this.sTableRight + ' sConnectionAliasLeftId: ' + this.sConnectionAliasLeftId + ' sConnectionAliasRightId: ' + this.sConnectionAliasRightId + ' bConnectionLeft: ' + this.bConnectionLeft + ' bConnectionRight: ' + this.bConnectionRight + ' sFilterCondition: ' + this.sFilterCondition + ' sStatus: ' + this.sStatus + ' current scope: ' + gs.getCurrentScopeName() + ' caller scope: ' + gs.getCallerScopeName());
+		this._gt = new global.GlobalTools();
+		this._gtObject = new global.GlobalToolsObject();
+		this._gtTable = new global.GlobalToolsTable();
+		this._gtRecordRead = new global.GlobalToolsRecordRead();
+		this._gtRecordWrite = new global.GlobalToolsRecordWrite();
+	}, // function initialize
+
+	compareAction: function () {
+		gs.debug('x_snc_compare_tool.CompareTool.compareAction START');
+		try {
+			//gs.debug('x_snc_compare_tool.CompareTool.compareAction current scope: ' + gs.getCurrentScopeName() + ' caller scope: ' + gs.getCallerScopeName() + ' nsub: ' + this._gt.nsub(undefined, 'test'));
+			if (this.sCompareId) {
+				this._gtRecordWrite.deleteMultiple('sys_attachment', 'table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId);
+			} // if compare cfg
+			if ((!this._gtTable.isValidTable(this.sTableLeft)) || (!this._gtTable.isValidTable(this.sTableRight))) {
+				return this._setError('invalid_table');
+			} // if table not valid
+			if ((this.aType[0] == 'remote') && (!this.bConnectionLeft)) {
+				return this._setError('remoteconnection_left');
+			} // if no remote left
+			if ((this.aType[1] == 'remote') && (!this.bConnectionRight)) {
+				return this._setError('remoteconnection_right');
+			} // if no remote right
+			if (this.aType[1] == 'history') {
+				this._compareHistory();
+			} else if (this.aType[2] == 'one') {
+				this._compareOne();
+			} else if (this.aType[2] == 'list') {
+				this._compareList();
+			} else if (this.aType[2] == 'count') {
+				this._compareCount();
+			} // if type
+		} catch (oEx) {
+			this._setError('error_catch', String(oEx));
+			gs.error('CompareToolAPI.compareAction Catched error: ' + String(oEx));
+		} // try
+		gs.debug('x_snc_compare_tool.CompareTool.compareAction END'); // oReturn: ' + JSON.stringify(this.oReturn)
+	}, // function compareAction
+
+	_compareOne: function () {
+		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_one');
+		var grRecordLeft;
+		var grRecordRight;
+		if (this.aType[0] == 'local') {
+			grRecordLeft = new GlideRecord(this.sTableLeft);
+			if ((!grRecordLeft.get(this.sRecordLeftId)) || (!grRecordLeft.isValidRecord())) {
+				return this._setError('record_left');
+			} // if valid record
+		} else {
+			grRecordLeft = this._CompareToolAPI.getRemoteRecordLeft(this.sTableLeft, this.sFilterCondition);
+			if (!this._gt.getType(grRecordLeft) == 'gliderecord') {
+				return this._setError('record_left');
+			} // if valid record
+		} // if local left
+		if (this.aType[1] == 'local') {
+			grRecordRight = new GlideRecord(this.sTableRight);
+			if ((!grRecordRight.get(this.sRecordRightId)) || (!grRecordRight.isValidRecord())) {
+				return this._setError('record_right');
+			} // if valid record
+		} else {
+			var sQuery = this.sFilterCondition;
+			if ((this.sType == 'local_remote_one') && (this.sKeyType != 'filter_condition')) {
+				if (this.sKeyType == 'sys_id') {
+					sQuery = 'sys_id=' + this.sRecordLeftId;
+				} else {
+					var aQuery = this._parseFields(this.sKeyFields, grRecordLeft);
+					sQuery = aQuery.join('^');
+				} // if sys_id
+			} // if local remote and not filter
+			grRecordRight = this._CompareToolAPI.getRemoteRecordRight(this.sTableLeft, sQuery);
+			if (!this._gt.getType(grRecordRight) == 'gliderecord') {
+				return this._setError('record_right');
+			} // if valid record
+		} // if local right
+		var sXMLLeft = this._gtRecordRead.convertGRtoXML(grRecordLeft);
+		var sXMLRight = this._gtRecordRead.convertGRtoXML(grRecordRight);
+		var sHTMLDiff = this._gt.getHTMLDiffFromXML(sXMLLeft, sXMLRight, 'CompareTool_title_left', 'CompareTool_title_right');
+		if (sHTMLDiff == null) {
+			return this._setError('diff_one');
+		} else {
+			this.oReturn['sHTML'] = sHTMLDiff;
+		} // if diff failed
+		return true;
+	}, // function _compareOne
+
+	_compareList: function () {
+		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_list');
+		var aKeys = (this.sKeyFields) ? this._parseFields(this.sKeyFields) : ['sys_id'];
+		var aFields = (this.sOutputFields) ? this._parseFields(this.sOutputFields) : this._gtTable.getFields(this.sTableLeft);
+		var sQuery = (this.sFilterCondition) ? this.sFilterCondition + '^ORDERBY' + aFields[0] : 'ORDERBY' + aFields[0];
+		var oLeft = {};
+		var oRight = {};
+		if (this.aType[0] == 'local') {
+			oLeft = this._getLocalList(this.sTableLeft, sQuery, aKeys, aFields, 'left');
+		} else {
+			oLeft = this._CompareToolAPI.getRemoteListLeft(this.sTableLeft, sQuery, aKeys, aFields);
+		} // if local left
+		if (this.aType[1] == 'local') {
+			oRight = this._getLocalList(this.sTableRight, sQuery, aKeys, aFields, 'right');
+		} else {
+			oRight = this._CompareToolAPI.getRemoteListRight(this.sTableRight, sQuery, aKeys, aFields);
+		} // if local right
+		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
+		var sReturn = (this.sOutputFormat == 'screen') ? '<body><table cellpadding="0" cellspacing="0" width="100%" class="diff"><thead><tr><th width="10%" class="texttitle">' + gs.getMessage('CompareTool_field_status') + '</th>' : gs.getMessage('CompareTool_field_status') + ';';
+		var grRecordTitle = new GlideRecord(this.sTableLeft);
+		aFields.forEach(function (sField) {
+			if (this.sOutputFormat == 'screen') {
+				sReturn += '<th class="texttitle">' + grRecordTitle.getElement(sField).getLabel() + '</th>';
+			} else {
+				sReturn += grRecordTitle.getElement(sField).getLabel() + ';';
+			} // if output
+		}, this); // each title field
+		sReturn += (this.sOutputFormat == 'screen') ? '</tr></thead><tbody>' : '\n';
+		var aAllKeys = Object.keys(oMerged);
+		aAllKeys.sort();
+		var oMergedFields = {}, aMergedFields = [], sStatus = '', sReturnTmp = '', sValueLeft = '', sDisplayValueLeft = '', sValueRight = '', sDisplayValueRight = '';
+		aAllKeys.forEach(function (sKey) {
+			sStatus = '';
+			sReturnTmp = '';
+			oMergedFields = oMerged[sKey];
+			aMergedFields = Object.keys(oMergedFields);
+			aMatches = Object.keys(oMergedFields[aMergedFields[0]]);
+			if ((aMatches.indexOf('left') != -1) && (aMatches.indexOf('right') != -1)) {
+				sStatus = 'diff';
+			} else if (aMatches.indexOf('left') != -1) {
+				sStatus = 'left';
+			} else if (aMatches.indexOf('right') != -1) {
+				sStatus = 'right';
+			} // if status
+			if ((['all', 'diff'].indexOf(this.sOutputFilter) != -1) || (this.sOutputFilter == sStatus) || (this.sOutputFilter == sStatus + 'only')) {
+				sStatus = (sStatus == 'diff') ? 'same' : sStatus;
+				aMergedFields.forEach(function (sField) {
+					sValueLeft = this._gtObject.getValue(sField + '/left/value', '', oMergedFields);
+					sDisplayValueLeft = this._gtObject.getValue(sField + '/left/display_value', '', oMergedFields);
+					sDisplayValueLeft = (sDisplayValueLeft) ? ' (' + sDisplayValueLeft + ')' : '';
+					sValueRight = this._gtObject.getValue(sField + '/right/value', '', oMergedFields);
+					sDisplayValueRight = this._gtObject.getValue(sField + '/right/display_value', '', oMergedFields);
+					sDisplayValueRight = (sDisplayValueRight) ? ' (' + sDisplayValueRight + ')' : '';
+					if (['same', 'diff'].indexOf(sStatus) != -1) {
+						if (!this._gt.isEqual(sValueLeft, sValueRight)) {
+							if (this.bShowCompareCharCodeInLog) { gs.debug('CompareTool_._compareList char compare left: ' + this._convertStringToCode(sValueLeft) + ' right: ' + this._convertStringToCode(sValueRight)); }
+							sStatus = 'diff';
+							if (this.sOutputFormat == 'screen') {
+								sReturnTmp += '<td style="width:auto;" class="empty"><div style="color:darkgreen;"><b>' + sValueLeft + sDisplayValueLeft + '</b></div><div style="color:darkred;"><b>' + sValueRight + sDisplayValueRight + '</b></div></td>';
+							} else {
+								sReturnTmp += this._parseCSV(sValueLeft + sDisplayValueLeft + '\n\n<-- ' + gs.getMessage('CompareTool_field_value_left') + ' | ' + gs.getMessage('CompareTool_field_value_right') + ' -->\n\n' + sValueRight + sDisplayValueRight);
+							} // if output
+						} else {
+							if (this.sOutputFormat == 'screen') {
+								sReturnTmp += '<td style="width:auto;" class="equals">' + sValueLeft + sDisplayValueLeft + '</td>';
+							} else {
+								sReturnTmp += this._parseCSV(sValueLeft + sDisplayValueLeft);
+							} // if output
+						} // if is not equal
+					} else if (sStatus == 'left') {
+						if (this.sOutputFormat == 'screen') {
+							sReturnTmp += '<td style="width:auto;" class="delete">' + sValueLeft + sDisplayValueLeft + '</td>';
+						} else {
+							sReturnTmp += this._parseCSV(sValueLeft + sDisplayValueLeft);
+						} // if output
+					} else {
+						if (this.sOutputFormat == 'screen') {
+							sReturnTmp += '<td style="width:auto;" class="insert">' + sValueRight + sDisplayValueRight + '</td>';
+						} else {
+							sReturnTmp += this._parseCSV(sValueRight + sDisplayValueRight);
+						} // if output
+					} // if status same or diff and values are diff
+				}, this); // each field
+				if (((this.sOutputFilter == 'all') && (sStatus == 'same')) || (sStatus != 'same')) {
+					if (this.sOutputFormat == 'screen') {
+						sReturn += '<tr><td style="width:auto;" class="fields">' + gs.getMessage('CompareTool_status_' + sStatus) + '</td>' + sReturnTmp + '</tr>';
+					} else {
+						sReturn += gs.getMessage('CompareTool_status_' + sStatus) + ';' + sReturnTmp + '\n';
+					} // if output
+				} // if not all or same
+			} // if not filtered (diff, left, right, diffonly, all)
+		}, this); // each record
+		if (this.sOutputFormat == 'screen') {
+			sReturn += '</tbody></table></body>';
+			this.oReturn['sHTML'] = sReturn;
+		} else if (this.sCompareId) {
+			var grCompare = new GlideRecord('x_snc_compare_tool_config');
+			if (grCompare.get(this.sCompareId)) {
+				var grAttachment = new GlideSysAttachment();
+				grAttachment.write(grCompare, 'compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', sReturn);
+			} // if compare
+		} // if sys id
+		//gs.info('tomtom sReturn: ' + sReturn);
+		//gs.info('tomtom oMerged: ' + JSON.stringify(oMerged));
+	}, // function _compareList
+
+	_getLocalList: function (sTable, sQuery, aKeys, aFields, sSource) {
+		var oLocalListResult = {};
+		var sValue = '', sDisplayValue = '';
+		var _parseKeys = function (aKeys, grRecord) {
+			var aKeyValues = [];
+			aKeys.forEach(function (sKey) {
+				aKeyValues.push(grRecord.getValue(sKey));
+			}, this); // each key
+			return aKeyValues.join('_');
+		}; // function _parseKeys
+		var grRecord = new GlideRecord(sTable);
+		if (sQuery) {
+			grRecord.addEncodedQuery(sQuery);
+		} // if query
+		grRecord._query();
+		if (!grRecord.hasNext()) {
+			this._setError('error_parse_record');
+		} // if valid record
+		while (grRecord.next()) {
+			var sKeyValue = _parseKeys(aKeys, grRecord);
+			aFields.forEach(function (sField) {
+				sValue = grRecord.getValue(sField);
+				sValue = ((sValue == 'null') || (sValue == 'unknown')) ? '' : sValue;
+				sDisplayValue = grRecord.getDisplayValue(sField);
+				sDisplayValue = ((sDisplayValue) && (sDisplayValue != 'null') && (sDisplayValue != 'unknown')) ? sDisplayValue : grRecord[sField].getDisplayValue();
+				sDisplayValue = ((sDisplayValue == 'null') || (sDisplayValue == 'unknown')) ? '' : sDisplayValue;
+				sValue = ((sValue == '1') && (sDisplayValue == 'true')) ? 'true' : sValue.replace(/\r/gm, ''); // remove cr (13);
+				this._gtObject.setValue(sKeyValue + '/' + sField + '/' + sSource + '/value', sValue, oLocalListResult);
+				if ((sDisplayValue) && (sValue != sDisplayValue)) {
+					this._gtObject.setValue(sKeyValue + '/' + sField + '/' + sSource + '/display_value', sDisplayValue, oLocalListResult);
+				} // if display value and not same as value
+			}, this); // each field
+		} // while records
+		return oLocalListResult;
+	}, // function _getLocalList
+
+	_convertStringToCode: function (sString) {
+		var aResult = [];
+		for (var i = 0; i < sString.length; i++) {
+			aResult.push(sString.charCodeAt(i));
+		} // each char
+		return aResult.join(',');
+	}, // function _convertStringToCode
+
+	_parseCSV: function (sValue) {
+		if ((!sValue) || (String(sValue) == 'null') || (String(sValue) == 'unknown')) {
+			sValue = '';
+		} // if empty
+		sValue = String(sValue).replace(/\n|\r|/g, ''); // replace newline
+		sValue = String(sValue).replace(/"/g, '""'); // replace quotes
+		sValue = String(sValue).replace(/;/g, ''); // replace semicolon
+		return '"' + sValue + '";';
+	}, // function _parseCSV
+
+	_parseFields: function (aFieldIds, grRecord, oLine) {
+		aFieldIds = (Array.isArray(aFieldIds)) ? aFieldIds : aFieldIds.split(',');
+		var aReturn = [];
+		var grDict = new GlideRecord('sys_dictionary');
+		aFieldIds.forEach(function (sFieldId) {
+			if (grDict.get(sFieldId)) {
+				if ((grRecord) && (grRecord.isValidRecord())) {
+					aReturn.push(grDict.getValue('element') + '=' + grRecord.getValue(grDict.getValue('element')));
+				} else if (oLine) {
+					aReturn.push(grDict.getValue('element') + '=' + oLine[grDict.getValue('element')]);
+				} else {
+					aReturn.push(grDict.getValue('element'));
+				} // if rec, line
+			} // if key
+		}, this); // each key
+		return aReturn;
+	}, // function _parseFields
+
+	_setError: function (sMessage) {
+		var aArguments = [];
+		for (var i = 1; i < arguments.length; i++) {
+			aArguments.push(String(arguments[i]));
+		} // each argument after script and scope
+		this.oReturn['bValid'] = false;
+		this.oReturn['sMessage'] = gs.getMessage('CompareTool_error_' + sMessage, aArguments);
+		return false;
+	}, // function _setError
+
+	type: 'CompareTool',
+	version: '1.0.0',
+	author: 'Tom Hauri',
+	email: 'tom@hauri.biz'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2023-12-12 13:41:54</sys_created_on>
+        <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
+        <sys_mod_count>79</sys_mod_count>
+        <sys_name>CompareTool</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2023-12-21 05:30:21</sys_updated_on>
+    </sys_script_include>
+</record_update>

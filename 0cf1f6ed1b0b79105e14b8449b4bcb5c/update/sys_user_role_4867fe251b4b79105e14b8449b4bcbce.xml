@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_user_role">
+    <sys_user_role action="INSERT_OR_UPDATE">
+        <assignable_by/>
+        <can_delegate>true</can_delegate>
+        <description/>
+        <elevated_privilege>false</elevated_privilege>
+        <grantable>true</grantable>
+        <includes_roles/>
+        <name>x_snc_compare_tool.config_user</name>
+        <requires_subscription>-1</requires_subscription>
+        <scoped_admin>false</scoped_admin>
+        <suffix>config_user</suffix>
+        <sys_class_name>sys_user_role</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2023-12-11 16:36:58</sys_created_on>
+        <sys_id>4867fe251b4b79105e14b8449b4bcbce</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_snc_compare_tool.config_user</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_update_name>sys_user_role_4867fe251b4b79105e14b8449b4bcbce</sys_update_name>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2023-12-11 16:36:58</sys_updated_on>
+    </sys_user_role>
+</record_update>

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_compare_tool.CompareToolAPI</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Compare Tool API Handler&#13;
+ServiceNow Customer Outcomes, Tom Hauri</description>
+        <name>CompareToolAPI</name>
+        <script><![CDATA[var CompareToolAPI = Class.create();
+CompareToolAPI.prototype = {
+	initialize: function (sConnectionAliasLeftId, sConnectionAliasRightId, sCompareId, oReturn) {
+		this.iRemoteRecordsChunkSize = 1000;
+		this.iMaxTablesForCount = 500;
+		this.sCompareId = sCompareId;
+		this.oReturn = oReturn;
+		this.oAttachmentCfg = {
+			'sSysId': sCompareId,
+			'sTable': 'x_snc_compare_tool_config'
+		}; // attachment cfg
+		this.sConnectionAliasLeftId = sConnectionAliasLeftId;
+		this.sConnectionAliasRightId = sConnectionAliasRightId;
+		this.bConnectionLeft = false;
+		this.bConnectionRight = false;
+		var oResult = {};
+		if (this.sConnectionAliasLeftId) {
+			this._gtRESTAPILeft = new global.GlobalToolsRESTAPI(this.sConnectionAliasLeftId);
+			if (this._gtRESTAPILeft) {
+				oResult = this._gtRESTAPILeft.testNOWConnection();
+				this.bConnectionLeft = ((oResult) && (oResult.hasOwnProperty('success')) && (oResult['success'] == true)) ? true : false;
+			} // if api
+		} // if alias left
+		if (this.sConnectionAliasRightId) {
+			this._gtRESTAPIRight = new global.GlobalToolsRESTAPI(this.sConnectionAliasRightId);
+			if (this._gtRESTAPIRight) {
+				oResult = this._gtRESTAPIRight.testNOWConnection();
+				this.bConnectionRight = ((oResult) && (oResult.hasOwnProperty('success')) && (oResult['success'] == true)) ? true : false;
+			} // if api
+		} // if alias right
+		this._gt = new global.GlobalTools();
+		this._gtArray = new global.GlobalToolsArray();
+		this._gtObject = new global.GlobalToolsObject();
+		this._gtTable = new global.GlobalToolsTable();
+		this._gtRecordWrite = new global.GlobalToolsRecordWrite();
+	}, // function initialize
+
+	getRemoteRecordLeft: function (sTable, sQuery) {
+		return this._gtRESTAPILeft.getRemoteRecord(sTable, sQuery);
+	}, // function getRemoteRecordLeft
+
+	getRemoteRecordRight: function (sTable, sQuery) {
+		return this._gtRESTAPIRight.getRemoteRecord(sTable, sQuery);
+	}, // function getRemoteRecordRight
+
+	getRemoteListLeft: function (sTable, sQuery, aKeys, aFields) {
+		try {
+			var aRESTAPIResult = [];
+			var aAllFields = this._gtArray.mergeArray(aKeys, aFields);
+			var iRemoteCount = this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery);
+			if (iRemoteCount < this.iRemoteRecordsChunkSize) {
+				aRESTAPIResult = this._gtRESTAPILeft.doNOWRESTQuery(sTable, sQuery, 0, this.iRemoteRecordsChunkSize, aAllFields, 'all');
+			} else {
+				var iOffset = 0;
+				var iChunks = Math.ceil(iRemoteCount / this.iRemoteRecordsChunkSize);
+				for (var i = 0; i < iChunks; i++) {
+					this.oAttachmentCfg['sFilename'] = 'remote_record_' + String(i);
+					this._gtRESTAPILeft.doNOWRESTQuery(sTable, sQuery, iOffset, this.iRemoteRecordsChunkSize, aAllFields, 'all', this.oAttachmentCfg);
+					iOffset += this.iRemoteRecordsChunkSize;
+				} // each chunk
+				aRESTAPIResult = this._parseAttachment(iChunks);
+			} // if remote count
+			return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'left');
+		} catch (oEx) {
+			this._setError('error_remote_list_left', String(oEx));
+			gs.error('CompareToolAPI.getRemoteListLeft Error getting remote list: ' + String(oEx));
+		} // try
+	}, // function getRemoteListLeft
+
+	getRemoteListRight: function (sTable, sQuery, aKeys, aFields) {
+		try {
+			var aRESTAPIResult = [];
+			var aAllFields = this._gtArray.mergeArray(aKeys, aFields);
+			var iRemoteCount = this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery);
+			if (iRemoteCount < this.iRemoteRecordsChunkSize) {
+				aRESTAPIResult = this._gtRESTAPIRight.doNOWRESTQuery(sTable, sQuery, 0, this.iRemoteRecordsChunkSize, aAllFields, 'all');
+			} else {
+				var iOffset = 0;
+				var iChunks = Math.ceil(iRemoteCount / this.iRemoteRecordsChunkSize);
+				for (var i = 0; i < iChunks; i++) {
+					this.oAttachmentCfg['sFilename'] = 'remote_record_' + String(i);
+					this._gtRESTAPIRight.doNOWRESTQuery(sTable, sQuery, iOffset, this.iRemoteRecordsChunkSize, aAllFields, 'all', this.oAttachmentCfg);
+					iOffset += this.iRemoteRecordsChunkSize;
+				} // each chunk
+				aRESTAPIResult = this._parseAttachment(iChunks);
+			} // if remote count
+			return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'right');
+		} catch (oEx) {
+			this._setError('error_remote_list_right', String(oEx));
+			gs.error('CompareToolAPI.getRemoteListRight Error getting remote list: ' + String(oEx));
+		} // try
+	}, // function getRemoteListRight
+
+	parseAPIResult: function (aRESTAPIResult, aKeys, aFields, sSource) {
+		var oRESTAPIResult = {};
+		var sValue = '', sDisplayValue = '';
+		var _parseKeys = function (aKeys, oResult) {
+			var aKeyValues = [];
+			aKeys.forEach(function (sKey) {
+				if ((oResult.hasOwnProperty(sKey)) && (oResult[sKey].hasOwnProperty('value'))) {
+					aKeyValues.push(oResult[sKey]['value']);
+				} // if value
+			}, this); // each key
+			return aKeyValues.join('_');
+		}; // function _parseKeys
+		if (this._gtArray.isValidArray(aRESTAPIResult)) {
+			aRESTAPIResult.forEach(function (oResult) {
+				var sKeyValue = _parseKeys(aKeys, oResult);
+				aFields.forEach(function (sField) {
+					sValue = this._gtObject.getValue(sField + '/value', '', oResult);
+					this._gtObject.setValue(sKeyValue + '/' + sField + '/' + sSource + '/value', sValue.replace(/\r/gm, ''), oRESTAPIResult); // remove cr (13)
+					sDisplayValue = this._gtObject.getValue(sField + '/display_value', '', oResult);
+					if ((sDisplayValue) && (sValue != sDisplayValue)) {
+						this._gtObject.setValue(sKeyValue + '/' + sField + '/' + sSource + '/display_value', sDisplayValue, oRESTAPIResult);
+					} // if display value and not same as value
+				}, this); // each field
+			}, this); // each result
+		} else {
+			this._setError('error_parse_api');
+		} // if
+		return oRESTAPIResult;
+	}, // function parseAPIResult
+
+	_parseAttachment: function (iChunks) {
+		try {
+			var gsAttachment = new GlideSysAttachment();
+			var grAttachment = new GlideRecord('sys_attachment');
+			grAttachment.addEncodedQuery('table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId + '^file_nameSTARTSWITHremote_record_');
+			grAttachment.query();
+			var iAttachments = grAttachment.getRowCount();
+			if (iAttachments == iChunks) {
+				var aLines = [];
+				while (grAttachment.next()) {
+					var gsContentStream = gsAttachment.getContentStream(grAttachment.getUniqueValue());
+					var gTextReader = new GlideTextReader(gsContentStream);
+					var oLine = ' ';
+					while ((oLine = gTextReader.readLine()) != null) {
+						aLines.push(oLine);
+					} // while lines
+				} // each attachment
+				var sResposeBody = aLines.join('\n');
+				sResposeBody = sResposeBody.replace(/\]\}\n\{"result":\[/gi, ', ');
+				try {
+					var oResposeBody = JSON.parse(sResposeBody);
+					this._gtRecordWrite.deleteMultiple('sys_attachment', 'table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId + '^file_nameSTARTSWITHremote_record_');
+					return oResposeBody['result'];
+				} catch (oEx) {
+					this._setError('error_parsechunks', String(oEx));
+					gs.error('CompareToolAPI._parseAttachment Error parsing JSON: ' + String(oEx));
+				} // try remote call
+			} else {
+				this._setError('error_chunks', iAttachments, iChunks);
+			} // if chunks match files
+		} catch (oEx) {
+			this._setError('error_parse_attach', String(oEx));
+			gs.error('CompareToolAPI._parseAttachment Error parsing attachments: ' + String(oEx));
+		} // try remote call
+		this._gtRecordWrite.deleteMultiple('sys_attachment', 'table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId + '^file_nameSTARTSWITHremote_record_');
+	}, // function _parseAttachment
+
+	_setError: function (sMessage) {
+		var aArguments = [];
+		for (var i = 1; i < arguments.length; i++) {
+			aArguments.push(String(arguments[i]));
+		} // each argument after script and scope
+		this.oReturn['bValid'] = false;
+		this.oReturn['sMessage'] = gs.getMessage('CompareTool_error_' + sMessage, aArguments);
+		return false;
+	}, // function _setError
+
+	type: 'CompareToolAPI',
+	version: '1.0.0',
+	author: 'Tom Hauri',
+	email: 'tom@hauri.biz'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2023-12-14 06:42:23</sys_created_on>
+        <sys_id>2f0c002e1bc73d105e14b8449b4bcb15</sys_id>
+        <sys_mod_count>53</sys_mod_count>
+        <sys_name>CompareToolAPI</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_update_name>sys_script_include_2f0c002e1bc73d105e14b8449b4bcb15</sys_update_name>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2023-12-20 10:32:10</sys_updated_on>
+    </sys_script_include>
+</record_update>
