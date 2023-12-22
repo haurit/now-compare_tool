@@ -12,6 +12,7 @@ ServiceNow Customer Outcomes, Tom Hauri</description>
 CompareTool.prototype = {
 	initialize: function (sCompareId, sNumber, sType, sOutputFormat, sOutputFilter, sRecordLeftId, sRecordRightId, sKeyType, sKeyFields, sOutputFields, sTableLeft, sTableRight, sConnectionAliasLeftId, sConnectionAliasRightId, sFilterCondition, sStatus, oReturn) {
 		this.bShowCompareCharCodeInLog = false;
+		this.iMaxTablesForCount = 500;
 		this.sCompareId = sCompareId;
 		this.sNumber = sNumber;
 		this.sType = sType; // local_local_one, local_local_list, local_history, local_remote_one, local_remote_list, local_remote_count, remote_remote_one, remote_remote_list, remote_remote_count
@@ -150,6 +151,7 @@ CompareTool.prototype = {
 			oRight = this._CompareToolAPI.getRemoteListRight(this.sTableRight, sQuery, aKeys, aFields);
 		} // if local right
 		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
+		//gs.debug('x_snc_compare_tool.CompareTool._compareList oMerged: ' + JSON.stringify(oMerged));
 		var sReturn = (this.sOutputFormat == 'screen') ? '<body><table cellpadding="0" cellspacing="0" width="100%" class="diff"><thead><tr><th width="10%" class="texttitle">' + gs.getMessage('CompareTool_field_status') + '</th>' : gs.getMessage('CompareTool_field_status') + ';';
 		var grRecordTitle = new GlideRecord(this.sTableLeft);
 		aFields.forEach(function (sField) {
@@ -162,7 +164,7 @@ CompareTool.prototype = {
 		sReturn += (this.sOutputFormat == 'screen') ? '</tr></thead><tbody>' : '\n';
 		var aAllKeys = Object.keys(oMerged);
 		aAllKeys.sort();
-		var oMergedFields = {}, aMergedFields = [], sStatus = '', sReturnTmp = '', sValueLeft = '', sDisplayValueLeft = '', sValueRight = '', sDisplayValueRight = '';
+		var oMergedFields = {}, aMergedFields = [], sStatus = '', sReturnTmp = '', sValueLeft = '', sDisplayValueLeft = '', sValueRight = '', sDisplayValueRight = '', bIsEqual = false;
 		aAllKeys.forEach(function (sKey) {
 			sStatus = '';
 			sReturnTmp = '';
@@ -185,8 +187,9 @@ CompareTool.prototype = {
 					sValueRight = this._gtObject.getValue(sField + '/right/value', '', oMergedFields);
 					sDisplayValueRight = this._gtObject.getValue(sField + '/right/display_value', '', oMergedFields);
 					sDisplayValueRight = (sDisplayValueRight) ? ' (' + sDisplayValueRight + ')' : '';
+					bIsEqual = this._gt.isEqual(sValueLeft, sValueRight);
 					if (['same', 'diff'].indexOf(sStatus) != -1) {
-						if (!this._gt.isEqual(sValueLeft, sValueRight)) {
+						if (!bIsEqual) {
 							if (this.bShowCompareCharCodeInLog) { gs.debug('CompareTool_._compareList char compare left: ' + this._convertStringToCode(sValueLeft) + ' right: ' + this._convertStringToCode(sValueRight)); }
 							sStatus = 'diff';
 							if (this.sOutputFormat == 'screen') {
@@ -207,7 +210,7 @@ CompareTool.prototype = {
 						} else {
 							sReturnTmp += this._parseCSV(sValueLeft + sDisplayValueLeft);
 						} // if output
-					} else {
+					} else if (sStatus == 'right') {
 						if (this.sOutputFormat == 'screen') {
 							sReturnTmp += '<td style="width:auto;" class="insert">' + sValueRight + sDisplayValueRight + '</td>';
 						} else {
@@ -234,8 +237,6 @@ CompareTool.prototype = {
 				grAttachment.write(grCompare, 'compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', sReturn);
 			} // if compare
 		} // if sys id
-		//gs.info('tomtom sReturn: ' + sReturn);
-		//gs.info('tomtom oMerged: ' + JSON.stringify(oMerged));
 	}, // function _compareList
 
 	_getLocalList: function (sTable, sQuery, aKeys, aFields, sSource) {
@@ -281,6 +282,131 @@ CompareTool.prototype = {
 		} // each char
 		return aResult.join(',');
 	}, // function _convertStringToCode
+
+	_compareCount: function (bScheduled) {
+		var grCompare = new GlideRecord('x_snc_compare_tool_config');
+		if (!bScheduled) {
+			var iTableCount = 0;
+			if (this.sType == 'local_remote_count') {
+				iTableCount = Number(this._gtRecordRead.countRecords('sys_db_object', this.sFilterCondition, '', false, false, true));
+			} else {
+				iTableCount = Number(this._CompareToolAPI.getRemoteCountLeft('sys_db_object', this.sFilterCondition));
+			} // if remote
+			if (iTableCount > this.iMaxTablesForCount) {
+				if (this.sOutputFormat == 'attach_csv') {
+					this._gt.scheduleScript('x_snc_compare_tool.CompareTool', '_compareCount', 1, [true], [this.sCompareId, this.sNumber, this.sType, this.sOutputFormat, this.sOutputFilter, this.sRecordLeftId, this.sRecordRightId, this.sKeyType, this.sKeyFields, this.sOutputFields, this.sTableLeft, this.sTableRight, this.sConnectionAliasLeftId, this.sConnectionAliasRightId, this.sFilterCondition, this.sStatus, this.oReturn], 'compare_count_csv');
+					this.oReturn['bValid'] = false;
+					this.oReturn['sMessage'] = gs.getMessage('CompareTool_message_count_tables', [String(this.iMaxTablesForCount), String(iTableCount)]);
+					this.oReturn['bRefresh'] = true;
+					if (grCompare.get(this.sCompareId)) {
+						grCompare.setValue('status', 'running');
+						grCompare.update();
+					} // if compare
+				} else {
+					this._setError('error_count_tables', [String(this.iMaxTablesForCount), String(iTableCount)]);
+				} // if too many tables
+				return;
+			} // if local count
+		} // if not scheduled
+		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_count');
+		var sReturn = '';
+		var oLeft = {};
+		var oRight = {};
+		oLeft = this._getCount(this.aType[0]);
+		oRight = this._getCount('right');
+		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
+		//gs.debug('x_snc_compare_tool.CompareTool._compareCount oMerged: ' + JSON.stringify(oMerged));
+		if (this.sOutputFormat == 'screen') {
+			sReturn = '<body><table cellpadding="0" cellspacing="0" width="100%" class="diff"><thead><tr><th width="10%" class="texttitle">' + gs.getMessage('Table name') + '</th>';
+			sReturn += '<th class="texttitle">' + gs.getMessage('CompareTool_field_count_left') + '</th>';
+			sReturn += '<th class="texttitle">' + gs.getMessage('CompareTool_field_count_right') + '</th>';
+			sReturn += '</tr></thead><tbody>';
+		} else {
+			sReturn = gs.getMessage('Table name') + ';' + gs.getMessage('CompareTool_field_count_left') + ';' + gs.getMessage('CompareTool_field_count_right') + '\n';
+		} // if output
+		var aAllKeys = Object.keys(oMerged);
+		aAllKeys.sort();
+		var sStatus = '', sTableLabel = '', iCountLeft = '', iCountRight = '', sReturnTmp = '', bAddCSVLine = false;
+		aAllKeys.forEach(function (sTable) {
+			sStatus = '', sReturnTmp = '';
+			bAddCSVLine = false;
+			aMatches = Object.keys(oMerged[sTable]);
+			if ((aMatches.indexOf('left') != -1) && (aMatches.indexOf('right') != -1)) {
+				sStatus = 'diff';
+			} else if (aMatches.indexOf('left') != -1) {
+				sStatus = 'left';
+			} else if (aMatches.indexOf('right') != -1) {
+				sStatus = 'right';
+			} // if status
+			if ((['all', 'diff'].indexOf(this.sOutputFilter) != -1) || (this.sOutputFilter == sStatus) || (this.sOutputFilter == sStatus + 'only')) {
+				sTableLabel = this._gtObject.getValue(sTable + '/left/label', this._gtObject.getValue(sTable + '/right/label', sTable, oMerged), oMerged);
+				iCountLeft = this._gtObject.getValue(sTable + '/left/count', -1, oMerged);
+				iCountRight = this._gtObject.getValue(sTable + '/right/count', -1, oMerged);
+				if (sStatus == 'diff') {
+					if (iCountLeft > iCountRight) {
+						sReturnTmp = '<tr><td style="width:auto;" class="fields">' + sTableLabel + '</td><td style="width:auto;" class="equals"><div style="color:darkred;"><b>' + String(iCountLeft) + '</b><div></td><td style="width:auto;" class="equals">' + String(iCountRight) + '</td></tr>';
+						bAddCSVLine = true;
+					} else if (iCountLeft < iCountRight) {
+						sReturnTmp = '<tr><td style="width:auto;" class="fields">' + sTableLabel + '</td><td style="width:auto;" class="equals">' + String(iCountLeft) + '</td><td style="width:auto;" class="equals"><div style="color:darkred;"><b>' + String(iCountRight) + '</b><div></td></tr>';
+						bAddCSVLine = true;
+					} else if (this.sOutputFilter == 'all') {
+						sReturnTmp = '<tr><td style="width:auto;" class="fields">' + sTableLabel + '</td><td style="width:auto;" class="equals">' + String(iCountLeft) + '</td><td style="width:auto;" class="equals">' + String(iCountRight) + '</td></tr>';
+						bAddCSVLine = true;
+					} // if left > right
+				} else if (sStatus == 'left') {
+					sReturnTmp = '<tr><td style="width:auto;" class="fields">' + sTableLabel + '</td><td style="width:auto;" class="insert">' + String(iCountLeft) + '</td><td style="width:auto;" class="equals"></td></tr>';
+					bAddCSVLine = true;
+				} else if (sStatus == 'right') {
+					sReturnTmp = '<tr><td style="width:auto;" class="fields">' + sTableLabel + '</td><td style="width:auto;" class="equals"></td><td style="width:auto;" class="delete">' + String(iCountRight) + '</td></tr>';
+					bAddCSVLine = true;
+				} // if status same or diff and values are diff
+				if (this.sOutputFormat == 'screen') {
+					sReturn += sReturnTmp;
+				} else if (bAddCSVLine) {
+					sReturn += sTableLabel + ';' + String(iCountLeft) + ';' + String(iCountRight) + '\n';
+				} // if csv and add line
+			} // if not filtered (diff, left, right, diffonly, all)
+		}, this); // each record
+		if (this.sOutputFormat == 'screen') {
+			sReturn += '</tbody></table></body>';
+			this.oReturn['sHTML'] = sReturn;
+		} else if (this.sCompareId) {
+			if (grCompare.get(this.sCompareId)) {
+				var grAttachment = new GlideSysAttachment();
+				grAttachment.write(grCompare, 'compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', sReturn);
+				if (grCompare.getValue('status') == 'running') {
+					grCompare.setValue('status', 'completed');
+					grCompare.update();
+				} // if compare
+			} // if compare
+		} // if sys id
+	}, // function _compareCount
+
+	_getCount: function (sType) {
+		var oCountResult = {};
+		var sTable = '';
+		if (sType == 'local') {
+			var grTable = new GlideRecord('sys_db_object');
+			if (this.sFilterCondition) {
+				grTable.addEncodedQuery(this.sFilterCondition);
+			} // if query
+			grTable.query();
+			while (grTable.next()) {
+				try {
+					sTable = grTable.getValue('name');
+					this._gtObject.setValue(sTable + '/left/label', grTable.getValue('label'), oCountResult);
+					this._gtObject.setValue(sTable + '/left/count', Number(this._gtRecordRead.countRecords(sTable, '', '', false, false, true)), oCountResult);
+				} catch (oEx) {
+					// catch access errors
+				} // if access problem
+			} // while table
+		} else if (sType == 'remote') {
+			oCountResult = this._CompareToolAPI.getRemoteCountObjectLeft(this.sFilterCondition);
+		} else {
+			oCountResult = this._CompareToolAPI.getRemoteCountObjectRight(this.sFilterCondition);
+		} // if local
+		return oCountResult;
+	}, // function _getCount
 
 	_parseCSV: function (sValue) {
 		if ((!sValue) || (String(sValue) == 'null') || (String(sValue) == 'unknown')) {
@@ -329,13 +455,13 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>79</sys_mod_count>
+        <sys_mod_count>102</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-21 05:30:21</sys_updated_on>
+        <sys_updated_on>2023-12-22 09:07:14</sys_updated_on>
     </sys_script_include>
 </record_update>

@@ -12,7 +12,6 @@ ServiceNow Customer Outcomes, Tom Hauri</description>
 CompareToolAPI.prototype = {
 	initialize: function (sConnectionAliasLeftId, sConnectionAliasRightId, sCompareId, oReturn) {
 		this.iRemoteRecordsChunkSize = 1000;
-		this.iMaxTablesForCount = 500;
 		this.sCompareId = sCompareId;
 		this.oReturn = oReturn;
 		this.oAttachmentCfg = {
@@ -25,18 +24,28 @@ CompareToolAPI.prototype = {
 		this.bConnectionRight = false;
 		var oResult = {};
 		if (this.sConnectionAliasLeftId) {
-			this._gtRESTAPILeft = new global.GlobalToolsRESTAPI(this.sConnectionAliasLeftId);
-			if (this._gtRESTAPILeft) {
-				oResult = this._gtRESTAPILeft.testNOWConnection();
-				this.bConnectionLeft = ((oResult) && (oResult.hasOwnProperty('success')) && (oResult['success'] == true)) ? true : false;
-			} // if api
+			try {
+				this._gtRESTAPILeft = new global.GlobalToolsRESTAPI(this.sConnectionAliasLeftId);
+				if (this._gtRESTAPILeft) {
+					oResult = this._gtRESTAPILeft.testNOWConnection();
+					this.bConnectionLeft = ((oResult) && (oResult.hasOwnProperty('success')) && (oResult['success'] == true)) ? true : false;
+				} // if api
+			} catch (oEx) {
+				this._setError('error_remote_initialize_left', String(oEx));
+				gs.error('CompareToolAPI.initialize Error getting remote test left: ' + String(oEx));
+			} // try
 		} // if alias left
 		if (this.sConnectionAliasRightId) {
-			this._gtRESTAPIRight = new global.GlobalToolsRESTAPI(this.sConnectionAliasRightId);
-			if (this._gtRESTAPIRight) {
-				oResult = this._gtRESTAPIRight.testNOWConnection();
-				this.bConnectionRight = ((oResult) && (oResult.hasOwnProperty('success')) && (oResult['success'] == true)) ? true : false;
-			} // if api
+			try {
+				this._gtRESTAPIRight = new global.GlobalToolsRESTAPI(this.sConnectionAliasRightId);
+				if (this._gtRESTAPIRight) {
+					oResult = this._gtRESTAPIRight.testNOWConnection();
+					this.bConnectionRight = ((oResult) && (oResult.hasOwnProperty('success')) && (oResult['success'] == true)) ? true : false;
+				} // if api
+			} catch (oEx) {
+				this._setError('error_remote_initialize_right', String(oEx));
+				gs.error('CompareToolAPI.initialize Error getting remote test right: ' + String(oEx));
+			} // try
 		} // if alias right
 		this._gt = new global.GlobalTools();
 		this._gtArray = new global.GlobalToolsArray();
@@ -46,11 +55,21 @@ CompareToolAPI.prototype = {
 	}, // function initialize
 
 	getRemoteRecordLeft: function (sTable, sQuery) {
-		return this._gtRESTAPILeft.getRemoteRecord(sTable, sQuery);
+		try {
+			return this._gtRESTAPILeft.getRemoteRecord(sTable, sQuery);
+		} catch (oEx) {
+			this._setError('error_remote_record_left', String(oEx));
+			gs.error('CompareToolAPI.getRemoteRecordLeft Error getting remote record: ' + String(oEx));
+		} // try
 	}, // function getRemoteRecordLeft
 
 	getRemoteRecordRight: function (sTable, sQuery) {
-		return this._gtRESTAPIRight.getRemoteRecord(sTable, sQuery);
+		try {
+			return this._gtRESTAPIRight.getRemoteRecord(sTable, sQuery);
+		} catch (oEx) {
+			this._setError('error_remote_record_right', String(oEx));
+			gs.error('CompareToolAPI.getRemoteRecordRight Error getting remote record: ' + String(oEx));
+		} // try
 	}, // function getRemoteRecordRight
 
 	getRemoteListLeft: function (sTable, sQuery, aKeys, aFields) {
@@ -127,7 +146,7 @@ CompareToolAPI.prototype = {
 			}, this); // each result
 		} else {
 			this._setError('error_parse_api');
-		} // if
+		} // if valid array
 		return oRESTAPIResult;
 	}, // function parseAPIResult
 
@@ -168,6 +187,70 @@ CompareToolAPI.prototype = {
 		this._gtRecordWrite.deleteMultiple('sys_attachment', 'table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId + '^file_nameSTARTSWITHremote_record_');
 	}, // function _parseAttachment
 
+	getRemoteCountLeft: function (sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue) {
+		try {
+			return this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue);
+		} catch (oEx) {
+			this._setError('error_remote_count_left', String(oEx));
+			gs.error('CompareToolAPI.getRemoteCountLeft Error getting remote count: ' + String(oEx));
+		} // try
+	}, // function getRemoteCountLeft
+
+	getRemoteCountRight: function (sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue) {
+		try {
+			return this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue);
+		} catch (oEx) {
+			this._setError('error_remote_count_right', String(oEx));
+			gs.error('CompareToolAPI.getRemoteCountRight Error getting remote record: ' + String(oEx));
+		} // try
+	}, // function getRemoteCountRight
+
+	getRemoteCountObjectLeft: function (sQuery) {
+		var oCountResult = {};
+		try {
+			var sTable = '', sCount = '';
+			var aRESTAPIResult = this._gtRESTAPILeft.doNOWRESTQuery('sys_db_object', sQuery, '', 5000, ['name', 'label']);
+			if (this._gtArray.isValidArray(aRESTAPIResult)) {
+				aRESTAPIResult.forEach(function (oRESTAPIResult) {
+					sTable = this._gtObject.getValue('name', '', oRESTAPIResult);
+					sCount = this.getRemoteCountLeft(sTable);
+					sCount = (isNaN(sCount)) ? '-1' : sCount;
+					this._gtObject.setValue(sTable + '/left/label', this._gtObject.getValue('label', '', oRESTAPIResult), oCountResult);
+					this._gtObject.setValue(sTable + '/left/count', sCount, oCountResult);
+				}, this); // each result
+			} else {
+				this._setError('error_parse_api');
+			} // if valid array
+		} catch (oEx) {
+			this._setError('error_remote_count_object_left', String(oEx));
+			gs.error('CompareToolAPI.getRemoteCountObjectLeft Error getting remote object: ' + String(oEx));
+		} // try
+		return oCountResult;
+	}, // function getRemoteCountObjectRight
+
+	getRemoteCountObjectRight: function (sQuery) {
+		var oCountResult = {};
+		try {
+			var sTable = '', sCount = '';
+			var aRESTAPIResult = this._gtRESTAPIRight.doNOWRESTQuery('sys_db_object', sQuery, '', 5000, ['name', 'label']);
+			if (this._gtArray.isValidArray(aRESTAPIResult)) {
+				aRESTAPIResult.forEach(function (oRESTAPIResult) {
+					sTable = this._gtObject.getValue('name', '', oRESTAPIResult);
+					sCount = this.getRemoteCountRight(sTable);
+					sCount = (isNaN(sCount)) ? '-1' : sCount;
+					this._gtObject.setValue(sTable + '/right/label', this._gtObject.getValue('label', '', oRESTAPIResult), oCountResult);
+					this._gtObject.setValue(sTable + '/right/count', sCount, oCountResult);
+				}, this); // each result
+			} else {
+				this._setError('error_parse_api');
+			} // if valid array
+		} catch (oEx) {
+			this._setError('error_remote_count_object_right', String(oEx));
+			gs.error('CompareToolAPI.getRemoteCountObjectRight Error getting remote object: ' + String(oEx));
+		} // try
+		return oCountResult;
+	}, // function getRemoteCountObjectRight
+
 	_setError: function (sMessage) {
 		var aArguments = [];
 		for (var i = 1; i < arguments.length; i++) {
@@ -187,13 +270,13 @@ CompareToolAPI.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-14 06:42:23</sys_created_on>
         <sys_id>2f0c002e1bc73d105e14b8449b4bcb15</sys_id>
-        <sys_mod_count>53</sys_mod_count>
+        <sys_mod_count>64</sys_mod_count>
         <sys_name>CompareToolAPI</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_2f0c002e1bc73d105e14b8449b4bcb15</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-20 10:32:10</sys_updated_on>
+        <sys_updated_on>2023-12-22 08:04:07</sys_updated_on>
     </sys_script_include>
 </record_update>
