@@ -26,44 +26,55 @@
         <list_link>false</list_link>
         <list_save_with_form_button>false</list_save_with_form_button>
         <list_style/>
-        <messages/>
+        <messages>CompareTool.progress&#13;
+CompareTool.error_no_return&#13;
+CompareTool.error_running</messages>
         <name>Compare</name>
-        <onclick>compare()</onclick>
+        <onclick>checkRunning()</onclick>
         <order>-1000</order>
-        <script><![CDATA[function compare() {
+        <script><![CDATA[function checkRunning() {
 	var gaCompare = new GlideAjax('x_snc_compare_tool.CompareAJAX');
-	gaCompare.addParam('sysparm_name', 'compareAction');
-	gaCompare.addParam('sysparm_sys_id', g_form.getUniqueValue());
+	gaCompare.addParam('sysparm_name', 'checkRunning');
 	gaCompare.addParam('sysparm_number', g_form.getValue('number'));
-	gaCompare.addParam('sysparm_type', g_form.getValue('type'));
-	gaCompare.addParam('sysparm_output_format',  g_form.getValue('output_format'));
-	gaCompare.addParam('sysparm_output_filter',  g_form.getValue('output_filter'));
-	gaCompare.addParam('sysparm_record_left', g_form.getValue('record_left'));
-	gaCompare.addParam('sysparm_record_right', g_form.getValue('record_right'));
-	gaCompare.addParam('sysparm_key_type', g_form.getValue('key_type'));
-	gaCompare.addParam('sysparm_key_fields', g_form.getValue('key_fields'));
-	gaCompare.addParam('sysparm_output_fields', g_form.getValue('output_fields'));
-	gaCompare.addParam('sysparm_table_left', g_form.getValue('table_left'));
-	gaCompare.addParam('sysparm_table_right', g_form.getValue('table_right'));
-	gaCompare.addParam('sysparm_connection_alias_left', g_form.getValue('connection_alias_left'));
-	gaCompare.addParam('sysparm_connection_alias_right', g_form.getValue('connection_alias_right'));
-	gaCompare.addParam('sysparm_filter_condition', g_form.getValue('filter_condition'));
-	gaCompare.addParam('sysparm_status', g_form.getValue('status'));
-	if ((g_form.getValue('type').indexOf('one') == -1) && (g_form.getValue('output_format') == 'attach_csv')) {
-		gaCompare.getXMLAnswer(showCompareAttach);
+	gaCompare.getXMLAnswer(checkRunningResult);
+} // function checkRunning
+
+function checkRunningResult(sIsRunning) {
+	var bIsRunning = ((sIsRunning) && (sIsRunning == 'false')) ? false : true;
+	if (bIsRunning) {
+		g_form.addErrorMessage(getMessage('CompareTool.error_running'));
 	} else {
-		gaCompare.getXMLAnswer(showCompareScreen);
-	} // function compare
+		compare();
+	} // if running
+} // function checkRunningResult
+
+function compare() {
+	var gdwProgress = new GlideDialogWindow('hierarchical_progress_viewer', false, '40em', '10.5em');
+	gdwProgress.setTitle(getMessage('CompareTool.progress'));
+	gdwProgress.setPreference('sysparm_renderer_progress_title', 'Compare in progress');
+	gdwProgress.setPreference('sysparm_ajax_processor', 'x_snc_compare_tool.CompareAJAX');
+	gdwProgress.setPreference('sysparm_ajax_processor_sys_id', g_form.getUniqueValue());
+	['number', 'type', 'output_format', 'output_filter', 'record_left', 'record_right', 'key_type', 'key_fields', 'output_fields', 'table_left', 'table_right', 'connection_alias_left', 'connection_alias_right', 'filter_condition', 'status'].forEach(function (sArgument) {
+		gdwProgress.setPreference('sysparm_ajax_processor_' + sArgument, g_form.getValue(sArgument));
+	}); // each argument
+	gdwProgress.on('executionComplete', function (oResult) {
+		if ((oResult) && (oResult.hasOwnProperty('result')) && (oResult['result'].hasOwnProperty('sType')) && (oResult['result'].hasOwnProperty('sOutputFormat'))) {
+			if ((oResult['result']['sType'].indexOf('one') == -1) && (oResult['result']['sOutputFormat'] == 'attach_csv')) {
+				showCompareAttach(oResult['result']);
+			} else {
+				showCompareScreen(oResult['result']);
+			} // if csv
+		} else {
+			g_form.addErrorMessage(getMessage('CompareTool.error_no_return'));
+		} // if result
+		gdwProgress.destroy();
+	}); // on execution
+	gdwProgress.render();
 } // function compare
 
-function showCompareScreen(sReturn) {
-	if (!sReturn) {
-		g_form.addErrorMessage('no return');
-		return;
-	}
-	var oReturn = sReturn.evalJSON();
-	if (oReturn['bValid'] == true) {
-		var dialog = new GlideBox({
+function showCompareScreen(oReturn) {
+	if (oReturn['bValid'] == 'true') {
+		var gbDialog = new GlideBox({
 			body: oReturn['sHTML'],
 			title: oReturn['sTitle'],
 			height: '95%',
@@ -71,25 +82,26 @@ function showCompareScreen(sReturn) {
 			autoDimensionOnLoad: true
 		}); // glidebox
 		oReturn['sHTML'].evalScripts(true);
-		dialog.render();
+		gbDialog.render();
 	} else {
-		if (oReturn.refresh == true) {
+		if (oReturn['refresh'] == true) {
 			location.reload();
 		} // if refresh
 		g_form.addErrorMessage(oReturn['sMessage']);
 	} // if valid
 } // function showCompareScreen
 
-function showCompareAttach(sReturn) {
-	var oReturn = sReturn.evalJSON();
-	if (oReturn['bValid'] == true) {
+function showCompareAttach(oReturn) {
+	if (oReturn['bValid'] == 'true') {
 		location.reload();
 	} else {
-		if (oReturn['bRefresh'] == true) {
+		if (oReturn['bRefresh'] == 'true') {
 			location.reload();
 		} // if refresh
-		g_form.addInfoMessage(oReturn['sMessage']);
-	}
+		if (oReturn['sMessage']) {
+			g_form.addInfoMessage(oReturn['sMessage']);
+		} // if message
+	} // if valid
 } // function showCompareAttach]]></script>
         <show_insert>false</show_insert>
         <show_multiple_update>false</show_multiple_update>
@@ -101,7 +113,7 @@ function showCompareAttach(sReturn) {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>93f293fd1b0bb9105e14b8449b4bcba9</sys_id>
-        <sys_mod_count>11</sys_mod_count>
+        <sys_mod_count>60</sys_mod_count>
         <sys_name>Compare</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -109,7 +121,7 @@ function showCompareAttach(sReturn) {
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_ui_action_93f293fd1b0bb9105e14b8449b4bcba9</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-22 09:36:44</sys_updated_on>
+        <sys_updated_on>2023-12-24 06:47:54</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>
