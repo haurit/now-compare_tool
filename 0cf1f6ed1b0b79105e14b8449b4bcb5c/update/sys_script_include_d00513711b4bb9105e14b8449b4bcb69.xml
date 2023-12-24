@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_compare_tool.CompareAJAX</api_name>
+        <caller_access/>
+        <client_callable>true</client_callable>
+        <description>Compare Tool, AJAX&#13;
+ServiceNow Customer Outcomes, Tom Hauri</description>
+        <name>CompareAJAX</name>
+        <script><![CDATA[var CompareAJAX = Class.create();
+CompareAJAX.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
+
+	// Called from UI Action: Compare
+	start: function () {
+		try {
+			var gsHierarchicalWorker = new GlideScriptedHierarchicalWorker();
+			gsHierarchicalWorker.setProgressName('Compare_' + this.getParameter('sysparm_ajax_processor_number'));
+			gsHierarchicalWorker.setScriptIncludeName('x_snc_compare_tool.CompareTool');
+			gsHierarchicalWorker.setScriptIncludeMethod('compareAction');
+			var aVariables = ['sCompareId', 'sNumber', 'sType', 'sOutputFormat', 'sOutputFilter', 'sRecordLeftId', 'sRecordRightId', 'sKeyType', 'sKeyFields', 'sOutputFields', 'sTableLeft', 'sTableRight', 'sConnectionAliasLeftId', 'sConnectionAliasRightId', 'sFilterCondition', 'sStatus', 'oReturn'];
+			['sys_id', 'number', 'type', 'output_format', 'output_filter', 'record_left', 'record_right', 'key_type', 'key_fields', 'output_fields', 'table_left', 'table_right', 'connection_alias_left', 'connection_alias_right', 'filter_condition', 'status'].forEach(function (sArgument, i) {
+				gsHierarchicalWorker.putConstructorArg(aVariables[i], this.getParameter('sysparm_ajax_processor_' + sArgument));
+			}, this); // each argument
+			gsHierarchicalWorker.setBackground(true);
+			gsHierarchicalWorker.start();
+			gs.debug('x_snc_compare_tool.CompareAJAX.start worker: ' + gsHierarchicalWorker.getProgressID());
+			return gsHierarchicalWorker.getProgressID();
+		} catch (oEx) {
+			gs.error('x_snc_compare_tool.CompareAJAX.start oEx: ' + String(oEx));
+		} // try
+	}, // function start
+
+	checkRunning: function () {
+		var sNumber = this.getParameter('sysparm_number');
+		if (sNumber) {
+			var grProgressWorker = new GlideRecord('sys_progress_worker');
+			grProgressWorker.setLimit(1);
+			grProgressWorker.addEncodedQuery('name=Compare_' + sNumber + '^state=running');
+			grProgressWorker.query();
+			if (!grProgressWorker.hasNext()) {
+				return 'false';
+			} // if no running worker
+		} // if number
+		return 'true';
+	}, // function checkRunning
+
+	type: 'CompareAJAX',
+	version: '1.0.0',
+	author: 'Tom Hauri',
+	email: 'tom@hauri.biz'
+});]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2023-12-12 13:30:40</sys_created_on>
+        <sys_id>d00513711b4bb9105e14b8449b4bcb69</sys_id>
+        <sys_mod_count>40</sys_mod_count>
+        <sys_name>CompareAJAX</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_update_name>sys_script_include_d00513711b4bb9105e14b8449b4bcb69</sys_update_name>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2023-12-24 07:09:52</sys_updated_on>
+    </sys_script_include>
+</record_update>

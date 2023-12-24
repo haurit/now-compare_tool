@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="c9c63e251b4b79105e14b8449b4bcb0d" label="Compare Configuration" max_length="40" name="x_snc_compare_tool_config" type="collection">
+        <element default="0461fa4e1b07f9105e14b8449b4bcb60" label="Connection Alias (Left)" max_length="32" name="connection_alias_left" reference="sys_alias" reference_qual="connection_type=http_connection^type=connection^EQ" reference_qual_condition="connection_type=http_connection^type=connection^EQ" type="reference"/>
+        <element default="b191be4e1b07f9105e14b8449b4bcbf0" label="Connection Alias (Right)" max_length="32" name="connection_alias_right" reference="sys_alias" reference_qual="connection_type=http_connection^type=connection^EQ" reference_qual_condition="connection_type=http_connection^type=connection^EQ" type="reference"/>
+        <element attributes="condition_builder=v2,show_condition_count=true" dependent="table_left" dependent_on_field="table_left" label="Filter Condition" max_length="4000" name="filter_condition" type="conditions" use_dependent_field="true"/>
+        <element attributes="no_sort=true,slushbucket_ref_no_expand=true" dependent="table_left" dependent_on_field="table_left" label="Key (Fields)" max_length="4000" name="key_fields" reference="sys_dictionary" reference_qual="javascript:'internal_type!=collection^nameIN' + new global.GlobalToolsTable().getTableHierarchy(current.getValue('table_left')) + '^name=' + new global.GlobalToolsTable().getAbsoluteBase(current.getValue('table_left')) + '^name!=cmdb^ORelement!=sys_id^ORDERBYcolumn_label'" type="glide_list" use_dependent_field="true" use_reference_qualifier="advanced"/>
+        <element choice="3" default="sys_id" label="Key (Type)" max_length="40" name="key_type" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="SysId" sequence="100" value="sys_id"/>
+                <element inactive_on_update="false" label="Filter Condition" sequence="200" value="filter_condition"/>
+                <element inactive_on_update="false" label="Key Fields" sequence="300" value="key_fields"/>
+            </choice>
+        </element>
+        <element default="javascript:global.getNextObjNumberPadded();" display="true" label="Number" max_length="40" name="number" read_only="true" type="string"/>
+        <element attributes="no_sort=true,slushbucket_ref_no_expand=true,maintain_order=true" dependent="table_left" dependent_on_field="table_left" label="Output (Fields)" max_length="4000" name="output_fields" reference="sys_dictionary" reference_qual="javascript:'internal_type!=collection^nameIN' + new global.GlobalToolsTable().getTableHierarchy(current.getValue('table_left')) + '^name=' + new global.GlobalToolsTable().getAbsoluteBase(current.getValue('table_left')) + '^name!=cmdb^ORelement!=sys_id^ORDERBYcolumn_label'" type="glide_list" use_dependent_field="true" use_reference_qualifier="advanced"/>
+        <element choice="3" default="diff" label="Output (Filter)" max_length="40" name="output_filter" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="All differences" sequence="100" value="diff"/>
+                <element inactive_on_update="false" label="Left only" sequence="200" value="left"/>
+                <element inactive_on_update="false" label="Right only" sequence="300" value="right"/>
+                <element inactive_on_update="false" label="Difference only" sequence="400" value="diffonly"/>
+                <element inactive_on_update="false" label="All" sequence="500" value="all"/>
+            </choice>
+        </element>
+        <element choice="3" default="screen" label="Output (Format)" max_length="40" name="output_format" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Screen" sequence="100" value="screen"/>
+                <element inactive_on_update="false" label="Attachment (CSV)" sequence="200" value="attach_csv"/>
+            </choice>
+        </element>
+        <element dependent="table_left" dependent_on_field="table_left" label="Record (Left)" max_length="32" name="record_left" type="document_id" use_dependent_field="true"/>
+        <element dependent="table_right" dependent_on_field="table_right" label="Record (Right)" max_length="32" name="record_right" type="document_id" use_dependent_field="true"/>
+        <element choice="3" default="complete" label="Status" max_length="40" name="status" read_only="true" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Running" sequence="100" value="running"/>
+                <element inactive_on_update="false" label="Complete" sequence="200" value="complete"/>
+                <element inactive_on_update="false" label="Error" sequence="300" value="error"/>
+            </choice>
+        </element>
+        <element attributes="base_start=true" label="Table (Left)" max_length="80" name="table_left" type="table_name"/>
+        <element attributes="base_start=true" label="Table (Right)" max_length="80" name="table_right" type="table_name"/>
+        <element choice="3" default="local_local_one" label="Type" mandatory="true" max_length="40" name="type" type="choice">
+            <choice>
+                <element inactive_on_update="false" label="Local to Local (One)" sequence="100" value="local_local_one"/>
+                <element inactive="true" inactive_on_update="true" label="Local to Local (List)" sequence="200" value="local_local_list"/>
+                <element inactive_on_update="false" label="Local (History)" sequence="300" value="local_history"/>
+                <element inactive_on_update="false" label="Local to Remote (One)" sequence="400" value="local_remote_one"/>
+                <element inactive_on_update="false" label="Local to Remote (List)" sequence="500" value="local_remote_list"/>
+                <element inactive_on_update="false" label="Local to Remote (Count)" sequence="600" value="local_remote_count"/>
+                <element inactive_on_update="false" label="Remote to Remote (One)" sequence="700" value="remote_remote_one"/>
+                <element inactive_on_update="false" label="Remote to Remote (List)" sequence="800" value="remote_remote_list"/>
+                <element inactive_on_update="false" label="Remote to Remote (Count)" sequence="900" value="remote_remote_count"/>
+            </choice>
+        </element>
+        <index name="index">
+            <element name="connection_alias_left"/>
+        </index>
+        <index name="index2">
+            <element name="connection_alias_right"/>
+        </index>
+        <index name="index3">
+            <element name="record_left"/>
+        </index>
+        <index name="index4">
+            <element name="record_right"/>
+        </index>
+    </element>
+</database>

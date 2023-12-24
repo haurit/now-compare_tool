@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_choice action="INSERT_OR_UPDATE" field="output_format" table="x_snc_compare_tool_config" version="3">
+        <sys_choice_set action="INSERT_OR_UPDATE">
+            <element>output_format</element>
+            <name>x_snc_compare_tool_config</name>
+            <sys_class_name>sys_choice_set</sys_class_name>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:37:31</sys_created_on>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>output_format</sys_name>
+            <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+            <sys_update_name>sys_choice_x_snc_compare_tool_config_output_format</sys_update_name>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-11 18:37:31</sys_updated_on>
+        </sys_choice_set>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>output_format</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Screen</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>100</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:37:31</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-11 18:37:31</sys_updated_on>
+            <value>screen</value>
+        </sys_choice>
+        <sys_choice action="INSERT_OR_UPDATE">
+            <dependent_value/>
+            <element>output_format</element>
+            <hint/>
+            <inactive>false</inactive>
+            <label>Attachment (CSV)</label>
+            <language>en</language>
+            <name>x_snc_compare_tool_config</name>
+            <sequence>200</sequence>
+            <synonyms/>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-11 18:37:54</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-11 18:37:54</sys_updated_on>
+            <value>attach_csv</value>
+        </sys_choice>
+    </sys_choice>
+</record_update>
