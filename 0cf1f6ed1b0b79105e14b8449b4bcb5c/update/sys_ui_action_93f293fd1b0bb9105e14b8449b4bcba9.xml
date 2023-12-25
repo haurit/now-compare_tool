@@ -26,9 +26,9 @@
         <list_link>false</list_link>
         <list_save_with_form_button>false</list_save_with_form_button>
         <list_style/>
-        <messages>CompareTool.progress&#13;
-CompareTool.error_no_return&#13;
-CompareTool.error_running</messages>
+        <messages>CompareTool_progress&#13;
+CompareTool_error_no_return&#13;
+CompareTool_error_running</messages>
         <name>Compare</name>
         <onclick>checkRunning()</onclick>
         <order>-1000</order>
@@ -42,7 +42,7 @@ CompareTool.error_running</messages>
 function checkRunningResult(sIsRunning) {
 	var bIsRunning = ((sIsRunning) && (sIsRunning == 'false')) ? false : true;
 	if (bIsRunning) {
-		g_form.addErrorMessage(getMessage('CompareTool.error_running'));
+		g_form.addErrorMessage(getMessage('CompareTool_error_running'));
 	} else {
 		compare();
 	} // if running
@@ -50,8 +50,8 @@ function checkRunningResult(sIsRunning) {
 
 function compare() {
 	var gdwProgress = new GlideDialogWindow('hierarchical_progress_viewer', false, '40em', '10.5em');
-	gdwProgress.setTitle(getMessage('CompareTool.progress'));
-	gdwProgress.setPreference('sysparm_renderer_progress_title', 'Compare in progress');
+	gdwProgress.setTitle(getMessage('CompareTool_progress'));
+	gdwProgress.setPreference('sysparm_renderer_progress_title', getMessage('CompareTool_progress'));
 	gdwProgress.setPreference('sysparm_ajax_processor', 'x_snc_compare_tool.CompareAJAX');
 	gdwProgress.setPreference('sysparm_ajax_processor_sys_id', g_form.getUniqueValue());
 	['number', 'type', 'output_format', 'output_filter', 'record_left', 'record_right', 'key_type', 'key_fields', 'output_fields', 'table_left', 'table_right', 'connection_alias_left', 'connection_alias_right', 'filter_condition', 'status'].forEach(function (sArgument) {
@@ -65,7 +65,7 @@ function compare() {
 				showCompareScreen(oResult['result']);
 			} // if csv
 		} else {
-			g_form.addErrorMessage(getMessage('CompareTool.error_no_return'));
+			g_form.addErrorMessage(getMessage('CompareTool_error_no_return'));
 		} // if result
 		gdwProgress.destroy();
 	}); // on execution
@@ -113,7 +113,7 @@ function showCompareAttach(oReturn) {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>93f293fd1b0bb9105e14b8449b4bcba9</sys_id>
-        <sys_mod_count>63</sys_mod_count>
+        <sys_mod_count>65</sys_mod_count>
         <sys_name>Compare</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -121,7 +121,7 @@ function showCompareAttach(oReturn) {
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_ui_action_93f293fd1b0bb9105e14b8449b4bcba9</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-24 07:09:07</sys_updated_on>
+        <sys_updated_on>2023-12-25 10:24:33</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>
