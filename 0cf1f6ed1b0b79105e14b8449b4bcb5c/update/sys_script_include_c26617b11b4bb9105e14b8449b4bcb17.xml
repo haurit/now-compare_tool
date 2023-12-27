@@ -12,7 +12,6 @@ ServiceNow Customer Outcomes, Tom Hauri</description>
 CompareTool.prototype = {
 	initialize: function (sCompareId, sNumber, sType, sOutputFormat, sOutputFilter, sRecordLeftId, sRecordRightId, sKeyType, sKeyFields, sOutputFields, sTableLeft, sTableRight, sConnectionAliasLeftId, sConnectionAliasRightId, sFilterCondition, sStatus) {
 		this.bShowCompareCharCodeInLog = false;
-		this.iMaxTablesForCount = 500;
 		this.sCompareId = sCompareId;
 		this.sNumber = sNumber;
 		this.sType = sType; // local_local_one, local_local_list, local_history, local_remote_one, local_remote_list, local_remote_count, remote_remote_one, remote_remote_list, remote_remote_count
@@ -42,6 +41,7 @@ CompareTool.prototype = {
 		this.oReturn['sMessage'] = '';
 		this.oReturn['sTitle'] = '';
 		this.oReturn['bRefresh'] = false;
+		this._CompareOutputBuilder = new x_snc_compare_tool.CompareOutputBuilder(this.sOutputFormat);
 		if ((this.sConnectionAliasLeftId) || (this.sConnectionAliasRightId)) {
 			this._CompareToolAPI = new x_snc_compare_tool.CompareToolAPI(this.sConnectionAliasLeftId, this.sConnectionAliasRightId, this.sCompareId, this.oReturn);
 			this.bConnectionLeft = this._CompareToolAPI.bConnectionLeft;
@@ -85,7 +85,7 @@ CompareTool.prototype = {
 			} else if (this.aType[2] == 'count') {
 				this._compareCount();
 			} // if type
-			if (grCompare.isValidRecord()) {
+			if ((grCompare) && (grCompare.isValidRecord())) {
 				grCompare.setValue('status', 'complete');
 				grCompare.update();
 			} // if compare
@@ -94,7 +94,7 @@ CompareTool.prototype = {
 			gs.error('CompareTool.compareAction Catched error: ' + String(oEx));
 		} // try
 		this._gExecutionTracker.updateResult(this.oReturn);
-		this._gExecutionTracker.success('CompareTool_tracker_success');
+		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
 		gs.debug('x_snc_compare_tool.CompareTool.compareAction END'); // oReturn: ' + JSON.stringify(this.oReturn));
 		//return this.oReturn;
 	}, // function compareAction
@@ -170,22 +170,13 @@ CompareTool.prototype = {
 		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
 		this._gExecutionTracker.incrementPercentComplete(70);
 		//gs.debug('x_snc_compare_tool.CompareTool._compareList oMerged: ' + JSON.stringify(oMerged));
-		var sReturn = (this.sOutputFormat == 'screen') ? '<body><table cellpadding="0" cellspacing="0" width="100%" class="diff"><thead><tr><th width="10%" class="texttitle">' + gs.getMessage('CompareTool_field_status') + '</th>' : gs.getMessage('CompareTool_field_status') + ';';
-		var grRecordTitle = new GlideRecord(this.sTableLeft);
-		aFields.forEach(function (sField) {
-			if (this.sOutputFormat == 'screen') {
-				sReturn += '<th class="texttitle">' + grRecordTitle.getElement(sField).getLabel() + '</th>';
-			} else {
-				sReturn += grRecordTitle.getElement(sField).getLabel() + ';';
-			} // if output
-		}, this); // each title field
-		sReturn += (this.sOutputFormat == 'screen') ? '</tr></thead><tbody>' : '\n';
+		this._CompareOutputBuilder.addTable(this.sTableLeft, aFields);
 		var aAllKeys = Object.keys(oMerged);
 		aAllKeys.sort();
-		var oMergedFields = {}, aMergedFields = [], sStatus = '', sReturnTmp = '', sValueLeft = '', sDisplayValueLeft = '', sValueRight = '', sDisplayValueRight = '', bIsEqual = false;
+		var oMergedFields = {}, aMergedFields = [], sStatus = '', aRow = [], sValueLeft = '', sDisplayValueLeft = '', sValueRight = '', sDisplayValueRight = '', bIsEqual = false;
 		aAllKeys.forEach(function (sKey) {
 			sStatus = '';
-			sReturnTmp = '';
+			aRow = []; aRow.push('first_column');
 			oMergedFields = oMerged[sKey];
 			aMergedFields = Object.keys(oMergedFields);
 			aMatches = Object.keys(oMergedFields[aMergedFields[0]]);
@@ -210,50 +201,30 @@ CompareTool.prototype = {
 						if (!bIsEqual) {
 							if (this.bShowCompareCharCodeInLog) { gs.debug('CompareTool_._compareList char compare left: ' + this._convertStringToCode(sValueLeft) + ' right: ' + this._convertStringToCode(sValueRight)); }
 							sStatus = 'diff';
-							if (this.sOutputFormat == 'screen') {
-								sReturnTmp += '<td style="width:auto;" class="empty"><div style="color:darkgreen;"><b>' + sValueLeft + sDisplayValueLeft + '</b></div><div style="color:darkred;"><b>' + sValueRight + sDisplayValueRight + '</b></div></td>';
-							} else {
-								sReturnTmp += this._parseCSV(sValueLeft + sDisplayValueLeft + '\n\n<-- ' + gs.getMessage('CompareTool_field_value_left') + ' | ' + gs.getMessage('CompareTool_field_value_right') + ' -->\n\n' + sValueRight + sDisplayValueRight);
-							} // if output
+							aRow.push({ 'sClass': 'empty', 'sValue': [sValueLeft + sDisplayValueLeft, sValueRight + sDisplayValueRight] });
 						} else {
-							if (this.sOutputFormat == 'screen') {
-								sReturnTmp += '<td style="width:auto;" class="equals">' + sValueLeft + sDisplayValueLeft + '</td>';
-							} else {
-								sReturnTmp += this._parseCSV(sValueLeft + sDisplayValueLeft);
-							} // if output
+							aRow.push({ 'sClass': 'equals', 'sValue': sValueLeft + sDisplayValueLeft });
 						} // if is not equal
 					} else if (sStatus == 'left') {
-						if (this.sOutputFormat == 'screen') {
-							sReturnTmp += '<td style="width:auto;" class="delete">' + sValueLeft + sDisplayValueLeft + '</td>';
-						} else {
-							sReturnTmp += this._parseCSV(sValueLeft + sDisplayValueLeft);
-						} // if output
+						aRow.push({ 'sClass': 'delete', 'sValue': sValueLeft + sDisplayValueLeft });
 					} else if (sStatus == 'right') {
-						if (this.sOutputFormat == 'screen') {
-							sReturnTmp += '<td style="width:auto;" class="insert">' + sValueRight + sDisplayValueRight + '</td>';
-						} else {
-							sReturnTmp += this._parseCSV(sValueRight + sDisplayValueRight);
-						} // if output
+						aRow.push({ 'sClass': 'insert', 'sValue': sValueRight + sDisplayValueRight });
 					} // if status same or diff and values are diff
 				}, this); // each field
 				if (((this.sOutputFilter == 'all') && (sStatus == 'same')) || (sStatus != 'same')) {
-					if (this.sOutputFormat == 'screen') {
-						sReturn += '<tr><td style="width:auto;" class="fields">' + gs.getMessage('CompareTool_status_' + sStatus) + '</td>' + sReturnTmp + '</tr>';
-					} else {
-						sReturn += gs.getMessage('CompareTool_status_' + sStatus) + ';' + sReturnTmp + '\n';
-					} // if output
+					aRow[0] = { 'sClass': 'fields', 'sValue': gs.getMessage('CompareTool_status_' + sStatus) };
+					this._CompareOutputBuilder.addRow(aRow);
 				} // if not all or same
 			} // if not filtered (diff, left, right, diffonly, all)
 		}, this); // each record
 		this._gExecutionTracker.incrementPercentComplete(90);
 		if (this.sOutputFormat == 'screen') {
-			sReturn += '</tbody></table></body>';
-			this.oReturn['sHTML'] = sReturn;
+			this.oReturn['sHTML'] = this._CompareOutputBuilder.getTable();
 		} else if (this.sCompareId) {
 			var grCompare = new GlideRecord('x_snc_compare_tool_config');
 			if (grCompare.get(this.sCompareId)) {
 				var grAttachment = new GlideSysAttachment();
-				grAttachment.write(grCompare, 'compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', sReturn);
+				grAttachment.write(grCompare, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', this._CompareOutputBuilder.getTable());
 			} // if compare
 		} // if sys id
 	}, // function _compareList
@@ -274,7 +245,7 @@ CompareTool.prototype = {
 		} // if query
 		grRecord._query();
 		if (!grRecord.hasNext()) {
-			this._setError('error_parse_record');
+			this._setError('local_list');
 		} // if valid record
 		while (grRecord.next()) {
 			var sKeyValue = _parseKeys(aKeys, grRecord);
@@ -313,19 +284,12 @@ CompareTool.prototype = {
 		this._gExecutionTracker.incrementPercentComplete(60);
 		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
 		//gs.debug('x_snc_compare_tool.CompareTool._compareCount oMerged: ' + JSON.stringify(oMerged));
-		if (this.sOutputFormat == 'screen') {
-			sReturn = '<body><table cellpadding="0" cellspacing="0" width="100%" class="diff"><thead><tr><th width="10%" class="texttitle">' + gs.getMessage('Table name') + '</th>';
-			sReturn += '<th class="texttitle">' + gs.getMessage('CompareTool_field_count_left') + '</th>';
-			sReturn += '<th class="texttitle">' + gs.getMessage('CompareTool_field_count_right') + '</th>';
-			sReturn += '</tr></thead><tbody>';
-		} else {
-			sReturn = gs.getMessage('Table name') + ';' + gs.getMessage('CompareTool_field_count_left') + ';' + gs.getMessage('CompareTool_field_count_right') + '\n';
-		} // if output
+		this._CompareOutputBuilder.addTable('', ['CompareTool_field_count_left', 'CompareTool_field_count_right'], 'Table name');
 		var aAllKeys = Object.keys(oMerged);
 		aAllKeys.sort();
-		var sStatus = '', sTableLabel = '', iCountLeft = '', iCountRight = '', sReturnTmp = '', bAddCSVLine = false;
+		var sStatus = '', sTableLabel = '', iCountLeft = '', iCountRight = '', aRow = [], bAddCSVLine = false;
 		aAllKeys.forEach(function (sTable) {
-			sStatus = '', sReturnTmp = '';
+			sStatus = '', aRow = [];
 			bAddCSVLine = false;
 			aMatches = Object.keys(oMerged[sTable]);
 			if ((aMatches.indexOf('left') != -1) && (aMatches.indexOf('right') != -1)) {
@@ -337,41 +301,49 @@ CompareTool.prototype = {
 			} // if status
 			if ((['all', 'diff'].indexOf(this.sOutputFilter) != -1) || (this.sOutputFilter == sStatus) || (this.sOutputFilter == sStatus + 'only')) {
 				sTableLabel = this._gtObject.getValue(sTable + '/left/label', this._gtObject.getValue(sTable + '/right/label', sTable, oMerged), oMerged);
+				aRow.push({ 'sClass': 'fields', 'sValue': sTableLabel });
 				iCountLeft = this._gtObject.getValue(sTable + '/left/count', -1, oMerged);
 				iCountRight = this._gtObject.getValue(sTable + '/right/count', -1, oMerged);
 				if (sStatus == 'diff') {
 					if (iCountLeft > iCountRight) {
-						sReturnTmp = '<tr><td style="width:auto;" class="fields">' + sTableLabel + '</td><td style="width:auto;" class="equals"><div style="color:darkred;"><b>' + String(iCountLeft) + '</b><div></td><td style="width:auto;" class="equals">' + String(iCountRight) + '</td></tr>';
+						aRow.push({ 'sClass': 'equals', 'sValue': { 'sColor': 'darkgreen', 'sValue': iCountLeft } });
+						aRow.push({ 'sClass': 'equals', 'sValue': iCountRight });
 						bAddCSVLine = true;
 					} else if (iCountLeft < iCountRight) {
-						sReturnTmp = '<tr><td style="width:auto;" class="fields">' + sTableLabel + '</td><td style="width:auto;" class="equals">' + String(iCountLeft) + '</td><td style="width:auto;" class="equals"><div style="color:darkred;"><b>' + String(iCountRight) + '</b><div></td></tr>';
+						aRow.push({ 'sClass': 'equals', 'sValue': iCountLeft });
+						aRow.push({ 'sClass': 'equals', 'sValue': { 'sColor': 'darkred', 'sValue': iCountRight } });
 						bAddCSVLine = true;
 					} else if (this.sOutputFilter == 'all') {
-						sReturnTmp = '<tr><td style="width:auto;" class="fields">' + sTableLabel + '</td><td style="width:auto;" class="equals">' + String(iCountLeft) + '</td><td style="width:auto;" class="equals">' + String(iCountRight) + '</td></tr>';
+						aRow.push({ 'sClass': 'equals', 'sValue': iCountLeft });
+						aRow.push({ 'sClass': 'equals', 'sValue': iCountRight });
 						bAddCSVLine = true;
 					} // if left > right
 				} else if (sStatus == 'left') {
-					sReturnTmp = '<tr><td style="width:auto;" class="fields">' + sTableLabel + '</td><td style="width:auto;" class="insert">' + String(iCountLeft) + '</td><td style="width:auto;" class="equals"></td></tr>';
+					aRow.push({ 'sClass': 'insert', 'sValue': iCountLeft });
+					aRow.push({ 'sClass': 'equals', 'sValue': '' });
 					bAddCSVLine = true;
 				} else if (sStatus == 'right') {
-					sReturnTmp = '<tr><td style="width:auto;" class="fields">' + sTableLabel + '</td><td style="width:auto;" class="equals"></td><td style="width:auto;" class="delete">' + String(iCountRight) + '</td></tr>';
+					aRow.push({ 'sClass': 'equals', 'sValue': '' });
+					aRow.push({ 'sClass': 'delete', 'sValue': iCountRight });
 					bAddCSVLine = true;
 				} // if status same or diff and values are diff
-				if (this.sOutputFormat == 'screen') {
-					sReturn += sReturnTmp;
-				} else if (bAddCSVLine) {
-					sReturn += sTableLabel + ';' + String(iCountLeft) + ';' + String(iCountRight) + '\n';
-				} // if csv and add line
+				if (bAddCSVLine) {
+					aRow.push(iCountLeft);
+					aRow.push(iCountRight);
+				} // if csv
+				if ((this.sOutputFormat == 'screen') || (bAddCSVLine)) {
+					this._CompareOutputBuilder.addRow(aRow);
+				} // if screen or add csv
 			} // if not filtered (diff, left, right, diffonly, all)
 		}, this); // each record
 		this._gExecutionTracker.incrementPercentComplete(90);
 		if (this.sOutputFormat == 'screen') {
-			sReturn += '</tbody></table></body>';
-			this.oReturn['sHTML'] = sReturn;
+			this.oReturn['sHTML'] = this._CompareOutputBuilder.getTable();
 		} else if (this.sCompareId) {
+			var grCompare = new GlideRecord('x_snc_compare_tool_config');
 			if (grCompare.get(this.sCompareId)) {
 				var grAttachment = new GlideSysAttachment();
-				grAttachment.write(grCompare, 'compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', sReturn);
+				grAttachment.write(grCompare, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', this._CompareOutputBuilder.getTable());
 			} // if compare
 		} // if sys id
 	}, // function _compareCount
@@ -401,16 +373,6 @@ CompareTool.prototype = {
 		} // if local
 		return oCountResult;
 	}, // function _getCount
-
-	_parseCSV: function (sValue) {
-		if ((!sValue) || (String(sValue) == 'null') || (String(sValue) == 'unknown')) {
-			sValue = '';
-		} // if empty
-		sValue = String(sValue).replace(/\n|\r|/g, ''); // replace newline
-		sValue = String(sValue).replace(/"/g, '""'); // replace quotes
-		sValue = String(sValue).replace(/;/g, ''); // replace semicolon
-		return '"' + sValue + '";';
-	}, // function _parseCSV
 
 	_parseFields: function (aFieldIds, grRecord, oLine) {
 		aFieldIds = (Array.isArray(aFieldIds)) ? aFieldIds : aFieldIds.split(',');
@@ -449,13 +411,13 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>122</sys_mod_count>
+        <sys_mod_count>135</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-23 09:19:42</sys_updated_on>
+        <sys_updated_on>2023-12-27 14:32:15</sys_updated_on>
     </sys_script_include>
 </record_update>
