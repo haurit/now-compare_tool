@@ -32,7 +32,7 @@
         <order>100</order>
         <script><![CDATA[function openURL() {
 	var sUrl = 'sys_progress_worker_list.do?';
-	sUrl += 'sysparm_query=GOTOnameLIKECompare_' + g_form.getValue('number') + '^state=running';
+	sUrl += 'sysparm_query=GOTOnameLIKEComparing ' + g_form.getValue('number') + '^state=running';
 	top.window.open(sUrl, '_blank');
 } // function ]]></script>
         <show_insert>false</show_insert>
@@ -45,7 +45,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>2fc063991bd3f9104422dc61ab4bcb71</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>5</sys_mod_count>
         <sys_name>Show Progress Workers</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -53,7 +53,7 @@
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_ui_action_2fc063991bd3f9104422dc61ab4bcb71</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-23 11:31:20</sys_updated_on>
+        <sys_updated_on>2023-12-27 13:12:02</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>

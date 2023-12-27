@@ -12,7 +12,6 @@ ServiceNow Customer Outcomes, Tom Hauri</description>
 CompareTool.prototype = {
 	initialize: function (sCompareId, sNumber, sType, sOutputFormat, sOutputFilter, sRecordLeftId, sRecordRightId, sKeyType, sKeyFields, sOutputFields, sTableLeft, sTableRight, sConnectionAliasLeftId, sConnectionAliasRightId, sFilterCondition, sStatus) {
 		this.bShowCompareCharCodeInLog = false;
-		this.iMaxTablesForCount = 500;
 		this.sCompareId = sCompareId;
 		this.sNumber = sNumber;
 		this.sType = sType; // local_local_one, local_local_list, local_history, local_remote_one, local_remote_list, local_remote_count, remote_remote_one, remote_remote_list, remote_remote_count
@@ -225,7 +224,7 @@ CompareTool.prototype = {
 			var grCompare = new GlideRecord('x_snc_compare_tool_config');
 			if (grCompare.get(this.sCompareId)) {
 				var grAttachment = new GlideSysAttachment();
-				grAttachment.write(grCompare, 'compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', this._CompareOutputBuilder.getTable());
+				grAttachment.write(grCompare, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', this._CompareOutputBuilder.getTable());
 			} // if compare
 		} // if sys id
 	}, // function _compareList
@@ -344,7 +343,7 @@ CompareTool.prototype = {
 			var grCompare = new GlideRecord('x_snc_compare_tool_config');
 			if (grCompare.get(this.sCompareId)) {
 				var grAttachment = new GlideSysAttachment();
-				grAttachment.write(grCompare, 'compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', this._CompareOutputBuilder.getTable());
+				grAttachment.write(grCompare, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', this._CompareOutputBuilder.getTable());
 			} // if compare
 		} // if sys id
 	}, // function _compareCount
@@ -412,13 +411,13 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>133</sys_mod_count>
+        <sys_mod_count>135</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-27 09:43:50</sys_updated_on>
+        <sys_updated_on>2023-12-27 14:32:15</sys_updated_on>
     </sys_script_include>
 </record_update>
