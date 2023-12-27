@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_snc_compare_tool.CompareOutputBuilder</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description>Compare Tool Output Builder&#13;
+ServiceNow Customer Outcomes, Tom Hauri</description>
+        <name>CompareOutputBuilder</name>
+        <script><![CDATA[var CompareOutputBuilder = Class.create();
+CompareOutputBuilder.prototype = {
+	initialize: function (sOutputFormat) {
+		this.sOutputFormat = sOutputFormat;
+		this.aReturn = [];
+		this._gt = new global.GlobalTools();
+		this._gtArray = new global.GlobalToolsArray();
+		this._gtTable = new global.GlobalToolsTable();
+	}, // function initialize
+
+	addTable: function (sTable, aFields, sFirstHeader) {
+		sFirstHeader = (sFirstHeader) ? gs.getMessage(sFirstHeader) : gs.getMessage('CompareTool_field_status');
+		var sReturn = (this.sOutputFormat == 'screen') ? '<body><table cellpadding="0" cellspacing="0" width="100%" class="diff"><thead><tr><th width="10%" class="texttitle">' + sFirstHeader + '</th>' : sFirstHeader + ';';
+		if ((sTable) && (this._gtTable.isValidTable(sTable))) {
+			var grRecordTitle = new GlideRecord(sTable);
+			aFields.forEach(function (sField) {
+				if (this.sOutputFormat == 'screen') {
+					sReturn += '<th class="texttitle">' + grRecordTitle.getElement(sField).getLabel() + '</th>';
+				} else {
+					sReturn += grRecordTitle.getElement(sField).getLabel() + ';';
+				} // if output
+			}, this); // each title field
+		} else {
+			aFields.forEach(function (sField) {
+				if (this.sOutputFormat == 'screen') {
+					sReturn += '<th class="texttitle">' + gs.getMessage(sField) + '</th>';
+				} else {
+					sReturn += gs.getMessage(sField) + ';';
+				} // if output
+			}, this); // each title field
+		} // if table
+		sReturn += (this.sOutputFormat == 'screen') ? '</tr></thead><tbody>' : '';
+		this.aReturn.push(sReturn);
+	}, // function addTableHeader
+
+	addRow: function (aRow) {
+		var sReturn = '';
+		if (this._gtArray.isValidArray(aRow)) {
+			aRow.forEach(function (sColumn) {
+				var sColumnType = this._gt.getType(sColumn);
+				var sClass = (sColumnType == 'object') && (sColumn.hasOwnProperty('sClass')) ? 'class="' + sColumn['sClass'] + '"' : '';
+				var sValue = (sColumnType == 'object') && (sColumn.hasOwnProperty('sValue')) ? sColumn['sValue'] : '';
+				var sValue2 = '', sColor = '';
+				if (this._gtArray.isValidArray(sValue)) {
+					sValue2 = sValue[1];
+					sValue = sValue[0];
+				} // if two values
+				if ((this._gt.getType(sValue) == 'object') && (sValue.hasOwnProperty('sColor'))) {
+					sColor = sValue['sColor'];
+					sValue = sValue['sValue'];
+				} // if color
+				sValue = String(sValue);
+				sValue2 = String(sValue2);
+				if (this.sOutputFormat == 'screen') {
+					if (sValue2) {
+						sReturn += '<td style="width:auto;" ' + sClass + '><div style="color:darkgreen;"><b>' + sValue + '</b></div><div style="color:darkred;"><b>' + sValue2 + '</b></div></td>';
+					} else if (sColor) {
+						sReturn += '<td style="width:auto;" ' + sClass + '><div style="color:' + sColor + ';"><b>' + sValue + '</b></div></td>';
+					} else {
+						sReturn += '<td style="width:auto;" ' + sClass + '>' + sValue + '</td>';
+					} // if two values
+				} else {
+					if (sValue2) {
+						sReturn += this._parseCSV(sValue + '\n\n<-- ' + gs.getMessage('CompareTool_field_value_left') + ' | ' + gs.getMessage('CompareTool_field_value_right') + ' -->\n\n' + sValue2);
+					} else {
+						sReturn += this._parseCSV(sValue);
+					} // if two values
+				} // if output screen
+			}, this); // each column
+			if (this.sOutputFormat == 'screen') {
+				sReturn = '<tr>' + sReturn + '</tr>';
+			} // if screen
+			this.aReturn.push(sReturn);
+		} // if valid array
+	}, // function 
+
+	getTable: function () {
+		if (this.sOutputFormat == 'screen') {
+			this.aReturn.push('</tbody></table></body>');
+		} // if screen
+		return this.aReturn.join('\n');
+	}, // function getTable
+
+	_parseCSV: function (sValue) {
+		if ((!sValue) || (String(sValue) == 'null') || (String(sValue) == 'unknown')) {
+			sValue = '';
+		} // if empty
+		sValue = String(sValue).replace(/\n|\r|/g, ''); // replace newline
+		sValue = String(sValue).replace(/"/g, '""'); // replace quotes
+		sValue = String(sValue).replace(/;/g, ''); // replace semicolon
+		return '"' + sValue + '";';
+	}, // function _parseCSV
+
+	type: 'CompareOutputBuilder',
+	version: '1.0.0',
+	author: 'Tom Hauri',
+	email: 'tom@hauri.biz'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2023-12-27 07:22:57</sys_created_on>
+        <sys_id>1b5fcb6a1bdffd104422dc61ab4bcb9b</sys_id>
+        <sys_mod_count>7</sys_mod_count>
+        <sys_name>CompareOutputBuilder</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_update_name>sys_script_include_1b5fcb6a1bdffd104422dc61ab4bcb9b</sys_update_name>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2023-12-27 09:42:02</sys_updated_on>
+    </sys_script_include>
+</record_update>
