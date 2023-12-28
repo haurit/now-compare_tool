@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_action">
     <sys_ui_action action="INSERT_OR_UPDATE">
-        <action_name>sysverb_takesnapshot</action_name>
+        <action_name>sysverb_cleanupsnapshot</action_name>
         <active>true</active>
         <client>true</client>
         <client_script_v2><![CDATA[function onClick(g_form) {
@@ -9,14 +9,14 @@
         <comments/>
         <condition>current.getValue('type') == 'local_history'</condition>
         <form_action>true</form_action>
-        <form_button>true</form_button>
+        <form_button>false</form_button>
         <form_button_v2>false</form_button_v2>
         <form_context_menu>false</form_context_menu>
-        <form_link>false</form_link>
+        <form_link>true</form_link>
         <form_menu_button_v2>false</form_menu_button_v2>
-        <form_style>primary</form_style>
+        <form_style/>
         <format_for_configurable_workspace>false</format_for_configurable_workspace>
-        <hint>Taking a new snapshot for the configured table and records.</hint>
+        <hint>Cleaning up older snapshots leaving the only the latest.</hint>
         <isolate_script>true</isolate_script>
         <list_action>false</list_action>
         <list_banner_button>false</list_banner_button>
@@ -30,12 +30,11 @@
 CompareTool_error_no_return&#13;
 CompareTool_error_running&#13;
 CompareTool_error_modified&#13;
-CompareTool_error_snapshot_nothistory&#13;
-</messages>
-        <name>Take Snapshot</name>
-        <onclick>checkRunningTakeSnapshot()</onclick>
-        <order>-500</order>
-        <script><![CDATA[function checkRunningTakeSnapshot() {
+CompareTool_error_snapshot_nothistory</messages>
+        <name>Cleanup Snapshots</name>
+        <onclick>checkRunningCleanupSnapshot()</onclick>
+        <order>200</order>
+        <script><![CDATA[function checkRunningCleanupSnapshot() {
 	if (g_form.getValue('type') == 'local_history') {
 		var gaCompare = new GlideAjax('x_snc_compare_tool.CompareAJAX');
 		gaCompare.addParam('sysparm_name', 'checkRunning');
@@ -44,7 +43,7 @@ CompareTool_error_snapshot_nothistory&#13;
 	} else {
 		g_form.addErrorMessage(getMessage('CompareTool_error_snapshot_nothistory'));
 	} // if not history
-} // function checkRunning
+} // function checkRunningCleanupSnapshot
 
 function checkRunningResult(sIsRunning) {
 	var bIsRunning = ((sIsRunning) && (sIsRunning == 'false')) ? false : true;
@@ -54,18 +53,18 @@ function checkRunningResult(sIsRunning) {
 		if (g_form.modified) {
 			g_form.addErrorMessage(getMessage('CompareTool_error_modified'));
 		} else {
-			takeSnapshot();
+			cleanupSnapshot();
 		} // if modified
 	} // if running
 } // function checkRunningResult
 
-function takeSnapshot() {
+function cleanupSnapshot() {
 	var gdwProgress = new GlideDialogWindow('hierarchical_progress_viewer', false, '40em', '10.5em');
 	gdwProgress.setTitle(getMessage('CompareTool_progress'));
 	gdwProgress.setPreference('sysparm_renderer_progress_title', getMessage('CompareTool_progress'));
 	gdwProgress.setPreference('sysparm_ajax_processor', 'x_snc_compare_tool.CompareAJAX');
 	gdwProgress.setPreference('sysparm_ajax_processor_sys_id', g_form.getUniqueValue());
-	gdwProgress.setPreference('sysparm_ajax_processor_function', 'takeSnapshot');
+	gdwProgress.setPreference('sysparm_ajax_processor_function', 'cleanupSnapshot');
 	['number', 'type', 'output_format', 'output_filter', 'record_left', 'record_right', 'key_type', 'key_fields', 'output_fields', 'table_left', 'table_right', 'connection_alias_left', 'connection_alias_right', 'filter_condition', 'snapshot_left', 'snapshot_right', 'status'].forEach(function (sArgument) {
 		gdwProgress.setPreference('sysparm_ajax_processor_' + sArgument, g_form.getValue(sArgument));
 	}); // each argument
@@ -78,26 +77,26 @@ function takeSnapshot() {
 		gdwProgress.destroy();
 	}); // on execution
 	gdwProgress.render();
-} // function takeSnapshot]]></script>
+} // function cleanupSnapshot]]></script>
         <show_insert>false</show_insert>
         <show_multiple_update>false</show_multiple_update>
         <show_query>false</show_query>
         <show_update>true</show_update>
         <sys_class_name>sys_ui_action</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
-        <sys_created_on>2023-12-27 14:51:20</sys_created_on>
+        <sys_created_on>2023-12-28 11:34:47</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
-        <sys_id>f8a8f0b21b9731504422dc61ab4bcbc0</sys_id>
-        <sys_mod_count>8</sys_mod_count>
-        <sys_name>Take Snapshot</sys_name>
+        <sys_id>1b35ddcb1bd771504422dc61ab4bcb95</sys_id>
+        <sys_mod_count>7</sys_mod_count>
+        <sys_name>Cleanup Snapshots</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
-        <sys_update_name>sys_ui_action_f8a8f0b21b9731504422dc61ab4bcbc0</sys_update_name>
+        <sys_update_name>sys_ui_action_1b35ddcb1bd771504422dc61ab4bcb95</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-28 15:52:40</sys_updated_on>
+        <sys_updated_on>2023-12-28 15:52:55</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>

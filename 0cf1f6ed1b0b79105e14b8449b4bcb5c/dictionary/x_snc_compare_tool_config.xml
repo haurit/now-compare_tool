@@ -30,6 +30,12 @@
         </element>
         <element dependent="table_left" dependent_on_field="table_left" label="Record (Left)" max_length="32" name="record_left" type="document_id" use_dependent_field="true"/>
         <element dependent="table_right" dependent_on_field="table_right" label="Record (Right)" max_length="32" name="record_right" type="document_id" use_dependent_field="true"/>
+        <element choice="1" label="Snapshot (Left)" max_length="40" name="snapshot_left" type="choice">
+            <choice/>
+        </element>
+        <element choice="1" label="Snapshot (Right)" max_length="40" name="snapshot_right" type="choice">
+            <choice/>
+        </element>
         <element choice="3" default="complete" label="Status" max_length="40" name="status" read_only="true" type="choice">
             <choice>
                 <element inactive_on_update="false" label="Running" sequence="100" value="running"/>
