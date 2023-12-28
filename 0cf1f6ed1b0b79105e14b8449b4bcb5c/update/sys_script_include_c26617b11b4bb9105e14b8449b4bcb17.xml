@@ -53,6 +53,7 @@ CompareTool.prototype = {
 		this._gtTable = new global.GlobalToolsTable();
 		this._gtRecordRead = new global.GlobalToolsRecordRead();
 		this._gtRecordWrite = new global.GlobalToolsRecordWrite();
+		this._gtAttachment = new global.GlobalToolsAttachment();
 		this._gExecutionTracker = GlideExecutionTracker.getLastRunning();
 	}, // function initialize
 
@@ -61,7 +62,7 @@ CompareTool.prototype = {
 		try {
 			var grCompare = new GlideRecord('x_snc_compare_tool_config');
 			if (this.sCompareId) {
-				this._gtRecordWrite.deleteMultiple('sys_attachment', 'table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId);
+				this._gtAttachment.deleteAttachments('x_snc_compare_tool_config', this.sCompareId);
 				if (grCompare.get(this.sCompareId)) {
 					grCompare.setValue('status', 'running');
 					grCompare.update();
@@ -98,6 +99,55 @@ CompareTool.prototype = {
 		gs.debug('x_snc_compare_tool.CompareTool.compareAction END'); // oReturn: ' + JSON.stringify(this.oReturn));
 		//return this.oReturn;
 	}, // function compareAction
+
+	takeSnapshot: function () {
+		gs.debug('x_snc_compare_tool.CompareTool.takeSnapshot START Worker: ' + this._gExecutionTracker.getSysID());
+		try {
+			var oSnapshotSummaryOld = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, 'SnapshotSummary.json', true, true, true);
+			var aSnapshots = [];
+			if (oSnapshotSummaryOld) {
+				aSnapshots = this._gtObject.getValue('aSnapshots', [], oSnapshotSummaryOld);
+			} // if summary old
+			gs.info('tomtom before aSnapshots: ' + aSnapshots + ' type: ' + this._gt.getType(aSnapshots));
+			var sSnapshot = String(GlideDateTime());
+			aSnapshots.push(sSnapshot);
+			gs.info('tomtom after aSnapshots: ' + aSnapshots);
+			var oSnapshotSummary = {};
+			oSnapshotSummary['aSnapshots'] = aSnapshots;
+			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'SnapshotSummary.json', JSON.stringify(oSnapshotSummary), '', false, true);
+
+			/*
+			var aSnapShotList
+			var oVersionHistory = {};
+			if (gs.tableExists(this.sTableLeft)) {
+				var grRecord = new GlideRecord(this.sTableLeft);
+				if (this.sFilterCondition) {
+					grRecord.addEncodedQuery(this.sFilterCondition);
+				} // if query
+				grRecord.queryNoDomain();
+				while (grRecord._next()) {
+					if (this._hasVersionHistory(this.sTableLeft)) {
+						if (!oVersionHistory.hasOwnProperty(this.sTableLeft)) {
+							oVersionHistory[this.sTableLeft] = {};
+						} // if new table
+						oVersionHistory[this.sTableLeft][grRecord.getUniqueValue()] = this._getCurrentVersionHistory(grRecord);
+					} else {
+						this._writeAttachment(grRecord);
+					} // if no version history
+				} // while record
+			} else {
+				gs.error('x_snc_compare_tool.CompareTool.takeSnapshot Error table does not exist: ' + this.sTableLeft);
+			} // if table exists
+			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'VersionHistoryLog.json', JSON.stringify(oVersionHistory));
+			*/
+		} catch (oEx) {
+			this._setError('catch', String(oEx));
+			gs.error('CompareTool.takeSnapshot Catched error: ' + String(oEx));
+		} // try
+		this._gExecutionTracker.updateResult(this.oReturn);
+		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
+		gs.debug('x_snc_compare_tool.CompareTool.takeSnapshot END'); // oReturn: ' + JSON.stringify(this.oReturn));
+	}, // function takeSnapshot
 
 	_compareOne: function () {
 		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_one');
@@ -220,13 +270,9 @@ CompareTool.prototype = {
 		this._gExecutionTracker.incrementPercentComplete(90);
 		if (this.sOutputFormat == 'screen') {
 			this.oReturn['sHTML'] = this._CompareOutputBuilder.getTable();
-		} else if (this.sCompareId) {
-			var grCompare = new GlideRecord('x_snc_compare_tool_config');
-			if (grCompare.get(this.sCompareId)) {
-				var grAttachment = new GlideSysAttachment();
-				grAttachment.write(grCompare, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', this._CompareOutputBuilder.getTable());
-			} // if compare
-		} // if sys id
+		} else {
+			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', this._CompareOutputBuilder.getTable());
+		} // if output to screen
 	}, // function _compareList
 
 	_getLocalList: function (sTable, sQuery, aKeys, aFields, sSource) {
@@ -339,13 +385,9 @@ CompareTool.prototype = {
 		this._gExecutionTracker.incrementPercentComplete(90);
 		if (this.sOutputFormat == 'screen') {
 			this.oReturn['sHTML'] = this._CompareOutputBuilder.getTable();
-		} else if (this.sCompareId) {
-			var grCompare = new GlideRecord('x_snc_compare_tool_config');
-			if (grCompare.get(this.sCompareId)) {
-				var grAttachment = new GlideSysAttachment();
-				grAttachment.write(grCompare, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', 'application/csv', this._CompareOutputBuilder.getTable());
-			} // if compare
-		} // if sys id
+		} else {
+			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', this._CompareOutputBuilder.getTable());
+		} // if output to screen
 	}, // function _compareCount
 
 	_getCount: function (sType) {
@@ -411,13 +453,13 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>135</sys_mod_count>
+        <sys_mod_count>142</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-27 14:32:15</sys_updated_on>
+        <sys_updated_on>2023-12-28 10:20:07</sys_updated_on>
     </sys_script_include>
 </record_update>

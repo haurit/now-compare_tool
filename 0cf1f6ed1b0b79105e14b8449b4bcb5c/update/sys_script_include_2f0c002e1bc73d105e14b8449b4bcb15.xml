@@ -11,7 +11,7 @@ ServiceNow Customer Outcomes, Tom Hauri</description>
         <script><![CDATA[var CompareToolAPI = Class.create();
 CompareToolAPI.prototype = {
 	initialize: function (sConnectionAliasLeftId, sConnectionAliasRightId, sCompareId, oReturn) {
-		this.iRemoteRecordsChunkSize = 1000;
+		this.iRemoteRecordsChunkSize = 4;
 		this.sCompareId = sCompareId;
 		this.oReturn = oReturn;
 		this.oAttachmentCfg = {
@@ -52,6 +52,7 @@ CompareToolAPI.prototype = {
 		this._gtObject = new global.GlobalToolsObject();
 		this._gtTable = new global.GlobalToolsTable();
 		this._gtRecordWrite = new global.GlobalToolsRecordWrite();
+		this._gtAttachment = new global.GlobalToolsAttachment();
 	}, // function initialize
 
 	getRemoteRecordLeft: function (sTable, sQuery) {
@@ -87,7 +88,7 @@ CompareToolAPI.prototype = {
 					this._gtRESTAPILeft.doNOWRESTQuery(sTable, sQuery, iOffset, this.iRemoteRecordsChunkSize, aAllFields, 'all', this.oAttachmentCfg);
 					iOffset += this.iRemoteRecordsChunkSize;
 				} // each chunk
-				aRESTAPIResult = this._parseAttachment(iChunks);
+				aRESTAPIResult = this._parseAttachment();
 			} // if remote count
 			return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'left');
 		} catch (oEx) {
@@ -111,7 +112,7 @@ CompareToolAPI.prototype = {
 					this._gtRESTAPIRight.doNOWRESTQuery(sTable, sQuery, iOffset, this.iRemoteRecordsChunkSize, aAllFields, 'all', this.oAttachmentCfg);
 					iOffset += this.iRemoteRecordsChunkSize;
 				} // each chunk
-				aRESTAPIResult = this._parseAttachment(iChunks);
+				aRESTAPIResult = this._parseAttachment();
 			} // if remote count
 			return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'right');
 		} catch (oEx) {
@@ -150,25 +151,10 @@ CompareToolAPI.prototype = {
 		return oRESTAPIResult;
 	}, // function parseAPIResult
 
-	_parseAttachment: function (iChunks) {
+	_parseAttachment: function () {
 		try {
-			var gsAttachment = new GlideSysAttachment();
-			var grAttachment = new GlideRecord('sys_attachment');
-			grAttachment.addEncodedQuery('table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId + '^file_nameSTARTSWITHremote_record_');
-			grAttachment.query();
-			var iAttachments = grAttachment.getRowCount();
-			if (iAttachments == iChunks) {
-				var aLines = [];
-				while (grAttachment.next()) {
-					var gsContentStream = gsAttachment.getContentStream(grAttachment.getUniqueValue());
-					var gTextReader = new GlideTextReader(gsContentStream);
-					var oLine = ' ';
-					while ((oLine = gTextReader.readLine()) != null) {
-						aLines.push(oLine);
-					} // while lines
-				} // each attachment
-				var sResposeBody = aLines.join('\n');
-				sResposeBody = sResposeBody.replace(/\]\}\n\{"result":\[/gi, ', ');
+			var sResposeBody  = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, 'remote_record_', false, true);
+			sResposeBody = sResposeBody.replace(/\]\}\n\{"result":\[/gi, ', ');
 				try {
 					var oResposeBody = JSON.parse(sResposeBody);
 					this._gtRecordWrite.deleteMultiple('sys_attachment', 'table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId + '^file_nameSTARTSWITHremote_record_');
@@ -177,9 +163,6 @@ CompareToolAPI.prototype = {
 					this._setError('parse_chunks', String(oEx));
 					gs.error('CompareToolAPI._parseAttachment Error parsing JSON: ' + String(oEx));
 				} // try remote call
-			} else {
-				this._setError('chunks', iAttachments, iChunks);
-			} // if chunks match files
 		} catch (oEx) {
 			this._setError('parse_attach', String(oEx));
 			gs.error('CompareToolAPI._parseAttachment Error parsing attachments: ' + String(oEx));
@@ -270,13 +253,13 @@ CompareToolAPI.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-14 06:42:23</sys_created_on>
         <sys_id>2f0c002e1bc73d105e14b8449b4bcb15</sys_id>
-        <sys_mod_count>71</sys_mod_count>
+        <sys_mod_count>72</sys_mod_count>
         <sys_name>CompareToolAPI</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_2f0c002e1bc73d105e14b8449b4bcb15</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-27 14:31:45</sys_updated_on>
+        <sys_updated_on>2023-12-28 09:51:33</sys_updated_on>
     </sys_script_include>
 </record_update>
