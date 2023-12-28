@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sys_ui_action">
     <sys_ui_action action="INSERT_OR_UPDATE">
-        <action_name>sysverb_compare</action_name>
+        <action_name>sysverb_takesnapshot</action_name>
         <active>true</active>
         <client>true</client>
         <client_script_v2><![CDATA[function onClick(g_form) {
 
 }]]></client_script_v2>
         <comments/>
-        <condition/>
+        <condition>current.getValue('type') == 'local_history'</condition>
         <form_action>true</form_action>
         <form_button>true</form_button>
         <form_button_v2>false</form_button_v2>
@@ -29,15 +29,20 @@
         <messages>CompareTool_progress&#13;
 CompareTool_error_no_return&#13;
 CompareTool_error_running&#13;
-CompareTool_error_modified</messages>
-        <name>Compare</name>
+CompareTool_error_modified&#13;
+CompareTool_info_snapshot_taken</messages>
+        <name>Take Snapshot</name>
         <onclick>checkRunning()</onclick>
-        <order>-1000</order>
+        <order>-500</order>
         <script><![CDATA[function checkRunning() {
-	var gaCompare = new GlideAjax('x_snc_compare_tool.CompareAJAX');
-	gaCompare.addParam('sysparm_name', 'checkRunning');
-	gaCompare.addParam('sysparm_number', g_form.getValue('number'));
-	gaCompare.getXMLAnswer(checkRunningResult);
+	if (g_form.getValue('type') == 'local_history') {
+		var gaCompare = new GlideAjax('x_snc_compare_tool.CompareAJAX');
+		gaCompare.addParam('sysparm_name', 'checkRunning');
+		gaCompare.addParam('sysparm_number', g_form.getValue('number'));
+		gaCompare.getXMLAnswer(checkRunningResult);
+	} else {
+		g_form.addErrorMessage(getMessage('CompareTool_error_snapshot_nothistory'));
+	} // if not history
 } // function checkRunning
 
 function checkRunningResult(sIsRunning) {
@@ -57,77 +62,41 @@ function compare() {
 	var gdwProgress = new GlideDialogWindow('hierarchical_progress_viewer', false, '40em', '10.5em');
 	gdwProgress.setTitle(getMessage('CompareTool_progress'));
 	gdwProgress.setPreference('sysparm_renderer_progress_title', getMessage('CompareTool_progress'));
-	gdwProgress.setPreference('sysparm_ajax_processor_function', 'compareAction');
 	gdwProgress.setPreference('sysparm_ajax_processor', 'x_snc_compare_tool.CompareAJAX');
 	gdwProgress.setPreference('sysparm_ajax_processor_sys_id', g_form.getUniqueValue());
+	gdwProgress.setPreference('sysparm_ajax_processor_function', 'takeSnapshot');
 	['number', 'type', 'output_format', 'output_filter', 'record_left', 'record_right', 'key_type', 'key_fields', 'output_fields', 'table_left', 'table_right', 'connection_alias_left', 'connection_alias_right', 'filter_condition', 'status'].forEach(function (sArgument) {
 		gdwProgress.setPreference('sysparm_ajax_processor_' + sArgument, g_form.getValue(sArgument));
 	}); // each argument
 	gdwProgress.on('executionComplete', function (oResult) {
 		if ((oResult) && (oResult.hasOwnProperty('result')) && (oResult['result'].hasOwnProperty('sType')) && (oResult['result'].hasOwnProperty('sOutputFormat'))) {
-			if ((oResult['result']['sType'].indexOf('one') == -1) && (oResult['result']['sOutputFormat'] == 'attach_csv')) {
-				showCompareAttach(oResult['result']);
-			} else {
-				showCompareScreen(oResult['result']);
-			} // if csv
+			g_form.addInfoMessage(getMessage('CompareTool_info_snapshot_taken'));
 		} else {
 			g_form.addErrorMessage(getMessage('CompareTool_error_no_return'));
 		} // if result
 		gdwProgress.destroy();
 	}); // on execution
 	gdwProgress.render();
-} // function compare
-
-function showCompareScreen(oReturn) {
-	if (oReturn['bValid'] == 'true') {
-		var gbDialog = new GlideBox({
-			body: oReturn['sHTML'],
-			title: oReturn['sTitle'],
-			height: '95%',
-			width: '95%',
-			autoDimensionOnLoad: true
-		}); // glidebox
-		oReturn['sHTML'].evalScripts(true);
-		gbDialog.render();
-	} else {
-		if (oReturn['refresh'] == true) {
-			location.reload();
-		} // if refresh
-		g_form.addErrorMessage(oReturn['sMessage']);
-	} // if valid
-} // function showCompareScreen
-
-function showCompareAttach(oReturn) {
-	if (oReturn['bValid'] == 'true') {
-		location.reload();
-	} else {
-		if (oReturn['bRefresh'] == 'true') {
-			location.reload();
-		} // if refresh
-		if (oReturn['sMessage']) {
-			g_form.addInfoMessage(oReturn['sMessage']);
-		} // if message
-	} // if valid
-} // function showCompareAttach]]></script>
+} // function compare]]></script>
         <show_insert>false</show_insert>
         <show_multiple_update>false</show_multiple_update>
         <show_query>false</show_query>
         <show_update>true</show_update>
         <sys_class_name>sys_ui_action</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
-        <sys_created_on>2023-12-12 13:23:03</sys_created_on>
+        <sys_created_on>2023-12-27 14:51:20</sys_created_on>
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
-        <sys_id>93f293fd1b0bb9105e14b8449b4bcba9</sys_id>
-        <sys_mod_count>71</sys_mod_count>
-        <sys_name>Compare</sys_name>
+        <sys_id>f8a8f0b21b9731504422dc61ab4bcbc0</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>Take Snapshot</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
-        <sys_update_name>sys_ui_action_93f293fd1b0bb9105e14b8449b4bcba9</sys_update_name>
+        <sys_update_name>sys_ui_action_f8a8f0b21b9731504422dc61ab4bcbc0</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-27 15:00:09</sys_updated_on>
+        <sys_updated_on>2023-12-27 15:05:07</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>
