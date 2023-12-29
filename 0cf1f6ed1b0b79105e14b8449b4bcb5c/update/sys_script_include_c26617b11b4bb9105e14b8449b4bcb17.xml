@@ -59,6 +59,7 @@ CompareTool.prototype = {
 		this._gtRecordWrite = new global.GlobalToolsRecordWrite();
 		this._gtAttachment = new global.GlobalToolsAttachment();
 		this._gExecutionTracker = GlideExecutionTracker.getLastRunning();
+		this._gdDigest = new GlideDigest();
 	}, // function initialize
 
 	compareAction: function () {
@@ -107,11 +108,10 @@ CompareTool.prototype = {
 	takeSnapshot: function () {
 		gs.debug(this.sLogPrefix + 'takeSnapshot START Worker: ' + this._gExecutionTracker.getSysID());
 		try {
-			var oSnapshotSummaryOld = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, 'SnapshotSummary.json', true, true, true);
-			var aSnapshots = [];
-			if (oSnapshotSummaryOld) {
-				aSnapshots = this._gtObject.getValue('aSnapshots', [], oSnapshotSummaryOld);
-			} // if summary old
+			var aSnapshots = this._getSnapshots(true);
+			if (!aSnapshots) {
+				aSnapshots = [];
+			} // if no snapshot
 			var sSnapshot = String(new GlideDateTime().getDisplayValueInternal()).replaceAll(' ', '_').replaceAll(':', '-');
 			aSnapshots.push(sSnapshot);
 			var oSnapshotSummary = {};
@@ -148,22 +148,27 @@ CompareTool.prototype = {
 	cleanupSnapshot: function () {
 		gs.debug(this.sLogPrefix + 'cleanupSnapshot START Worker: ' + this._gExecutionTracker.getSysID());
 		try {
-			var oSnapshotSummary = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, 'SnapshotSummary.json', true, true, true);
-			var aSnapshots = [];
-			if (oSnapshotSummary) {
-				aSnapshots = this._gtObject.getValue('aSnapshots', [], oSnapshotSummary);
-			} // if summary old
+			var aSnapshots = this._getSnapshots(true);
 			this._gExecutionTracker.incrementPercentComplete(50);
-			if (this._gtArray.isValidArray(aSnapshots)) {
+			if (aSnapshots) {
 				if (aSnapshots.length > 1) {
 					for (var i = aSnapshots.length - 2; i >= 0; i--) {
 						this._gtAttachment.deleteAttachmentsStartWithFilename('x_snc_compare_tool_config', this.sCompareId, aSnapshots[i] + '_', true);
 					} // for each attachment
 				} // if more than one
+				oSnapshotSummary = {};
 				oSnapshotSummary['aSnapshots'] = [];
 				oSnapshotSummary['aSnapshots'].push(aSnapshots[aSnapshots.length - 1]);
 				this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'SnapshotSummary.json', JSON.stringify(oSnapshotSummary), '', false, true);
-			} // if valid array
+			} // if snapshots
+			if (this.sCompareId) {
+				var grCompare = new GlideRecord('x_snc_compare_tool_config');
+				if (grCompare.get(this.sCompareId)) {
+					grCompare.setValue('snapshot_left', 'current');
+					grCompare.setValue('snapshot_right', 'latest');
+					grCompare.update();
+				} // if compare
+			} // if compare cfg
 			this._gExecutionTracker.incrementPercentComplete(80);
 		} catch (oEx) {
 			this._setError('catch', String(oEx));
@@ -173,6 +178,17 @@ CompareTool.prototype = {
 		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
 		gs.debug(this.sLogPrefix + 'cleanupSnapshot END'); // oReturn: ' + JSON.stringify(this.oReturn));
 	}, // function cleanupSnapshot
+
+	_getSnapshots: function (bDelete) {
+		var oSnapshotSummary = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, 'SnapshotSummary.json', true, bDelete, true);
+		var aSnapshots = [];
+		if (oSnapshotSummary) {
+			aSnapshots = this._gtObject.getValue('aSnapshots', [], oSnapshotSummary);
+		} // if summary old
+		if (this._gtArray.isValidArray(aSnapshots)) {
+			return aSnapshots;
+		} // if valid array
+	}, // function _getSnapshots
 
 	_hasVersionHistory: function () {
 		var aTableHierarchy = this._gtTable.getTableHierarchy(this.sTableLeft);
@@ -187,40 +203,49 @@ CompareTool.prototype = {
 		} // if metadata
 	}, // function _hasVersionHistory
 
-	_getCurrentVersionHistory: function (grRecord, sTableName, sSysId) {
+	_getCurrentVersionHistory: function (grRecord, sTable, sSysId) {
 		var oVersionHistoryEntry = {};
 		if (grRecord) {
-			sTableName = grRecord.getTableName();
+			sTable = grRecord.getTableName();
 			sSysId = grRecord.getUniqueValue();
 		} // if record
-		var grRecordRealClass = this._gtRecordRead.getRecord(sTableName, sSysId);
+		var grRecordRealClass = this._gtRecordRead.getRecord(sTable, sSysId);
 		if (grRecordRealClass) {
-			oVersionHistoryEntry['sDisplayName'] = grRecordRealClass.getDisplayValue();
-			if (grRecordRealClass.getTableName() != sTableName) {
-				oVersionHistoryEntry['sSysClassName'] = grRecordRealClass.getValue('sys_class_name');
-			} // if class name
-			var grVersionHistory = new GlideRecord('sys_update_version');
-			grVersionHistory.addEncodedQuery('name=' + grRecordRealClass.getTableName() + '_' + sSysId + '^state=current');
-			grVersionHistory.setLimit(1);
-			grVersionHistory.query();
+			oVersionHistoryEntry['type'] = 'version';
+			oVersionHistoryEntry['record_id'] = grRecordRealClass.getUniqueValue();
+			oVersionHistoryEntry['record_name'] = grRecordRealClass.getDisplayValue();
+			var sTableRealClass = this._gtTable.getRecordClass(grRecordRealClass);
+			oVersionHistoryEntry['record_class'] = sTableRealClass;
+			var grVersionHistory = this._gtRecordRead.getRecords('sys_update_version', 'name=' + sTableRealClass + '_' + sSysId + '^state=current', '', '', 1, true, true, true);
 			if (grVersionHistory.next()) {
-				oVersionHistoryEntry['sCurrentVersionId'] = grVersionHistory.getUniqueValue();
-			} else if (this.bLog) {
-				gs.warn(this.sLogPrefix + '_getCurrentVersionHistory Warning could not find current version history for: ' + sTableName + ' SysId: ' + sSysId);
+				oVersionHistoryEntry['version_id'] = grVersionHistory.getUniqueValue();
+			} else {
+				gs.debug(this.sLogPrefix + '_getCurrentVersionHistory warning could not find current version history for: ' + sTableRealClass + ' SysId: ' + sSysId);
 			} // if current version
 		} else {
-			gs.warn(this.sLogPrefix + '_getCurrentVersionHistory Warning could not find real record for: ' + sTableName + ' SysId: ' + sSysId);
-		} // if record
+			gs.warn(this.sLogPrefix + '_getCurrentVersionHistory warning could not find real record for: ' + sTable + ' SysId: ' + sSysId);
+		} // if record real class
 		return oVersionHistoryEntry;
 	}, // function _getCurrentVersionHistory
 
 	_compareHistory: function () {
 		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_history');
+		var sSnapshotRight = this.sSnapshotRight;
+		if (sSnapshotRight == 'latest') {
+			var aSnapshots = this._getSnapshots();
+			if (aSnapshots) {
+				sSnapshotRight = aSnapshots[aSnapshots.length - 1];
+			} else {
+				return this._setError('snapshot_right');
+			} // if snapshots
+		} // if latest
+		var oLeft = {};
+		var oRight = {};
+		var oVersionHistory = {};
+		var grRecord, grRecordRealClass, sXMLRecord, oCurrentInfo = {}, oAttachmentInfo = {}, i = 0;
 		if (this._hasVersionHistory()) {
-			var oLeft = {};
-			var oRight = {};
 			if (String(this.sSnapshotLeft).toLowerCase() == 'current') {
-				var grRecord = this._gtRecordRead.getRecords(this.sTableLeft, this.sFilterCondition, '', '', '', false, false, true);
+				grRecord = this._gtRecordRead.getRecords(this.sTableLeft, this.sFilterCondition, '', '', '', false, false, true);
 				while (grRecord._next()) {
 					this._gtObject.setValue(this.sTableLeft + '/' + grRecord.getUniqueValue() + '/left', this._getCurrentVersionHistory(grRecord), oLeft);
 				} // while record
@@ -230,20 +255,53 @@ CompareTool.prototype = {
 					this._gtObject.setValue(this.sTableLeft + '/' + sKey + '/left', this._gtObject.getValue(this.sTableLeft + '/' + sKey, '', oVersionHistory), oLeft);
 				}, this); // each key
 			} // if version history left
-			if (this.sSnapshotRight) {
-				var oVersionHistory = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, this.sSnapshotRight + '_VersionHistory.json', true, false, true);
+			if (sSnapshotRight) {
+				oVersionHistory = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, sSnapshotRight + '_VersionHistory.json', true, false, true);
 				Object.keys(oVersionHistory[this.sTableLeft]).forEach(function (sKey) {
 					this._gtObject.setValue(this.sTableLeft + '/' + sKey + '/right', this._gtObject.getValue(this.sTableLeft + '/' + sKey, '', oVersionHistory), oRight);
 				}, this); // each key
 			} // if version history
-			this._gExecutionTracker.incrementPercentComplete(60);
-			var oMerged = this._gtObject.deepMerge(oLeft, oRight);
-			gs.debug(this.sLogPrefix + '_compareHistory oMerged: ' + JSON.stringify(oMerged));
+			this._gExecutionTracker.incrementPercentComplete(50);
+		} else {
+			var aAttachmentInfos = [];
+			if (String(this.sSnapshotLeft).toLowerCase() == 'current') {
+				grRecord = this._gtRecordRead.getRecords(this.sTableLeft, this.sFilterCondition, '', '', '', true, true, true);
+				while (grRecord._next()) {
+					grRecordRealClass = this._gtRecordRead.getRecord(this._gtTable.getRecordClass(grRecord), grRecord.getUniqueValue());
+					sXMLRecord = this._gtRecordRead.convertGRtoXML(grRecordRealClass);
+					oCurrentInfo = {};
+					oCurrentInfo['type'] = 'record';
+					oCurrentInfo['record_id'] = grRecordRealClass.getUniqueValue();
+					oCurrentInfo['attachment_hash'] = this._gdDigest.getSHA256Hex(sXMLRecord);
+					oCurrentInfo['record_class'] = this._gtTable.getRecordClass(grRecordRealClass);
+					oCurrentInfo['record_name'] = grRecordRealClass.getDisplayValue();
+					this._gtObject.setValue(this.sTableLeft + '/' + grRecordRealClass.getUniqueValue() + '/left', oCurrentInfo, oLeft);
+				} // while record
+			} else {
+				aAttachmentInfos = this._gtAttachment.getAttachmentsStartWithFilename('x_snc_compare_tool_config', this.sCompareId, this.sSnapshotLeft, 'object', true);
+				for (i = 0; i < aAttachmentInfos.length; i++) {
+					oAttachmentInfo = aAttachmentInfos[i];
+					oAttachmentInfo['type'] = 'attachment';
+					this._gtObject.setValue(this.sTableLeft + '/' + oAttachmentInfo['record_id'] + '/left', oAttachmentInfo, oLeft);
+				} // each attachment
+			} // if attachment left
+			if (sSnapshotRight) {
+				aAttachmentInfos = this._gtAttachment.getAttachmentsStartWithFilename('x_snc_compare_tool_config', this.sCompareId, sSnapshotRight, 'object', true);
+				for (i = 0; i < aAttachmentInfos.length; i++) {
+					oAttachmentInfo = aAttachmentInfos[i];
+					oAttachmentInfo['type'] = 'attachment';
+					this._gtObject.setValue(this.sTableLeft + '/' + oAttachmentInfo['record_id'] + '/right', oAttachmentInfo, oRight);
+				} // each attachment
+			} // if attachment right
 			this._gExecutionTracker.incrementPercentComplete(70);
 		} // if has version history
-		//this.sSnapshotLeft
-		//this.sSnapshotRight
-		//this._gExecutionTracker.incrementPercentComplete(90);
+		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
+		aSysIds = Object.keys(oMerged[this.sTableLeft]);
+		gs.debug(this.sLogPrefix + '_compareHistory oMerged: ' + JSON.stringify(oMerged));
+		// this._addDiffRecord(grRecord.getTableName(), sTableName, grRecord.getUniqueValue(), grRecord.getDisplayValue(), 'version', 'update', sCurrentVersionId);
+		// this._addDiffRecord(sSysClassName, sTableName, sSysId, record_displayvalue, 'version', 'delete', sCurrentVersionId);
+		// this._addDiffRecord(grRecordTmp.getTableName(), sTableName, grRecordTmp.getUniqueValue(), grRecordTmp.getDisplayValue(), 'both', 'insert');
+		this._gExecutionTracker.incrementPercentComplete(90);
 		if (this.sOutputFormat == 'screen') {
 			this.oReturn['sHTML'] = this._CompareOutputBuilder.getTable();
 		} else {
@@ -555,13 +613,13 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>182</sys_mod_count>
+        <sys_mod_count>204</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-28 17:01:33</sys_updated_on>
+        <sys_updated_on>2023-12-29 15:43:29</sys_updated_on>
     </sys_script_include>
 </record_update>
