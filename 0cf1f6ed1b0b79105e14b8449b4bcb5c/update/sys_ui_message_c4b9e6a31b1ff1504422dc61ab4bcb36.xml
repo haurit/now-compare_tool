@@ -3,20 +3,20 @@
         <application/>
         <code/>
         <commented_message/>
-        <key>CompareTool_error_no_return</key>
+        <key>CompareTool_field_table</key>
         <language>en</language>
-        <message>Compare action failed, no return value recieved.</message>
+        <message>Table</message>
         <sys_class_name>sys_ui_message</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
-        <sys_created_on>2023-12-25 10:25:34</sys_created_on>
-        <sys_id>dca8650e1b9b7d104422dc61ab4bcb0a</sys_id>
-        <sys_mod_count>1</sys_mod_count>
-        <sys_name>CompareTool_error_no_return</sys_name>
+        <sys_created_on>2023-12-30 07:00:47</sys_created_on>
+        <sys_id>c4b9e6a31b1ff1504422dc61ab4bcb36</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>CompareTool_field_table</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
-        <sys_update_name>sys_ui_message_dca8650e1b9b7d104422dc61ab4bcb0a</sys_update_name>
+        <sys_update_name>sys_ui_message_c4b9e6a31b1ff1504422dc61ab4bcb36</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-28 12:32:56</sys_updated_on>
+        <sys_updated_on>2023-12-30 07:00:47</sys_updated_on>
     </sys_ui_message>
 </record_update>
