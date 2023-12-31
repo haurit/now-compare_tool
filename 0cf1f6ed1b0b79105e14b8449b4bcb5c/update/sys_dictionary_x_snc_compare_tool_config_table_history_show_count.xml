@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update>
-    <sys_dictionary action="INSERT_OR_UPDATE" element="table_right" table="x_snc_compare_tool_config">
+    <sys_dictionary action="INSERT_OR_UPDATE" element="table_history_show_count" table="x_snc_compare_tool_config">
         <active>true</active>
         <array>false</array>
-        <attributes>base_start=true,show_all_tables=true,allow_public=true</attributes>
+        <attributes/>
         <audit>false</audit>
         <calculation><![CDATA[(function calculatedFieldValue(current) {
 
@@ -13,10 +13,10 @@
         <choice/>
         <choice_field/>
         <choice_table/>
-        <column_label>Table (Right)</column_label>
+        <column_label>Table History Show Count</column_label>
         <comments/>
         <create_roles/>
-        <default_value/>
+        <default_value>false</default_value>
         <defaultsort/>
         <delete_roles/>
         <dependent/>
@@ -26,15 +26,15 @@
         <dynamic_creation_script/>
         <dynamic_default_value/>
         <dynamic_ref_qual/>
-        <element>table_right</element>
+        <element>table_history_show_count</element>
         <element_reference>false</element_reference>
         <foreign_database/>
         <formula/>
         <function_definition/>
         <function_field>false</function_field>
-        <internal_type display_value="">table_name</internal_type>
+        <internal_type display_value="">boolean</internal_type>
         <mandatory>false</mandatory>
-        <max_length>80</max_length>
+        <max_length>40</max_length>
         <name>x_snc_compare_tool_config</name>
         <next_element/>
         <primary>false</primary>
@@ -51,14 +51,14 @@
         <staged>false</staged>
         <sys_class_name>sys_dictionary</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
-        <sys_created_on>2023-12-12 06:54:11</sys_created_on>
-        <sys_name>Table (Right)</sys_name>
+        <sys_created_on>2023-12-31 10:15:41</sys_created_on>
+        <sys_name>Table History Show Count</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
-        <sys_update_name>sys_dictionary_x_snc_compare_tool_config_table_right</sys_update_name>
+        <sys_update_name>sys_dictionary_x_snc_compare_tool_config_table_history_show_count</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-31 10:11:39</sys_updated_on>
+        <sys_updated_on>2023-12-31 10:15:41</sys_updated_on>
         <table_reference>false</table_reference>
         <text_index>false</text_index>
         <unique>false</unique>
