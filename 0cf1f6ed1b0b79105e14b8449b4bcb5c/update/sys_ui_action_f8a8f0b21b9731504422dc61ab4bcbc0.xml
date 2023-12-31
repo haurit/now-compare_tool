@@ -66,19 +66,28 @@ function takeSnapshot() {
 	gdwProgress.setPreference('sysparm_ajax_processor', 'x_snc_compare_tool.CompareAJAX');
 	gdwProgress.setPreference('sysparm_ajax_processor_sys_id', g_form.getUniqueValue());
 	gdwProgress.setPreference('sysparm_ajax_processor_function', 'takeSnapshot');
-	['number', 'type', 'output_format', 'output_filter', 'record_left', 'record_right', 'key_type', 'key_fields', 'output_fields', 'table_left', 'table_right', 'connection_alias_left', 'connection_alias_right', 'filter_condition', 'snapshot_left', 'snapshot_right', 'status'].forEach(function (sArgument) {
+	['number', 'type', 'output_format', 'output_filter', 'record_left', 'record_right', 'key_type', 'key_fields', 'output_fields', 'table_left', 'table_right', 'connection_alias_left', 'connection_alias_right', 'filter_condition', 'snapshot_left', 'snapshot_right', 'table_history_show_count', 'status'].forEach(function (sArgument) {
 		gdwProgress.setPreference('sysparm_ajax_processor_' + sArgument, g_form.getValue(sArgument));
 	}); // each argument
 	gdwProgress.on('executionComplete', function (oResult) {
-		if ((oResult) && (oResult.hasOwnProperty('result')) && (oResult['result'].hasOwnProperty('sType')) && (oResult['result'].hasOwnProperty('sOutputFormat'))) {
-			location.reload();
+		if ((oResult) && (oResult.hasOwnProperty('result')) && (oResult['result'].hasOwnProperty('sType'))) {
+			if (oResult['result'].hasOwnProperty('sMessage')) {
+				g_form.addInfoMessage(oResult['result']['sMessage']);
+				setTimeout(reloadPage, 3000);
+			} else {
+				location.reload();
+			} // if message
 		} else {
 			g_form.addErrorMessage(getMessage('CompareTool_error_no_return'));
 		} // if result
 		gdwProgress.destroy();
 	}); // on execution
 	gdwProgress.render();
-} // function takeSnapshot]]></script>
+} // function takeSnapshot
+
+function reloadPage() {
+	location.reload();
+} // function showMessage]]></script>
         <show_insert>false</show_insert>
         <show_multiple_update>false</show_multiple_update>
         <show_query>false</show_query>
@@ -89,7 +98,7 @@ function takeSnapshot() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>f8a8f0b21b9731504422dc61ab4bcbc0</sys_id>
-        <sys_mod_count>8</sys_mod_count>
+        <sys_mod_count>14</sys_mod_count>
         <sys_name>Take Snapshot</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -97,7 +106,7 @@ function takeSnapshot() {
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_ui_action_f8a8f0b21b9731504422dc61ab4bcbc0</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-28 15:52:40</sys_updated_on>
+        <sys_updated_on>2023-12-31 10:23:46</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>

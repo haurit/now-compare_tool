@@ -4,13 +4,13 @@
             <element>.begin_split</element>
             <position>0</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>fe221d0b1bd771504422dc61ab4bcb8d</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>b570e0801be375504422dc61ab4bcbe4</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.begin_split</type>
         </sys_ui_element>
@@ -18,13 +18,13 @@
             <element>number</element>
             <position>1</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>76221d0b1bd771504422dc61ab4bcb8e</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3d70e0801be375504422dc61ab4bcbe4</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -32,13 +32,13 @@
             <element>type</element>
             <position>2</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>fa221d0b1bd771504422dc61ab4bcb8e</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>b170e0801be375504422dc61ab4bcbe5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -46,13 +46,13 @@
             <element>key_type</element>
             <position>3</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>72221d0b1bd771504422dc61ab4bcb8f</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3970e0801be375504422dc61ab4bcbe5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -60,13 +60,13 @@
             <element>.split</element>
             <position>4</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>f6221d0b1bd771504422dc61ab4bcb8f</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>bd70e0801be375504422dc61ab4bcbe5</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.split</type>
         </sys_ui_element>
@@ -74,13 +74,13 @@
             <element>status</element>
             <position>5</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>7e221d0b1bd771504422dc61ab4bcb8f</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3570e0801be375504422dc61ab4bcbe6</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -88,13 +88,13 @@
             <element>output_format</element>
             <position>6</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>f2221d0b1bd771504422dc61ab4bcb90</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>b970e0801be375504422dc61ab4bcbe6</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -102,13 +102,13 @@
             <element>output_filter</element>
             <position>7</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>7a221d0b1bd771504422dc61ab4bcb90</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3170e0801be375504422dc61ab4bcbe7</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -116,13 +116,13 @@
             <element>.end_split</element>
             <position>8</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>fe221d0b1bd771504422dc61ab4bcb90</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>b570e0801be375504422dc61ab4bcbe7</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.end_split</type>
         </sys_ui_element>
@@ -130,13 +130,13 @@
             <element>.begin_split</element>
             <position>9</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>76221d0b1bd771504422dc61ab4bcb91</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3d70e0801be375504422dc61ab4bcbe7</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.begin_split</type>
         </sys_ui_element>
@@ -144,13 +144,13 @@
             <element>connection_alias_left</element>
             <position>10</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>fa221d0b1bd771504422dc61ab4bcb91</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>b170e0801be375504422dc61ab4bcbe8</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -158,13 +158,13 @@
             <element>.split</element>
             <position>11</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:21</sys_created_on>
-            <sys_id>72221d0b1bd771504422dc61ab4bcb92</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3970e0801be375504422dc61ab4bcbe8</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:21</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.split</type>
         </sys_ui_element>
@@ -172,13 +172,13 @@
             <element>connection_alias_right</element>
             <position>12</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>f6221d0b1bd771504422dc61ab4bcb92</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>bd70e0801be375504422dc61ab4bcbe8</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -186,13 +186,13 @@
             <element>.end_split</element>
             <position>13</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>7e221d0b1bd771504422dc61ab4bcb92</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3570e0801be375504422dc61ab4bcbe9</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.end_split</type>
         </sys_ui_element>
@@ -200,13 +200,13 @@
             <element>.begin_split</element>
             <position>14</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>f2221d0b1bd771504422dc61ab4bcb93</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>b970e0801be375504422dc61ab4bcbe9</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.begin_split</type>
         </sys_ui_element>
@@ -214,13 +214,13 @@
             <element>table_left</element>
             <position>15</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>7a221d0b1bd771504422dc61ab4bcb93</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3170e0801be375504422dc61ab4bcbea</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
@@ -228,13 +228,13 @@
             <element>.split</element>
             <position>16</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>fe221d0b1bd771504422dc61ab4bcb93</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>b570e0801be375504422dc61ab4bcbea</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.split</type>
         </sys_ui_element>
@@ -242,251 +242,265 @@
             <element>table_right</element>
             <position>17</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>76221d0b1bd771504422dc61ab4bcb94</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3d70e0801be375504422dc61ab4bcbea</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
+            <sys_user/>
+            <type/>
+        </sys_ui_element>
+        <sys_ui_element action="INSERT_OR_UPDATE">
+            <element>table_history_show_count</element>
+            <position>18</position>
+            <sys_created_by>tom.hauri</sys_created_by>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>b170e0801be375504422dc61ab4bcbeb</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_ui_formatter/>
+            <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
+            <sys_updated_by>tom.hauri</sys_updated_by>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.end_split</element>
-            <position>18</position>
+            <position>19</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>fa221d0b1bd771504422dc61ab4bcb94</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3970e0801be375504422dc61ab4bcbeb</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.end_split</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.begin_split</element>
-            <position>19</position>
+            <position>20</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>72221d0b1bd771504422dc61ab4bcb95</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>3d7024801be375504422dc61ab4bcb04</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.begin_split</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>record_left</element>
-            <position>20</position>
+            <position>21</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>f6221d0b1bd771504422dc61ab4bcb95</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>b17024801be375504422dc61ab4bcb05</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.split</element>
-            <position>21</position>
+            <position>22</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>7e221d0b1bd771504422dc61ab4bcb95</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>397024801be375504422dc61ab4bcb05</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.split</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>record_right</element>
-            <position>22</position>
+            <position>23</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>f2221d0b1bd771504422dc61ab4bcb96</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>bd7024801be375504422dc61ab4bcb05</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.end_split</element>
-            <position>23</position>
+            <position>24</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>7a221d0b1bd771504422dc61ab4bcb96</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>357024801be375504422dc61ab4bcb06</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.end_split</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>filter_condition</element>
-            <position>24</position>
+            <position>25</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>fe221d0b1bd771504422dc61ab4bcb96</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>b97024801be375504422dc61ab4bcb06</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.begin_split</element>
-            <position>25</position>
+            <position>26</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>76221d0b1bd771504422dc61ab4bcb97</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>027024801be375504422dc61ab4bcb07</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.begin_split</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>key_fields</element>
-            <position>26</position>
+            <position>27</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>fa221d0b1bd771504422dc61ab4bcb97</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>867024801be375504422dc61ab4bcb07</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.split</element>
-            <position>27</position>
+            <position>28</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>72221d0b1bd771504422dc61ab4bcb98</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>0e7024801be375504422dc61ab4bcb07</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.split</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>output_fields</element>
-            <position>28</position>
+            <position>29</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>f6221d0b1bd771504422dc61ab4bcb98</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>827024801be375504422dc61ab4bcb08</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.end_split</element>
-            <position>29</position>
+            <position>30</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>7e221d0b1bd771504422dc61ab4bcb98</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>0a7024801be375504422dc61ab4bcb08</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.end_split</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.begin_split</element>
-            <position>30</position>
+            <position>31</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>f2221d0b1bd771504422dc61ab4bcb99</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>8e7024801be375504422dc61ab4bcb08</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.begin_split</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>snapshot_left</element>
-            <position>31</position>
+            <position>32</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>7a221d0b1bd771504422dc61ab4bcb99</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>067024801be375504422dc61ab4bcb09</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.split</element>
-            <position>32</position>
+            <position>33</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>fe221d0b1bd771504422dc61ab4bcb99</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>8a7024801be375504422dc61ab4bcb09</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.split</type>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>snapshot_right</element>
-            <position>33</position>
+            <position>34</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>76221d0b1bd771504422dc61ab4bcb9a</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>027024801be375504422dc61ab4bcb0a</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type/>
         </sys_ui_element>
         <sys_ui_element action="INSERT_OR_UPDATE">
             <element>.end_split</element>
-            <position>34</position>
+            <position>35</position>
             <sys_created_by>tom.hauri</sys_created_by>
-            <sys_created_on>2023-12-28 11:21:22</sys_created_on>
-            <sys_id>fa221d0b1bd771504422dc61ab4bcb9a</sys_id>
+            <sys_created_on>2023-12-31 10:18:08</sys_created_on>
+            <sys_id>867024801be375504422dc61ab4bcb0a</sys_id>
             <sys_mod_count>0</sys_mod_count>
             <sys_ui_formatter/>
             <sys_ui_section caption="NULL" display_value="" name="x_snc_compare_tool_config" sys_domain="global" view="Default view">dc305a7d1b07b9105e14b8449b4bcb13</sys_ui_section>
             <sys_updated_by>tom.hauri</sys_updated_by>
-            <sys_updated_on>2023-12-28 11:21:22</sys_updated_on>
+            <sys_updated_on>2023-12-31 10:18:08</sys_updated_on>
             <sys_user/>
             <type>.end_split</type>
         </sys_ui_element>

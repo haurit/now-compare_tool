@@ -47,8 +47,9 @@
                 <element inactive_on_update="false" label="Error" sequence="300" value="error"/>
             </choice>
         </element>
-        <element attributes="base_start=true" label="Table (Left)" max_length="80" name="table_left" type="table_name"/>
-        <element attributes="base_start=true" label="Table (Right)" max_length="80" name="table_right" type="table_name"/>
+        <element label="Table History Show Count" max_length="40" name="table_history_show_count" type="boolean"/>
+        <element attributes="base_start=true,show_all_tables=true,allow_public=true" label="Table (Left)" max_length="80" name="table_left" type="table_name"/>
+        <element attributes="base_start=true,show_all_tables=true,allow_public=true" label="Table (Right)" max_length="80" name="table_right" type="table_name"/>
         <element choice="3" default="local_local_one" label="Type" mandatory="true" max_length="40" name="type" type="choice">
             <choice>
                 <element inactive_on_update="false" label="Local to Local (One)" sequence="100" value="local_local_one"/>
