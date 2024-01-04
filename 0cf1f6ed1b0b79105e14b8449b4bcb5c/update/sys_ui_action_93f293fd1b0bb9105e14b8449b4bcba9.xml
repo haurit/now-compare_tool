@@ -65,11 +65,12 @@ function compare() {
 	}); // each argument
 	gdwProgress.on('executionComplete', function (oResult) {
 		if ((oResult) && (oResult.hasOwnProperty('result')) && (oResult['result'].hasOwnProperty('sType')) && (oResult['result'].hasOwnProperty('sOutputFormat'))) {
-			if ((oResult['result']['sType'].indexOf('one') == -1) && (oResult['result']['sOutputFormat'] == 'attach_csv')) {
-				showCompareAttach(oResult['result']);
+			if ((oResult['result'].hasOwnProperty('sMessage')) && (oResult['result']['sMessage'])) {
+				g_form.addInfoMessage(oResult['result']['sMessage']);
+				setTimeout(showResults(oResult), 3000);
 			} else {
-				showCompareScreen(oResult['result']);
-			} // if csv
+				showResults(oResult);
+			} // if message
 		} else {
 			g_form.addErrorMessage(getMessage('CompareTool_error_no_return'));
 		} // if result
@@ -77,6 +78,14 @@ function compare() {
 	}); // on execution
 	gdwProgress.render();
 } // function compare
+
+function showResults(oResult) {
+	if ((oResult['result']['sType'].indexOf('one') == -1) && (oResult['result']['sOutputFormat'] == 'attach_csv')) {
+		showCompareAttach(oResult['result']);
+	} else {
+		showCompareScreen(oResult['result']);
+	} // if csv
+}
 
 function showCompareScreen(oReturn) {
 	if (oReturn['bValid'] == 'true') {
@@ -119,7 +128,7 @@ function showCompareAttach(oReturn) {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>93f293fd1b0bb9105e14b8449b4bcba9</sys_id>
-        <sys_mod_count>74</sys_mod_count>
+        <sys_mod_count>76</sys_mod_count>
         <sys_name>Compare</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -127,7 +136,7 @@ function showCompareAttach(oReturn) {
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_ui_action_93f293fd1b0bb9105e14b8449b4bcba9</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-31 10:24:02</sys_updated_on>
+        <sys_updated_on>2024-01-04 07:41:42</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>
