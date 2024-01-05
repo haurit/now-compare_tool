@@ -102,9 +102,9 @@ CompareOutputBuilder.prototype = {
 		return '"' + sValue + '";';
 	}, // function _parseCSV
 
-	getUrl: function (sSide, sStatus, oConfig) {
+	getUrl: function (sSide, sStatus, oConfig, sType) {
 		var sUrl = '', sId = '';
-		var sType = this._gtObject.getValue('type', '', oConfig);
+		sType = (sType) ? sType : this._gtObject.getValue('type', '', oConfig);
 		var sTable = this._gtObject.getValue('record_table', '', oConfig);
 		sTable = sTable.replace(/(^.*\[|\].*$)/g, '');
 		if ((sSide == 'left') && (sStatus == 'right')) {
@@ -167,13 +167,13 @@ CompareOutputBuilder.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-27 07:22:57</sys_created_on>
         <sys_id>1b5fcb6a1bdffd104422dc61ab4bcb9b</sys_id>
-        <sys_mod_count>16</sys_mod_count>
+        <sys_mod_count>17</sys_mod_count>
         <sys_name>CompareOutputBuilder</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_1b5fcb6a1bdffd104422dc61ab4bcb9b</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-01 16:03:41</sys_updated_on>
+        <sys_updated_on>2024-01-05 06:40:03</sys_updated_on>
     </sys_script_include>
 </record_update>

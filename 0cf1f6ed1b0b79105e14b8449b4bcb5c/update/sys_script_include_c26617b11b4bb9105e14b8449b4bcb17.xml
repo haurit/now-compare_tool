@@ -52,7 +52,7 @@ CompareTool.prototype = {
 		this.sLogPrefix = 'x_snc_compare_tool.CompareTool.';
 		this._CompareOutputBuilder = new x_snc_compare_tool.CompareOutputBuilder(this.sOutputFormat);
 		if ((this.sConnectionAliasLeftId) || (this.sConnectionAliasRightId)) {
-			this._CompareToolAPI = new x_snc_compare_tool.CompareToolAPI(this.sConnectionAliasLeftId, this.sConnectionAliasRightId, this.sCompareId, this.oReturn);
+			this._CompareToolAPI = new x_snc_compare_tool.CompareAPI(this.sConnectionAliasLeftId, this.sConnectionAliasRightId, this.sCompareId, this.oReturn);
 			this.bConnectionLeft = this._CompareToolAPI.bConnectionLeft;
 			this.bConnectionRight = this._CompareToolAPI.bConnectionRight;
 		} // if connection alias
@@ -228,7 +228,7 @@ CompareTool.prototype = {
 		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
 		gs.debug(this.sLogPrefix + 'cleanupSnapshot END (Worker: ' + this.sWorkerId + ')');
 	}, // function cleanupSnapshot
-
+	
 	_childRunner: function () {
 		gs.debug(this.sLogPrefix + 'childRunner START (Worker: ' + this.sWorkerId + ')');
 		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_childrunner');
@@ -431,14 +431,12 @@ CompareTool.prototype = {
 						} // if left > right
 					} // if table count
 					if ((sStatus == 'same') && (sType == 'version')) {
-						sUrl = '';
+						sUrl = this._CompareOutputBuilder.getUrl('left', sStatus, this._gtObject.getValue(sKey + '/left', '', oMerged), 'record');
 					} else {
 						sUrl = this._CompareOutputBuilder.getUrl('left', sStatus, this._gtObject.getValue(sKey + '/left', '', oMerged));
 					} // if not same and version
 					aRow.push({ 'sClass': sClass, 'sValue': sUrl });
-					if ((sStatus == 'same') && (sType == 'version')) {
-						sUrl = '';
-					} else {
+					if (sStatus == 'same') {
 						sUrl = this._CompareOutputBuilder.getUrl('right', sStatus, this._gtObject.getValue(sKey + '/right', '', oMerged));
 					} // if not same and version
 					aRow.push({ 'sClass': sClass, 'sValue': sUrl });
@@ -572,7 +570,9 @@ CompareTool.prototype = {
 			} // if valid record
 		} else {
 			grRecordLeft = this._CompareToolAPI.getRemoteRecordLeft(this.sTableLeft, this.sFilterCondition);
-			if (!this._gt.getType(grRecordLeft) == 'gliderecord') {
+			if (this.oReturn['bValid'] == false) {
+				return;
+			} else if (!this._gt.getType(grRecordLeft) == 'gliderecord') {
 				return this._setError('record_left');
 			} // if valid record
 		} // if local left
@@ -593,7 +593,9 @@ CompareTool.prototype = {
 				} // if sys_id
 			} // if local remote and not filter
 			grRecordRight = this._CompareToolAPI.getRemoteRecordRight(this.sTableLeft, sQuery);
-			if (!this._gt.getType(grRecordRight) == 'gliderecord') {
+			if (this.oReturn['bValid'] == false) {
+				return;
+			} else if (!this._gt.getType(grRecordRight) == 'gliderecord') {
 				return this._setError('record_right');
 			} // if valid record
 		} // if local right
@@ -761,37 +763,56 @@ CompareTool.prototype = {
 			} // if status
 			if ((['all', 'diff'].indexOf(this.sOutputFilter) != -1) || (this.sOutputFilter == sStatus) || (this.sOutputFilter == sStatus + 'only')) {
 				sTableLabel = this._gtObject.getValue(sTable + '/left/label', this._gtObject.getValue(sTable + '/right/label', sTable, oMerged), oMerged);
-				aRow.push({ 'sClass': 'fields', 'sValue': sTableLabel });
 				iCountLeft = this._gtObject.getValue(sTable + '/left/count', -1, oMerged);
 				iCountRight = this._gtObject.getValue(sTable + '/right/count', -1, oMerged);
 				if (sStatus == 'diff') {
 					if (iCountLeft > iCountRight) {
-						aRow.push({ 'sClass': 'equals', 'sValue': { 'sColor': 'darkgreen', 'sValue': iCountLeft } });
-						aRow.push({ 'sClass': 'equals', 'sValue': iCountRight });
-						bAddCSVLine = true;
+						if (this.sOutputFormat == 'screen') {
+							aRow.push({ 'sClass': 'fields', 'sValue': sTableLabel });
+							aRow.push({ 'sClass': 'equals', 'sValue': { 'sColor': 'darkgreen', 'sValue': iCountLeft } });
+							aRow.push({ 'sClass': 'equals', 'sValue': iCountRight });
+						} else {
+							bAddCSVLine = true;
+						} // if screen
 					} else if (iCountLeft < iCountRight) {
-						aRow.push({ 'sClass': 'equals', 'sValue': iCountLeft });
-						aRow.push({ 'sClass': 'equals', 'sValue': { 'sColor': 'darkred', 'sValue': iCountRight } });
-						bAddCSVLine = true;
+						if (this.sOutputFormat == 'screen') {
+							aRow.push({ 'sClass': 'fields', 'sValue': sTableLabel });
+							aRow.push({ 'sClass': 'equals', 'sValue': iCountLeft });
+							aRow.push({ 'sClass': 'equals', 'sValue': { 'sColor': 'darkred', 'sValue': iCountRight } });
+						} else {
+							bAddCSVLine = true;
+						} // if screen
 					} else if (this.sOutputFilter == 'all') {
-						aRow.push({ 'sClass': 'equals', 'sValue': iCountLeft });
-						aRow.push({ 'sClass': 'equals', 'sValue': iCountRight });
-						bAddCSVLine = true;
+						if (this.sOutputFormat == 'screen') {
+							aRow.push({ 'sClass': 'fields', 'sValue': sTableLabel });
+							aRow.push({ 'sClass': 'equals', 'sValue': iCountLeft });
+							aRow.push({ 'sClass': 'equals', 'sValue': iCountRight });
+						} else {
+							bAddCSVLine = true;
+						} // if screen
 					} // if left > right
 				} else if (sStatus == 'left') {
-					aRow.push({ 'sClass': 'insert', 'sValue': iCountLeft });
-					aRow.push({ 'sClass': 'equals', 'sValue': '' });
-					bAddCSVLine = true;
+					if (this.sOutputFormat == 'screen') {
+						aRow.push({ 'sClass': 'fields', 'sValue': sTableLabel });
+						aRow.push({ 'sClass': 'insert', 'sValue': iCountLeft });
+						aRow.push({ 'sClass': 'equals', 'sValue': '' });
+					} else {
+						bAddCSVLine = true;
+					} // if screen
 				} else if (sStatus == 'right') {
-					aRow.push({ 'sClass': 'equals', 'sValue': '' });
-					aRow.push({ 'sClass': 'delete', 'sValue': iCountRight });
-					bAddCSVLine = true;
+					if (this.sOutputFormat == 'screen') {
+						aRow.push({ 'sClass': 'fields', 'sValue': sTableLabel });
+						aRow.push({ 'sClass': 'equals', 'sValue': '' });
+						aRow.push({ 'sClass': 'delete', 'sValue': iCountRight });
+					} else {
+						bAddCSVLine = true;
+					} // if screen
 				} // if status same or diff and values are diff
 				if (bAddCSVLine) {
 					aRow.push(iCountLeft);
 					aRow.push(iCountRight);
 				} // if csv
-				if ((this.sOutputFormat == 'screen') || (bAddCSVLine)) {
+				if (this._gtArray.isValidArray(aRow)) {
 					this._CompareOutputBuilder.addRow(aRow);
 				} // if screen or add csv
 			} // if not filtered (diff, left, right, diffonly, all)
@@ -887,13 +908,13 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>300</sys_mod_count>
+        <sys_mod_count>309</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-04 15:10:12</sys_updated_on>
+        <sys_updated_on>2024-01-05 06:55:13</sys_updated_on>
     </sys_script_include>
 </record_update>
