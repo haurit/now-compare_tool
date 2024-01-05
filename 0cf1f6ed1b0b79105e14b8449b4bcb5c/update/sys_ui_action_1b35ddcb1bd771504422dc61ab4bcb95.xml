@@ -70,11 +70,15 @@ function cleanupSnapshot() {
 	}); // each argument
 	gdwProgress.on('executionComplete', function (oResult) {
 		if ((oResult) && (oResult.hasOwnProperty('result')) && (oResult['result'].hasOwnProperty('sType'))) {
-			if (oResult['result'].hasOwnProperty('sMessage')) {
-				g_form.addInfoMessage(oResult['result']['sMessage']);
+			if ((oResult['result'].hasOwnProperty('sMessage')) && (oResult['result']['sMessage'])) {
+				if ((oResult['result'].hasOwnProperty('bValid')) && (oResult['result']['bValid'] == 'true')) {
+					g_form.addInfoMessage(oResult['result']['sMessage']);
+				} else {
+					g_form.addErrorMessage(oResult['result']['sMessage']);
+				} // if success
 				setTimeout(reloadPage, 3000);
 			} else {
-				location.reload();
+				reloadPage();
 			} // if message
 		} else {
 			g_form.addErrorMessage(getMessage('CompareTool_error_no_return'));
@@ -97,7 +101,7 @@ function reloadPage() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>1b35ddcb1bd771504422dc61ab4bcb95</sys_id>
-        <sys_mod_count>10</sys_mod_count>
+        <sys_mod_count>12</sys_mod_count>
         <sys_name>Cleanup Snapshots</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -105,7 +109,7 @@ function reloadPage() {
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_ui_action_1b35ddcb1bd771504422dc61ab4bcb95</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-31 10:23:26</sys_updated_on>
+        <sys_updated_on>2024-01-05 06:34:01</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>

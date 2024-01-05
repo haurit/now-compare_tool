@@ -2,14 +2,14 @@
     <sys_script_include action="INSERT_OR_UPDATE">
         <access>package_private</access>
         <active>true</active>
-        <api_name>x_snc_compare_tool.CompareToolAPI</api_name>
+        <api_name>x_snc_compare_tool.CompareAPI</api_name>
         <caller_access/>
         <client_callable>false</client_callable>
         <description>Compare Tool API Handler&#13;
 ServiceNow Customer Outcomes, Tom Hauri</description>
-        <name>CompareToolAPI</name>
-        <script><![CDATA[var CompareToolAPI = Class.create();
-CompareToolAPI.prototype = {
+        <name>CompareAPI</name>
+        <script><![CDATA[var CompareAPI = Class.create();
+CompareAPI.prototype = {
 	initialize: function (sConnectionAliasLeftId, sConnectionAliasRightId, sCompareId, oReturn) {
 		this.iRemoteRecordsChunkSize = 4;
 		this.sCompareId = sCompareId;
@@ -32,7 +32,7 @@ CompareToolAPI.prototype = {
 				} // if api
 			} catch (oEx) {
 				this._setError('remote_initialize_left', String(oEx));
-				gs.error('CompareToolAPI.initialize Error getting remote test left: ' + String(oEx));
+				gs.error('CompareAPI.initialize Error getting remote test left: ' + String(oEx));
 			} // try
 		} // if alias left
 		if (this.sConnectionAliasRightId) {
@@ -44,7 +44,7 @@ CompareToolAPI.prototype = {
 				} // if api
 			} catch (oEx) {
 				this._setError('remote_initialize_right', String(oEx));
-				gs.error('CompareToolAPI.initialize Error getting remote test right: ' + String(oEx));
+				gs.error('CompareAPI.initialize Error getting remote test right: ' + String(oEx));
 			} // try
 		} // if alias right
 		this._gt = new global.GlobalTools();
@@ -57,19 +57,29 @@ CompareToolAPI.prototype = {
 
 	getRemoteRecordLeft: function (sTable, sQuery) {
 		try {
-			return this._gtRESTAPILeft.getRemoteRecord(sTable, sQuery);
+			var iCount = this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery);
+			if (iCount == 1) {
+				return this._gtRESTAPILeft.getRemoteRecord(sTable, sQuery);
+			} else {
+				this._setError('remote_record_left_multiple');
+			} // if result is one record
 		} catch (oEx) {
 			this._setError('remote_record_left', String(oEx));
-			gs.error('CompareToolAPI.getRemoteRecordLeft Error getting remote record: ' + String(oEx));
+			gs.error('CompareAPI.getRemoteRecordLeft Error getting remote record: ' + String(oEx));
 		} // try
 	}, // function getRemoteRecordLeft
 
 	getRemoteRecordRight: function (sTable, sQuery) {
 		try {
-			return this._gtRESTAPIRight.getRemoteRecord(sTable, sQuery);
+			var iCount = this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery);
+			if (iCount == 1) {
+				return this._gtRESTAPIRight.getRemoteRecord(sTable, sQuery);
+			} else {
+				this._setError('remote_record_right_multiple');
+			} // if result is one record
 		} catch (oEx) {
 			this._setError('remote_record_right', String(oEx));
-			gs.error('CompareToolAPI.getRemoteRecordRight Error getting remote record: ' + String(oEx));
+			gs.error('CompareAPI.getRemoteRecordRight Error getting remote record: ' + String(oEx));
 		} // try
 	}, // function getRemoteRecordRight
 
@@ -93,7 +103,7 @@ CompareToolAPI.prototype = {
 			return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'left');
 		} catch (oEx) {
 			this._setError('remote_list_left', String(oEx));
-			gs.error('CompareToolAPI.getRemoteListLeft Error getting remote list: ' + String(oEx));
+			gs.error('CompareAPI.getRemoteListLeft Error getting remote list: ' + String(oEx));
 		} // try
 	}, // function getRemoteListLeft
 
@@ -117,7 +127,7 @@ CompareToolAPI.prototype = {
 			return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'right');
 		} catch (oEx) {
 			this._setError('remote_list_right', String(oEx));
-			gs.error('CompareToolAPI.getRemoteListRight Error getting remote list: ' + String(oEx));
+			gs.error('CompareAPI.getRemoteListRight Error getting remote list: ' + String(oEx));
 		} // try
 	}, // function getRemoteListRight
 
@@ -161,11 +171,11 @@ CompareToolAPI.prototype = {
 				return oResposeBody['result'];
 			} catch (oEx) {
 				this._setError('parse_chunks', String(oEx));
-				gs.error('CompareToolAPI._parseAttachment Error parsing JSON: ' + String(oEx));
+				gs.error('CompareAPI._parseAttachment Error parsing JSON: ' + String(oEx));
 			} // try remote call
 		} catch (oEx) {
 			this._setError('parse_attach', String(oEx));
-			gs.error('CompareToolAPI._parseAttachment Error parsing attachments: ' + String(oEx));
+			gs.error('CompareAPI._parseAttachment Error parsing attachments: ' + String(oEx));
 		} // try remote call
 		this._gtRecordWrite.deleteMultiple('sys_attachment', 'table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId + '^file_nameSTARTSWITHremote_record_');
 	}, // function _parseAttachment
@@ -175,7 +185,7 @@ CompareToolAPI.prototype = {
 			return this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue);
 		} catch (oEx) {
 			this._setError('remote_count_left', String(oEx));
-			gs.error('CompareToolAPI.getRemoteCountLeft Error getting remote count: ' + String(oEx));
+			gs.error('CompareAPI.getRemoteCountLeft Error getting remote count: ' + String(oEx));
 		} // try
 	}, // function getRemoteCountLeft
 
@@ -184,7 +194,7 @@ CompareToolAPI.prototype = {
 			return this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue);
 		} catch (oEx) {
 			this._setError('remote_count_right', String(oEx));
-			gs.error('CompareToolAPI.getRemoteCountRight Error getting remote record: ' + String(oEx));
+			gs.error('CompareAPI.getRemoteCountRight Error getting remote record: ' + String(oEx));
 		} // try
 	}, // function getRemoteCountRight
 
@@ -206,7 +216,7 @@ CompareToolAPI.prototype = {
 			} // if valid array
 		} catch (oEx) {
 			this._setError('remote_count_object_left', String(oEx));
-			gs.error('CompareToolAPI.getRemoteCountObjectLeft Error getting remote object: ' + String(oEx));
+			gs.error('CompareAPI.getRemoteCountObjectLeft Error getting remote object: ' + String(oEx));
 		} // try
 		return oCountResult;
 	}, // function getRemoteCountObjectRight
@@ -229,7 +239,7 @@ CompareToolAPI.prototype = {
 			} // if valid array
 		} catch (oEx) {
 			this._setError('remote_count_object_right', String(oEx));
-			gs.error('CompareToolAPI.getRemoteCountObjectRight Error getting remote object: ' + String(oEx));
+			gs.error('CompareAPI.getRemoteCountObjectRight Error getting remote object: ' + String(oEx));
 		} // try
 		return oCountResult;
 	}, // function getRemoteCountObjectRight
@@ -244,7 +254,7 @@ CompareToolAPI.prototype = {
 		return false;
 	}, // function _setError
 
-	type: 'CompareToolAPI',
+	type: 'CompareAPI',
 	version: '1.0.0',
 	author: 'Tom Hauri',
 	email: 'tom@hauri.biz'
@@ -253,13 +263,13 @@ CompareToolAPI.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-14 06:42:23</sys_created_on>
         <sys_id>2f0c002e1bc73d105e14b8449b4bcb15</sys_id>
-        <sys_mod_count>73</sys_mod_count>
-        <sys_name>CompareToolAPI</sys_name>
+        <sys_mod_count>83</sys_mod_count>
+        <sys_name>CompareAPI</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_2f0c002e1bc73d105e14b8449b4bcb15</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-31 11:22:03</sys_updated_on>
+        <sys_updated_on>2024-01-05 06:54:12</sys_updated_on>
     </sys_script_include>
 </record_update>

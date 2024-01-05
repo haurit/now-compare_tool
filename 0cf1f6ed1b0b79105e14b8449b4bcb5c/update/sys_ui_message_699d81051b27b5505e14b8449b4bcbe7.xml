@@ -3,20 +3,20 @@
         <application/>
         <code/>
         <commented_message/>
-        <key>CompareTool_info_snapshot_attachmentsize</key>
+        <key>CompareTool_fieldmsg_filtercondition_multicompare</key>
         <language>en</language>
-        <message> Size of all snapshots for this record is: {0}</message>
+        <message>Please ensure that your condition only matches records of the same type!</message>
         <sys_class_name>sys_ui_message</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
-        <sys_created_on>2023-12-31 09:56:04</sys_created_on>
-        <sys_id>943b5cc81ba375504422dc61ab4bcb92</sys_id>
-        <sys_mod_count>2</sys_mod_count>
-        <sys_name>CompareTool_info_snapshot_attachmentsize</sys_name>
+        <sys_created_on>2024-01-03 16:10:34</sys_created_on>
+        <sys_id>699d81051b27b5505e14b8449b4bcbe7</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>CompareTool_fieldmsg_filtercondition_multicompare</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
-        <sys_update_name>sys_ui_message_943b5cc81ba375504422dc61ab4bcb92</sys_update_name>
+        <sys_update_name>sys_ui_message_699d81051b27b5505e14b8449b4bcbe7</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-03 19:51:38</sys_updated_on>
+        <sys_updated_on>2024-01-03 16:10:34</sys_updated_on>
     </sys_ui_message>
 </record_update>
