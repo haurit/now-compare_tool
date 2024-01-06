@@ -27,7 +27,7 @@
         <omit_filters>true</omit_filters>
         <omit_if_empty>true</omit_if_empty>
         <omit_links>false</omit_links>
-        <omit_new_button>false</omit_new_button>
+        <omit_new_button>true</omit_new_button>
         <related_list>REL:1d03bace1b07f9105e14b8449b4bcb3d</related_list>
         <sys_class_name>sys_ui_list_control</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
@@ -35,7 +35,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>95043a021b47f9105e14b8449b4bcbcd</sys_id>
-        <sys_mod_count>1</sys_mod_count>
+        <sys_mod_count>2</sys_mod_count>
         <sys_name>x_snc_compare_tool_config</sys_name>
         <sys_overrides display_value="">global</sys_overrides>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -43,6 +43,6 @@
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_ui_list_control_95043a021b47f9105e14b8449b4bcbcd</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-13 05:43:15</sys_updated_on>
+        <sys_updated_on>2024-01-06 16:52:23</sys_updated_on>
     </sys_ui_list_control>
 </record_update>
