@@ -26,7 +26,7 @@ CompareAPI.prototype = {
 		if (this.sConnectionAliasLeftId) {
 			try {
 				this._gtRESTAPILeft = new global.GlobalToolsRESTAPI(this.sConnectionAliasLeftId);
-				if (this._gtRESTAPILeft) {
+				if ((this._gtRESTAPILeft) && (this._gtRESTAPILeft.bValidConnectionConfig)) {
 					oResult = this._gtRESTAPILeft.testNOWConnection();
 					this.bConnectionLeft = ((oResult) && (oResult.hasOwnProperty('success')) && (oResult['success'] == true)) ? true : false;
 				} // if api
@@ -38,7 +38,7 @@ CompareAPI.prototype = {
 		if (this.sConnectionAliasRightId) {
 			try {
 				this._gtRESTAPIRight = new global.GlobalToolsRESTAPI(this.sConnectionAliasRightId);
-				if (this._gtRESTAPIRight) {
+				if ((this._gtRESTAPIRight) && (this._gtRESTAPIRight.bValidConnectionConfig)) {
 					oResult = this._gtRESTAPIRight.testNOWConnection();
 					this.bConnectionRight = ((oResult) && (oResult.hasOwnProperty('success')) && (oResult['success'] == true)) ? true : false;
 				} // if api
@@ -263,13 +263,13 @@ CompareAPI.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-14 06:42:23</sys_created_on>
         <sys_id>2f0c002e1bc73d105e14b8449b4bcb15</sys_id>
-        <sys_mod_count>83</sys_mod_count>
+        <sys_mod_count>84</sys_mod_count>
         <sys_name>CompareAPI</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_2f0c002e1bc73d105e14b8449b4bcb15</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-05 06:54:12</sys_updated_on>
+        <sys_updated_on>2024-01-07 06:18:52</sys_updated_on>
     </sys_script_include>
 </record_update>
