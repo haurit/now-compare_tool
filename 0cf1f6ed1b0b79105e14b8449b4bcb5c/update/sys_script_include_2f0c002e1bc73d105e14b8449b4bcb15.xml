@@ -22,6 +22,7 @@ CompareAPI.prototype = {
 		this.sConnectionAliasRightId = sConnectionAliasRightId;
 		this.bConnectionLeft = false;
 		this.bConnectionRight = false;
+		this.sLogPrefix = 'x_snc_compare_tool.CompareAPI.';
 		var oResult = {};
 		if (this.sConnectionAliasLeftId) {
 			try {
@@ -32,7 +33,7 @@ CompareAPI.prototype = {
 				} // if api
 			} catch (oEx) {
 				this._setError('remote_initialize_left', String(oEx));
-				gs.error('CompareAPI.initialize Error getting remote test left: ' + String(oEx));
+				gs.error(this.sLogPrefix + 'initialize Error getting remote test left: ' + String(oEx));
 			} // try
 		} // if alias left
 		if (this.sConnectionAliasRightId) {
@@ -44,7 +45,7 @@ CompareAPI.prototype = {
 				} // if api
 			} catch (oEx) {
 				this._setError('remote_initialize_right', String(oEx));
-				gs.error('CompareAPI.initialize Error getting remote test right: ' + String(oEx));
+				gs.error(this.sLogPrefix + 'initialize Error getting remote test right: ' + String(oEx));
 			} // try
 		} // if alias right
 		this._gt = new global.GlobalTools();
@@ -57,29 +58,39 @@ CompareAPI.prototype = {
 
 	getRemoteRecordLeft: function (sTable, sQuery) {
 		try {
-			var iCount = this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery);
-			if (iCount == 1) {
+			var oCount = this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery);
+			var sResultType = this._gt.getType(oCount);
+			if ((sResultType == 'number') && (oCount == 1)) {
 				return this._gtRESTAPILeft.getRemoteRecord(sTable, sQuery);
-			} else {
+			} else if ((sResultType == 'number') && (oCount > 1)) {
 				this._setError('remote_record_left_multiple');
+			} else if ((sResultType == 'object') && (oCount.hasOwnProperty('message'))) {
+				this._setError('remote_record_left', oCount['message']);
+			} else {
+				this._setError('remote_record_left');
 			} // if result is one record
 		} catch (oEx) {
 			this._setError('remote_record_left', String(oEx));
-			gs.error('CompareAPI.getRemoteRecordLeft Error getting remote record: ' + String(oEx));
+			gs.error(this.sLogPrefix + 'getRemoteRecordLeft Error getting remote record: ' + String(oEx));
 		} // try
 	}, // function getRemoteRecordLeft
 
 	getRemoteRecordRight: function (sTable, sQuery) {
 		try {
-			var iCount = this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery);
-			if (iCount == 1) {
+			var oCount = this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery);
+			var sResultType = this._gt.getType(oCount);
+			if ((sResultType == 'number') && (oCount == 1)) {
 				return this._gtRESTAPIRight.getRemoteRecord(sTable, sQuery);
-			} else {
+			} else if ((sResultType == 'number') && (oCount > 1)) {
 				this._setError('remote_record_right_multiple');
+			} else if ((sResultType == 'object') && (oCount.hasOwnProperty('message'))) {
+				this._setError('remote_record_right', oCount['message']);
+			} else {
+				this._setError('remote_record_right');
 			} // if result is one record
 		} catch (oEx) {
 			this._setError('remote_record_right', String(oEx));
-			gs.error('CompareAPI.getRemoteRecordRight Error getting remote record: ' + String(oEx));
+			gs.error(this.sLogPrefix + 'getRemoteRecordRight Error getting remote record: ' + String(oEx));
 		} // try
 	}, // function getRemoteRecordRight
 
@@ -87,23 +98,30 @@ CompareAPI.prototype = {
 		try {
 			var aRESTAPIResult = [];
 			var aAllFields = this._gtArray.mergeArray(aKeys, aFields);
-			var iRemoteCount = this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery);
-			if (iRemoteCount < this.iRemoteRecordsChunkSize) {
-				aRESTAPIResult = this._gtRESTAPILeft.doNOWRESTQuery(sTable, sQuery, 0, this.iRemoteRecordsChunkSize, aAllFields, 'all');
+			var oCount = this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery);
+			var sResultType = this._gt.getType(oCount);
+			if ((sResultType == 'number') && (oCount > 0)) {
+				if (oCount < this.iRemoteRecordsChunkSize) {
+					aRESTAPIResult = this._gtRESTAPILeft.doNOWRESTQuery(sTable, sQuery, 0, this.iRemoteRecordsChunkSize, aAllFields, 'all');
+				} else {
+					var iOffset = 0;
+					var iChunks = Math.ceil(oCount / this.iRemoteRecordsChunkSize);
+					for (var i = 0; i < iChunks; i++) {
+						this.oAttachmentCfg['sFilename'] = 'remote_record_' + String(i) + '.txt';
+						this._gtRESTAPILeft.doNOWRESTQuery(sTable, sQuery, iOffset, this.iRemoteRecordsChunkSize, aAllFields, 'all', this.oAttachmentCfg);
+						iOffset += this.iRemoteRecordsChunkSize;
+					} // each chunk
+					aRESTAPIResult = this._parseAttachment();
+				} // if remote count
+				return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'left');
+			} else if ((sResultType == 'object') && (oCount.hasOwnProperty('message'))) {
+				this._setError('remote_list_left', oCount['message']);
 			} else {
-				var iOffset = 0;
-				var iChunks = Math.ceil(iRemoteCount / this.iRemoteRecordsChunkSize);
-				for (var i = 0; i < iChunks; i++) {
-					this.oAttachmentCfg['sFilename'] = 'remote_record_' + String(i) + '.txt';
-					this._gtRESTAPILeft.doNOWRESTQuery(sTable, sQuery, iOffset, this.iRemoteRecordsChunkSize, aAllFields, 'all', this.oAttachmentCfg);
-					iOffset += this.iRemoteRecordsChunkSize;
-				} // each chunk
-				aRESTAPIResult = this._parseAttachment();
-			} // if remote count
-			return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'left');
+				this._setError('remote_list_left');
+			} // if result is one record
 		} catch (oEx) {
 			this._setError('remote_list_left', String(oEx));
-			gs.error('CompareAPI.getRemoteListLeft Error getting remote list: ' + String(oEx));
+			gs.error(this.sLogPrefix + 'getRemoteListLeft Error getting remote list: ' + String(oEx));
 		} // try
 	}, // function getRemoteListLeft
 
@@ -111,23 +129,30 @@ CompareAPI.prototype = {
 		try {
 			var aRESTAPIResult = [];
 			var aAllFields = this._gtArray.mergeArray(aKeys, aFields);
-			var iRemoteCount = this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery);
-			if (iRemoteCount < this.iRemoteRecordsChunkSize) {
-				aRESTAPIResult = this._gtRESTAPIRight.doNOWRESTQuery(sTable, sQuery, 0, this.iRemoteRecordsChunkSize, aAllFields, 'all');
+			var oCount = this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery);
+			var sResultType = this._gt.getType(oCount);
+			if ((sResultType == 'number') && (oCount > 0)) {
+				if (oCount < this.iRemoteRecordsChunkSize) {
+					aRESTAPIResult = this._gtRESTAPIRight.doNOWRESTQuery(sTable, sQuery, 0, this.iRemoteRecordsChunkSize, aAllFields, 'all');
+				} else {
+					var iOffset = 0;
+					var iChunks = Math.ceil(oCount / this.iRemoteRecordsChunkSize);
+					for (var i = 0; i < iChunks; i++) {
+						this.oAttachmentCfg['sFilename'] = 'remote_record_' + String(i) + '.txt';
+						this._gtRESTAPIRight.doNOWRESTQuery(sTable, sQuery, iOffset, this.iRemoteRecordsChunkSize, aAllFields, 'all', this.oAttachmentCfg);
+						iOffset += this.iRemoteRecordsChunkSize;
+					} // each chunk
+					aRESTAPIResult = this._parseAttachment();
+				} // if remote count
+				return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'right');
+			} else if ((sResultType == 'object') && (oCount.hasOwnProperty('message'))) {
+				this._setError('remote_list_right', oCount['message']);
 			} else {
-				var iOffset = 0;
-				var iChunks = Math.ceil(iRemoteCount / this.iRemoteRecordsChunkSize);
-				for (var i = 0; i < iChunks; i++) {
-					this.oAttachmentCfg['sFilename'] = 'remote_record_' + String(i) + '.txt';
-					this._gtRESTAPIRight.doNOWRESTQuery(sTable, sQuery, iOffset, this.iRemoteRecordsChunkSize, aAllFields, 'all', this.oAttachmentCfg);
-					iOffset += this.iRemoteRecordsChunkSize;
-				} // each chunk
-				aRESTAPIResult = this._parseAttachment();
-			} // if remote count
-			return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'right');
+				this._setError('remote_list_right');
+			} // if result is one record
 		} catch (oEx) {
 			this._setError('remote_list_right', String(oEx));
-			gs.error('CompareAPI.getRemoteListRight Error getting remote list: ' + String(oEx));
+			gs.error(this.sLogPrefix + 'getRemoteListRight Error getting remote list: ' + String(oEx));
 		} // try
 	}, // function getRemoteListRight
 
@@ -172,12 +197,12 @@ CompareAPI.prototype = {
 					return oResposeBody['result'];
 				} catch (oEx) {
 					this._setError('parse_chunks', String(oEx));
-					gs.error('CompareAPI._parseAttachment Error parsing JSON: ' + String(oEx));
+					gs.error(this.sLogPrefix + '_parseAttachment Error parsing JSON: ' + String(oEx));
 				} // try remote call
 			} // if response body
 		} catch (oEx) {
 			this._setError('parse_attach', String(oEx));
-			gs.error('CompareAPI._parseAttachment Error parsing attachments: ' + String(oEx));
+			gs.error(this.sLogPrefix + '_parseAttachment Error parsing attachments: ' + String(oEx));
 		} // try remote call
 		this._gtRecordWrite.deleteMultiple('sys_attachment', 'table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId + '^file_nameSTARTSWITHremote_record_');
 	}, // function _parseAttachment
@@ -187,7 +212,7 @@ CompareAPI.prototype = {
 			return this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue);
 		} catch (oEx) {
 			this._setError('remote_count_left', String(oEx));
-			gs.error('CompareAPI.getRemoteCountLeft Error getting remote count: ' + String(oEx));
+			gs.error(this.sLogPrefix + 'getRemoteCountLeft Error getting remote count: ' + String(oEx));
 		} // try
 	}, // function getRemoteCountLeft
 
@@ -196,7 +221,7 @@ CompareAPI.prototype = {
 			return this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue);
 		} catch (oEx) {
 			this._setError('remote_count_right', String(oEx));
-			gs.error('CompareAPI.getRemoteCountRight Error getting remote record: ' + String(oEx));
+			gs.error(this.sLogPrefix + 'getRemoteCountRight Error getting remote record: ' + String(oEx));
 		} // try
 	}, // function getRemoteCountRight
 
@@ -205,7 +230,8 @@ CompareAPI.prototype = {
 		try {
 			var sTable = '', sCount = '';
 			var aRESTAPIResult = this._gtRESTAPILeft.doNOWRESTQuery('sys_db_object', sQuery, '', 5000, ['name', 'label']);
-			if (this._gtArray.isValidArray(aRESTAPIResult)) {
+			var sResultType = this._gt.getType(aRESTAPIResult);
+			if ((sResultType == 'array') && (this._gtArray.isValidArray(aRESTAPIResult))) {
 				aRESTAPIResult.forEach(function (oRESTAPIResult) {
 					sTable = this._gtObject.getValue('name', '', oRESTAPIResult);
 					sCount = this.getRemoteCountLeft(sTable);
@@ -213,12 +239,14 @@ CompareAPI.prototype = {
 					this._gtObject.setValue(sTable + '/left/label', this._gtObject.getValue('label', '', oRESTAPIResult), oCountResult);
 					this._gtObject.setValue(sTable + '/left/count', sCount, oCountResult);
 				}, this); // each result
+			} else if ((sResultType == 'object') && (aRESTAPIResult.hasOwnProperty('message'))) {
+				this._setError('remote_count_object_left', aRESTAPIResult['message']);
 			} else {
-				this._setError('parse_api');
+				this._setError('remote_count_object_left');
 			} // if valid array
 		} catch (oEx) {
 			this._setError('remote_count_object_left', String(oEx));
-			gs.error('CompareAPI.getRemoteCountObjectLeft Error getting remote object: ' + String(oEx));
+			gs.error(this.sLogPrefix + 'getRemoteCountObjectLeft Error getting remote object: ' + String(oEx));
 		} // try
 		return oCountResult;
 	}, // function getRemoteCountObjectRight
@@ -228,7 +256,8 @@ CompareAPI.prototype = {
 		try {
 			var sTable = '', sCount = '';
 			var aRESTAPIResult = this._gtRESTAPIRight.doNOWRESTQuery('sys_db_object', sQuery, '', 5000, ['name', 'label']);
-			if (this._gtArray.isValidArray(aRESTAPIResult)) {
+			var sResultType = this._gt.getType(aRESTAPIResult);
+			if ((sResultType == 'array') && (this._gtArray.isValidArray(aRESTAPIResult))) {
 				aRESTAPIResult.forEach(function (oRESTAPIResult) {
 					sTable = this._gtObject.getValue('name', '', oRESTAPIResult);
 					sCount = this.getRemoteCountRight(sTable);
@@ -236,23 +265,30 @@ CompareAPI.prototype = {
 					this._gtObject.setValue(sTable + '/right/label', this._gtObject.getValue('label', '', oRESTAPIResult), oCountResult);
 					this._gtObject.setValue(sTable + '/right/count', sCount, oCountResult);
 				}, this); // each result
+			} else if ((sResultType == 'object') && (aRESTAPIResult.hasOwnProperty('message'))) {
+				this._setError('remote_count_object_right', aRESTAPIResult['message']);
 			} else {
-				this._setError('parse_api');
+				this._setError('remote_count_object_right');
 			} // if valid array
 		} catch (oEx) {
 			this._setError('remote_count_object_right', String(oEx));
-			gs.error('CompareAPI.getRemoteCountObjectRight Error getting remote object: ' + String(oEx));
+			gs.error(this.sLogPrefix + 'getRemoteCountObjectRight Error getting remote object: ' + String(oEx));
 		} // try
 		return oCountResult;
 	}, // function getRemoteCountObjectRight
 
 	_setError: function (sMessage) {
-		var aArguments = [];
-		for (var i = 1; i < arguments.length; i++) {
-			aArguments.push(String(arguments[i]));
-		} // each argument after script and scope
-		this.oReturn['bValid'] = false;
-		this.oReturn['sMessage'] = gs.getMessage('CompareTool_error_' + sMessage, aArguments);
+		if (this.oReturn['bValid'] != false) {
+			var aArguments = [];
+			for (var i = 1; i < arguments.length; i++) {
+				aArguments.push(String(arguments[i]));
+			} // each argument after script and scope
+			if (!this._gtArray.isValidArray(aArguments)) {
+				aArguments.push(gs.getMessage('CompareTool_error_noerrordetail'));
+			} // if no arguments
+			this.oReturn['bValid'] = false;
+			this.oReturn['sMessage'] = gs.getMessage('CompareTool_error_' + sMessage, aArguments);
+		} // if already has an error, don't overwrite
 		return false;
 	}, // function _setError
 
@@ -265,13 +301,13 @@ CompareAPI.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-14 06:42:23</sys_created_on>
         <sys_id>2f0c002e1bc73d105e14b8449b4bcb15</sys_id>
-        <sys_mod_count>88</sys_mod_count>
+        <sys_mod_count>100</sys_mod_count>
         <sys_name>CompareAPI</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_2f0c002e1bc73d105e14b8449b4bcb15</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-07 21:05:09</sys_updated_on>
+        <sys_updated_on>2024-01-08 09:19:08</sys_updated_on>
     </sys_script_include>
 </record_update>
