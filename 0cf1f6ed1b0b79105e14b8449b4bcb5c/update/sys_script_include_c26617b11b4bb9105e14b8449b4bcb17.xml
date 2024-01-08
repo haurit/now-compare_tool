@@ -436,7 +436,8 @@ CompareTool.prototype = {
 						sUrl = this._CompareOutputBuilder.getUrl('left', sStatus, this._gtObject.getValue(sKey + '/left', '', oMerged));
 					} // if not same and version
 					aRow.push({ 'sClass': sClass, 'sValue': sUrl });
-					if (sStatus == 'same') {
+					sUrl = '';
+					if (sStatus != 'same') {
 						sUrl = this._CompareOutputBuilder.getUrl('right', sStatus, this._gtObject.getValue(sKey + '/right', '', oMerged));
 					} // if not same and version
 					aRow.push({ 'sClass': sClass, 'sValue': sUrl });
@@ -551,8 +552,8 @@ CompareTool.prototype = {
 		var grRecordLeft;
 		var grRecordRight;
 		if (this.aType[0] == 'local') {
-			grRecordLeft = new GlideRecord(this.sTableLeft);
-			if ((!grRecordLeft.get(this.sRecordLeftId)) || (!grRecordLeft.isValidRecord())) {
+			grRecordLeft = this._gtRecordRead.getRecord(this.sTableLeft, this.sRecordLeftId);
+			if ((!grRecordLeft) || (!grRecordLeft.isValidRecord())) {
 				return this._setError('record_left');
 			} // if valid record
 		} else {
@@ -565,8 +566,8 @@ CompareTool.prototype = {
 		} // if local left
 		this._gExecutionTracker.incrementPercentComplete(30);
 		if (this.aType[1] == 'local') {
-			grRecordRight = new GlideRecord(this.sTableRight);
-			if ((!grRecordRight.get(this.sRecordRightId)) || (!grRecordRight.isValidRecord())) {
+			grRecordRight = this._gtRecordRead.getRecord(this.sTableLeft, this.sRecordLeftId);
+			if ((!grRecordRight) || (!grRecordRight.isValidRecord())) {
 				return this._setError('record_right');
 			} // if valid record
 		} else {
@@ -879,22 +880,32 @@ CompareTool.prototype = {
 	}, // function _setError
 
 	_setError: function (sMessage) {
-		var aArguments = [];
-		for (var i = 1; i < arguments.length; i++) {
-			aArguments.push(String(arguments[i]));
-		} // each argument after script and scope
-		this.oReturn['bValid'] = false;
-		this.oReturn['sMessage'] = gs.getMessage('CompareTool_error_' + sMessage, aArguments);
+		if (this.oReturn['bValid'] != false) {
+			var aArguments = [];
+			for (var i = 1; i < arguments.length; i++) {
+				aArguments.push(String(arguments[i]));
+			} // each argument after script and scope
+			if (!this._gtArray.isValidArray(aArguments)) {
+				aArguments.push(gs.getMessage('CompareTool_error_noerrordetail'));
+			} // if no arguments
+			this.oReturn['bValid'] = false;
+			this.oReturn['sMessage'] = gs.getMessage('CompareTool_error_' + sMessage, aArguments);
+		} // if already has an error, don't overwrite
 		return false;
 	}, // function _setError
 
-	_returnError: function(sMessage) {
-		var aArguments = [];
-		for (var i = 1; i < arguments.length; i++) {
-			aArguments.push(String(arguments[i]));
-		} // each argument after script and scope
-		this.oReturn['bValid'] = false;
-		this.oReturn['sMessage'] = gs.getMessage('CompareTool_error_' + sMessage, aArguments);
+	_returnError: function (sMessage) {
+		if (this.oReturn['bValid'] != false) {
+			var aArguments = [];
+			for (var i = 1; i < arguments.length; i++) {
+				aArguments.push(String(arguments[i]));
+			} // each argument after script and scope
+			if (!this._gtArray.isValidArray(aArguments)) {
+				aArguments.push(gs.getMessage('CompareTool_error_noerrordetail'));
+			} // if no arguments
+			this.oReturn['bValid'] = false;
+			this.oReturn['sMessage'] = gs.getMessage('CompareTool_error_' + sMessage, aArguments);
+		} // if already has an error, don't overwrite
 		this._gExecutionTracker.updateResult(this.oReturn);
 		this._gExecutionTracker.fail(gs.getMessage('CompareTool_tracker_error'));
 	}, // function _returnError
@@ -908,13 +919,13 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>324</sys_mod_count>
+        <sys_mod_count>333</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-07 20:16:38</sys_updated_on>
+        <sys_updated_on>2024-01-08 10:49:40</sys_updated_on>
     </sys_script_include>
 </record_update>

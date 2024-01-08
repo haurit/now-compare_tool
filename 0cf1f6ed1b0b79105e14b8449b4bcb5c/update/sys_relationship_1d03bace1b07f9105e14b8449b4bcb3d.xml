@@ -9,18 +9,23 @@
         <query_from/>
         <query_with><![CDATA[(function refineQuery(current, parent) {
 
+	var sType = parent.getValue('type');
+	this.aType = sType.split('_');
+		if (this.aType.length == 2) {
+			this.aType.push('');
+		} // if history push third element
 	var aConnectionAndCredentialAlias = [];
-	if (parent.getValue('connection_alias_left')) {
+	if ((this.aType[0] == 'remote') && (parent.getValue('connection_alias_left'))) {
 		aConnectionAndCredentialAlias.push(parent.getValue('connection_alias_left'));
-	}
-	if (parent.getValue('connection_alias_right')) {
+	} // if remote and left
+	if ((this.aType[1] == 'remote') && (parent.getValue('connection_alias_right'))) {
 		aConnectionAndCredentialAlias.push(parent.getValue('connection_alias_right'));
-	}
+	} // if remote and right
 	if (aConnectionAndCredentialAlias.length > 0) {
 		current.addEncodedQuery('sys_idIN' + aConnectionAndCredentialAlias.join(','));
 	} else {
 		current.addEncodedQuery('sys_id=na');
-	}
+	} // if alias
 
 })(current, parent);]]></query_with>
         <reference_field/>
@@ -30,14 +35,14 @@
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-13 05:38:42</sys_created_on>
         <sys_id>1d03bace1b07f9105e14b8449b4bcb3d</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>1</sys_mod_count>
         <sys_name>Connection &amp; Credential Alias</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_relationship_1d03bace1b07f9105e14b8449b4bcb3d</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2023-12-13 05:38:42</sys_updated_on>
+        <sys_updated_on>2024-01-08 11:02:44</sys_updated_on>
     </sys_relationship>
     <sys_translated_text action="delete_multiple" query="documentkey=1d03bace1b07f9105e14b8449b4bcb3d"/>
 </record_update>
