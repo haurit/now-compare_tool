@@ -25,7 +25,8 @@
         <element choice="3" default="screen" label="Output (Format)" max_length="40" name="output_format" type="choice">
             <choice>
                 <element inactive_on_update="false" label="Screen" sequence="100" value="screen"/>
-                <element inactive_on_update="false" label="Attachment (CSV)" sequence="200" value="attach_csv"/>
+                <element inactive_on_update="false" label="Attachment (CSV) Separator" sequence="200" value="attach_csv"/>
+                <element inactive_on_update="false" label="Attachment (CSV) Columns" sequence="300" value="attach_csv_2"/>
             </choice>
         </element>
         <element dependent="table_left" dependent_on_field="table_left" label="Record (Left)" max_length="32" name="record_left" type="document_id" use_dependent_field="true"/>
