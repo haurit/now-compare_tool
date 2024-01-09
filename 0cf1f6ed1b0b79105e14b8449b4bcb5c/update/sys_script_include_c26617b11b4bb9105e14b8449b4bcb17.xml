@@ -566,7 +566,7 @@ CompareTool.prototype = {
 		} // if local left
 		this._gExecutionTracker.incrementPercentComplete(30);
 		if (this.aType[1] == 'local') {
-			grRecordRight = this._gtRecordRead.getRecord(this.sTableLeft, this.sRecordLeftId);
+			grRecordRight = this._gtRecordRead.getRecord(this.sTableRight, this.sRecordRightId);
 			if ((!grRecordRight) || (!grRecordRight.isValidRecord())) {
 				return this._setError('record_right');
 			} // if valid record
@@ -919,13 +919,13 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>333</sys_mod_count>
+        <sys_mod_count>334</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-08 10:49:40</sys_updated_on>
+        <sys_updated_on>2024-01-09 12:31:34</sys_updated_on>
     </sys_script_include>
 </record_update>
