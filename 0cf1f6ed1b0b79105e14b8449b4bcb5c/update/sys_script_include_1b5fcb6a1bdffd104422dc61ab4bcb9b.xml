@@ -27,16 +27,22 @@ CompareOutputBuilder.prototype = {
 			aFields.forEach(function (sField) {
 				if (this.sOutputFormat == 'screen') {
 					sReturn += '<th class="texttitle">' + grRecordTitle.getElement(sField).getLabel() + '</th>';
-				} else {
+				} else if (this.sOutputFormat == 'attach_csv') {
 					sReturn += grRecordTitle.getElement(sField).getLabel() + ';';
+				} else {
+					sReturn += grRecordTitle.getElement(sField).getLabel() + ' (' + gs.getMessage('CompareTool_field_left') + ');';
+					sReturn += grRecordTitle.getElement(sField).getLabel() + ' (' + gs.getMessage('CompareTool_field_right') + ');';
 				} // if output
 			}, this); // each title field
 		} else {
 			aFields.forEach(function (sField) {
 				if (this.sOutputFormat == 'screen') {
 					sReturn += '<th class="texttitle">' + gs.getMessage(sField) + '</th>';
-				} else {
+				} else if (this.sOutputFormat == 'attach_csv') {
 					sReturn += gs.getMessage(sField) + ';';
+				} else {
+					sReturn += gs.getMessage(sField) + ' (' + gs.getMessage('CompareTool_field_left') + ');';
+					sReturn += gs.getMessage(sField) + ' (' + gs.getMessage('CompareTool_field_right') + ');';
 				} // if output
 			}, this); // each title field
 		} // if table
@@ -47,7 +53,7 @@ CompareOutputBuilder.prototype = {
 	addRow: function (aRow) {
 		var sReturn = '';
 		if (this._gtArray.isValidArray(aRow)) {
-			aRow.forEach(function (sColumn) {
+			aRow.forEach(function (sColumn, iIndex) {
 				var sColumnType = this._gt.getType(sColumn);
 				var sClass = (sColumnType == 'object') && (sColumn.hasOwnProperty('sClass')) ? 'class="' + sColumn['sClass'] + '"' : '';
 				var sValue = (sColumnType == 'object') && (sColumn.hasOwnProperty('sValue')) ? sColumn['sValue'] : '';
@@ -71,11 +77,23 @@ CompareOutputBuilder.prototype = {
 						sReturn += '<td style="width:auto;" ' + sClass + '>' + sValue + '</td>';
 					} // if two values
 				} else {
-					if (sValue2) {
-						sReturn += this._parseCSV(sValue + '\n\n<-- ' + gs.getMessage('CompareTool_field_value_left') + ' | ' + gs.getMessage('CompareTool_field_value_right') + ' -->\n\n' + sValue2);
+					if (this.sOutputFormat == 'attach_csv') {
+						if (sValue2) {
+							sReturn += this._parseCSV(sValue + '\n\n<-- ' + gs.getMessage('CompareTool_field_value_left') + ' | ' + gs.getMessage('CompareTool_field_value_right') + ' -->\n\n' + sValue2);
+						} else {
+							sReturn += this._parseCSV(sValue);
+						} // if two values
+					} else if (iIndex > 0) {
+						if (sValue2) {
+							sReturn += this._parseCSV(sValue);
+							sReturn += this._parseCSV(sValue2);
+						} else {
+							sReturn += this._parseCSV(sValue);
+							sReturn += this._parseCSV(sValue);
+						} // if two values
 					} else {
 						sReturn += this._parseCSV(sValue);
-					} // if two values
+					} // if format is attach_csv
 				} // if output screen
 			}, this); // each column
 			if (this.sOutputFormat == 'screen') {
@@ -167,13 +185,13 @@ CompareOutputBuilder.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-27 07:22:57</sys_created_on>
         <sys_id>1b5fcb6a1bdffd104422dc61ab4bcb9b</sys_id>
-        <sys_mod_count>17</sys_mod_count>
+        <sys_mod_count>21</sys_mod_count>
         <sys_name>CompareOutputBuilder</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_1b5fcb6a1bdffd104422dc61ab4bcb9b</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-05 06:40:03</sys_updated_on>
+        <sys_updated_on>2024-01-09 06:30:14</sys_updated_on>
     </sys_script_include>
 </record_update>
