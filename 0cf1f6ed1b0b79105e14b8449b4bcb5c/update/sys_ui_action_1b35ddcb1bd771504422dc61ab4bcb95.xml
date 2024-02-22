@@ -28,27 +28,25 @@
         <list_style/>
         <messages>CompareTool_progress&#13;
 CompareTool_error_no_return&#13;
-CompareTool_error_running&#13;
 CompareTool_error_modified&#13;
 CompareTool_error_snapshot_nothistory</messages>
         <name>Cleanup Snapshots</name>
-        <onclick>checkRunningCleanupSnapshot()</onclick>
+        <onclick>checkPrerequisitesCleanupSnapshot()</onclick>
         <order>200</order>
-        <script><![CDATA[function checkRunningCleanupSnapshot() {
+        <script><![CDATA[function checkPrerequisitesCleanupSnapshot() {
 	if (g_form.getValue('type') == 'local_history') {
 		var gaCompare = new GlideAjax('x_snc_compare_tool.CompareAJAX');
-		gaCompare.addParam('sysparm_name', 'checkRunning');
+		gaCompare.addParam('sysparm_name', 'checkPrerequisites');
 		gaCompare.addParam('sysparm_number', g_form.getValue('number'));
-		gaCompare.getXMLAnswer(checkRunningResult);
+		gaCompare.getXMLAnswer(checkPrerequisitesResult);
 	} else {
 		g_form.addErrorMessage(getMessage('CompareTool_error_snapshot_nothistory'));
 	} // if not history
-} // function checkRunningCleanupSnapshot
+} // function checkPrerequisitesCleanupSnapshot
 
-function checkRunningResult(sIsRunning) {
-	var bIsRunning = ((sIsRunning) && (sIsRunning == 'false')) ? false : true;
-	if (bIsRunning) {
-		g_form.addErrorMessage(getMessage('CompareTool_error_running'));
+function checkPrerequisitesResult(sErrorMessage) {
+	if (sErrorMessage) {
+		g_form.addErrorMessage(sErrorMessage);
 	} else {
 		if (g_form.modified) {
 			g_form.addErrorMessage(getMessage('CompareTool_error_modified'));
@@ -56,7 +54,7 @@ function checkRunningResult(sIsRunning) {
 			cleanupSnapshot();
 		} // if modified
 	} // if running
-} // function checkRunningResult
+} // function checkPrerequisitesResult
 
 function cleanupSnapshot() {
 	var gdwProgress = new GlideDialogWindow('hierarchical_progress_viewer', false, '40em', '10.5em');
@@ -101,7 +99,7 @@ function reloadPage() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>1b35ddcb1bd771504422dc61ab4bcb95</sys_id>
-        <sys_mod_count>12</sys_mod_count>
+        <sys_mod_count>15</sys_mod_count>
         <sys_name>Cleanup Snapshots</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -109,7 +107,7 @@ function reloadPage() {
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_ui_action_1b35ddcb1bd771504422dc61ab4bcb95</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-05 06:34:01</sys_updated_on>
+        <sys_updated_on>2024-02-21 19:07:09</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>
