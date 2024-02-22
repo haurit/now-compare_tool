@@ -37,7 +37,7 @@ CompareTool_error_snapshot_nothistory&#13;
         <script><![CDATA[function checkPrerequisitesTakeSnapshot() {
 	if (g_form.getValue('type') == 'local_history') {
 		var gaCompare = new GlideAjax('x_snc_compare_tool.CompareAJAX');
-		gaCompare.addParam('sysparm_name', 'checkRunning');
+		gaCompare.addParam('sysparm_name', 'checkPrerequisites');
 		gaCompare.addParam('sysparm_number', g_form.getValue('number'));
 		gaCompare.getXMLAnswer(checkPrerequisitesResult);
 	} else {
@@ -100,7 +100,7 @@ function reloadPage() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>f8a8f0b21b9731504422dc61ab4bcbc0</sys_id>
-        <sys_mod_count>17</sys_mod_count>
+        <sys_mod_count>18</sys_mod_count>
         <sys_name>Take Snapshot</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -108,7 +108,7 @@ function reloadPage() {
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_ui_action_f8a8f0b21b9731504422dc61ab4bcbc0</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-02-21 19:08:19</sys_updated_on>
+        <sys_updated_on>2024-02-22 06:56:04</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>
