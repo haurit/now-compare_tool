@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
+    <sys_metadata_link action="INSERT_OR_UPDATE">
+        <directory>update</directory>
+        <documentkey>722d56bd1b47b9105e14b8449b4bcb71</documentkey>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_compare_tool_config">
+    <x_snc_compare_tool_config action="INSERT_OR_UPDATE">
+        <connection_alias_left/>
+        <connection_alias_right/>
+        <filter_condition/>
+        <key_fields/>
+        <key_type>sys_id</key_type>
+        <number>CMPCFG_DEMO_0000001</number>
+        <output_fields/>
+        <output_filter>diff</output_filter>
+        <output_format>screen</output_format>
+        <record_left>f31ccf7697816110b434f5f3a253afaa</record_left>
+        <record_right>52165d601bf47150d5be777d8b4bcbc4</record_right>
+        <snapshot_left>current</snapshot_left>
+        <snapshot_right>latest</snapshot_right>
+        <status>complete</status>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2023-12-12 09:21:39</sys_created_on>
+        <sys_id>722d56bd1b47b9105e14b8449b4bcb71</sys_id>
+        <sys_mod_count>41</sys_mod_count>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-02-22 15:26:31</sys_updated_on>
+        <table_history_show_count>false</table_history_show_count>
+        <table_left>sys_script_include</table_left>
+        <table_right>sys_script_include</table_right>
+        <type>local_local_one</type>
+    </x_snc_compare_tool_config>
+</record_update>
+]]></payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-23 07:39:49</sys_created_on>
+        <sys_id>d1120ed11ba8061004bab8449b4bcbaa</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>CMPCFG_DEMO_0000001</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_update_name>sys_metadata_link_d1120ed11ba8061004bab8449b4bcbaa</sys_update_name>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-02-23 07:39:49</sys_updated_on>
+        <tablename>x_snc_compare_tool_config</tablename>
+    </sys_metadata_link>
+</record_update>
