@@ -21,7 +21,7 @@
         <runtime_access_tracking>permissive</runtime_access_tracking>
         <scope>x_snc_compare_tool</scope>
         <scoped_administration>false</scoped_administration>
-        <short_description>Compare ServiceNow records on the same or across instances</short_description>
+        <short_description>Compare Tool – easily diff instances and snapshots</short_description>
         <source>x_snc_compare_tool</source>
         <store_correlation_id/>
         <store_url/>
@@ -31,16 +31,16 @@
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-11 16:13:13</sys_created_on>
         <sys_id>0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>5</sys_mod_count>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-09 12:39:12</sys_updated_on>
+        <sys_updated_on>2024-02-23 08:00:13</sys_updated_on>
         <template/>
         <trackable>true</trackable>
         <uninstall_blocked>false</uninstall_blocked>
         <user_role/>
         <vendor/>
         <vendor_prefix/>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </sys_app>
     <sys_translated_text action="delete_multiple" query="documentkey=0cf1f6ed1b0b79105e14b8449b4bcb5c"/>
     <sys_attachment action="INSERT_OR_UPDATE">

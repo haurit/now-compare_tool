@@ -3,6 +3,8 @@
         <cleared>false</cleared>
         <disabled>ignore</disabled>
         <field>snapshot_left</field>
+        <field_message/>
+        <field_message_type/>
         <mandatory>ignore</mandatory>
         <sys_class_name>sys_ui_policy_action</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
@@ -18,6 +20,9 @@
         <sys_updated_on>2023-12-28 15:42:32</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui_policy display_value="Local to Local (List)">177ddabd1b47b9105e14b8449b4bcb40</ui_policy>
+        <value/>
+        <value_action/>
         <visible>false</visible>
     </sys_ui_policy_action>
+    <sys_translated_text action="delete_multiple" query="documentkey=aa2b8dcf1b9771504422dc61ab4bcb59"/>
 </record_update>
