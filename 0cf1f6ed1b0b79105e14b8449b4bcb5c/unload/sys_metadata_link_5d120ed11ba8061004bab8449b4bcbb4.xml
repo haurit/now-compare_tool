@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
+    <sys_metadata_link action="INSERT_OR_UPDATE">
+        <directory>unload</directory>
+        <documentkey>d6a570fe1b5731504422dc61ab4bcb01</documentkey>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_compare_tool_config">
+    <x_snc_compare_tool_config action="INSERT_OR_UPDATE">
+        <connection_alias_left display_value="x_snc_compare_tool.ConnectionLeft">0461fa4e1b07f9105e14b8449b4bcb60</connection_alias_left>
+        <connection_alias_right display_value="x_snc_compare_tool.ConnectionRight">b191be4e1b07f9105e14b8449b4bcbf0</connection_alias_right>
+        <filter_condition/>
+        <key_fields/>
+        <key_type>sys_id</key_type>
+        <number>CMPCFG_DEMO_0000008</number>
+        <output_fields/>
+        <output_filter>all</output_filter>
+        <output_format>screen</output_format>
+        <record_left/>
+        <record_right/>
+        <snapshot_left>current</snapshot_left>
+        <snapshot_right>latest</snapshot_right>
+        <status>complete</status>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2023-12-27 14:41:50</sys_created_on>
+        <sys_id>d6a570fe1b5731504422dc61ab4bcb01</sys_id>
+        <sys_mod_count>161</sys_mod_count>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-02-22 15:35:27</sys_updated_on>
+        <table_history_show_count>false</table_history_show_count>
+        <table_left>sys_rest_message</table_left>
+        <table_right>sys_rest_message</table_right>
+        <type>local_history</type>
+    </x_snc_compare_tool_config>
+    <sys_attachment action="INSERT_OR_UPDATE">
+        <average_image_color/>
+        <chunk_size_bytes>700000</chunk_size_bytes>
+        <compressed>true</compressed>
+        <content_type>application/json</content_type>
+        <file_name>2024-02-22_16-34-21_VersionHistory.json</file_name>
+        <hash>e1ffbe4ab572544a787736d6911fe83a0c43c20380c37d2a4d928d29453d8d8c</hash>
+        <image_height/>
+        <image_width/>
+        <size_bytes>836</size_bytes>
+        <size_compressed>304</size_compressed>
+        <state>available</state>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-22 15:34:21</sys_created_on>
+        <sys_id>be1526c91b2cc21004bab8449b4bcb8a</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2024-02-22 15:34:22</sys_updated_on>
+        <table_name>ZZ_YYx_snc_compare_tool_config</table_name>
+        <table_sys_id>d6a570fe1b5731504422dc61ab4bcb01</table_sys_id>
+    </sys_attachment>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>H4sIAAAAAAAA/w==</data>
+        <length>16</length>
+        <position>0</position>
+        <sys_attachment display_value="2024-02-22_16-34-21_VersionHistory.json" sys_id="be1526c91b2cc21004bab8449b4bcb8a">be1526c91b2cc21004bab8449b4bcb8a</sys_attachment>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-22 15:34:21</sys_created_on>
+        <sys_id>fe1526c91b2cc21004bab8449b4bcb8a</sys_id>
+    </sys_attachment_doc>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>nZJPawIxEMW/SsjZQ/6b7a2UerOUWgqllCWTTDSgG9moRcTv3t1iLdjDts4xvHnzfpM50LIvdYtlU6+wFDdHenOg0lXBajReGiY4Zxq5M1LKYBULQfles9mvOy3dYVtSbuiItuhzG+oUutdBg7O8caveZpJaBFeQ3C3zNpDpV5bUzMkLJzNswk/DxsGy73i6nz2fdEjeLine6XFErQKlwcgYuZScsWosbTwXVIMYgwZ/xriaAYIaW69MiEywLoIP4+B01BVEYaSJgwyDBpcMr26RM5mkxjUe/5959J3jdAmGG+8j4+CYFd18BQ6sUhUo8KBNzxgwMNRCdGsWv9cch89t0OCScYbtLnl8yB/TDGmJt+s1edyWxRVfdDx+AkLj7rFEAwAA</data>
+        <length>392</length>
+        <position>1</position>
+        <sys_attachment display_value="2024-02-22_16-34-21_VersionHistory.json" sys_id="be1526c91b2cc21004bab8449b4bcb8a">be1526c91b2cc21004bab8449b4bcb8a</sys_attachment>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-22 15:34:21</sys_created_on>
+        <sys_id>721526c91b2cc21004bab8449b4bcb8b</sys_id>
+    </sys_attachment_doc>
+    <sys_attachment action="INSERT_OR_UPDATE">
+        <average_image_color/>
+        <chunk_size_bytes>700000</chunk_size_bytes>
+        <compressed>true</compressed>
+        <content_type>application/json</content_type>
+        <file_name>SnapshotSummary.json</file_name>
+        <hash>99ffb72d9f50a8f2afe136a0ad4eb556bbe4c6c73649b5b3c782e5bf1a296b2e</hash>
+        <image_height/>
+        <image_width/>
+        <size_bytes>38</size_bytes>
+        <size_compressed>58</size_compressed>
+        <state>available</state>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-22 15:34:49</sys_created_on>
+        <sys_id>3535a6c91b2cc21004bab8449b4bcb85</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2024-02-22 15:34:50</sys_updated_on>
+        <table_name>ZZ_YYx_snc_compare_tool_config</table_name>
+        <table_sys_id>d6a570fe1b5731504422dc61ab4bcb01</table_sys_id>
+    </sys_attachment>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>H4sIAAAAAAAA/w==</data>
+        <length>16</length>
+        <position>0</position>
+        <sys_attachment display_value="SnapshotSummary.json" sys_id="3535a6c91b2cc21004bab8449b4bcb85">3535a6c91b2cc21004bab8449b4bcb85</sys_attachment>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-22 15:34:49</sys_created_on>
+        <sys_id>7535a6c91b2cc21004bab8449b4bcb85</sys_id>
+    </sys_attachment_doc>
+    <sys_attachment_doc action="INSERT_OR_UPDATE">
+        <data>q1ZKDM5LLCjOyC8pVrKKVjIyMDLRNTDSNTKKNzTTNTbRNTJUiq0FABLPIKUmAAAA</data>
+        <length>64</length>
+        <position>1</position>
+        <sys_attachment display_value="SnapshotSummary.json" sys_id="3535a6c91b2cc21004bab8449b4bcb85">3535a6c91b2cc21004bab8449b4bcb85</sys_attachment>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-22 15:34:49</sys_created_on>
+        <sys_id>f535a6c91b2cc21004bab8449b4bcb85</sys_id>
+    </sys_attachment_doc>
+</record_update>
+]]></payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-23 07:39:49</sys_created_on>
+        <sys_id>5d120ed11ba8061004bab8449b4bcbb4</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>CMPCFG_DEMO_0000008</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_update_name>sys_metadata_link_5d120ed11ba8061004bab8449b4bcbb4</sys_update_name>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-02-27 15:57:18</sys_updated_on>
+        <tablename>x_snc_compare_tool_config</tablename>
+    </sys_metadata_link>
+</record_update>

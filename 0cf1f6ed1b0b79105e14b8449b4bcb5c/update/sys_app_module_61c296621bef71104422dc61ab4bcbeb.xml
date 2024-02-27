@@ -17,6 +17,7 @@
         <override_menu_roles>false</override_menu_roles>
         <query>https://www.servicenow.com/community/in-other-news/compare-tool-easily-diff-instances-and-snapshots/ba-p/2759060</query>
         <report/>
+        <require_confirmation>false</require_confirmation>
         <roles>x_snc_compare_tool.config_user</roles>
         <sys_class_name>sys_app_module</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>

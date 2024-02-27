@@ -3,6 +3,8 @@
         <cleared>false</cleared>
         <disabled>ignore</disabled>
         <field>table_history_show_count</field>
+        <field_message/>
+        <field_message_type/>
         <mandatory>ignore</mandatory>
         <sys_class_name>sys_ui_policy_action</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
@@ -18,6 +20,9 @@
         <sys_updated_on>2023-12-31 10:17:23</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui_policy display_value="Table History Show Count">7d00a8401be375504422dc61ab4bcb87</ui_policy>
+        <value/>
+        <value_action/>
         <visible>true</visible>
     </sys_ui_policy_action>
+    <sys_translated_text action="delete_multiple" query="documentkey=b330ac401be375504422dc61ab4bcbec"/>
 </record_update>

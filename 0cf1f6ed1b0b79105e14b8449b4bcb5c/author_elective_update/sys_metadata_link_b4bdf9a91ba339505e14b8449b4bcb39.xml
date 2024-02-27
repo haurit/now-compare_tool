@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
+    <sys_metadata_link action="DELETE">
+        <directory>unload</directory>
+        <documentkey>9d5a7a391bc7b9105e14b8449b4bcb32</documentkey>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_compare_tool_config">
+    <x_snc_compare_tool_config action="INSERT_OR_UPDATE">
+        <connection_alias_left/>
+        <connection_alias_right display_value="x_snc_compare_tool.ConnectionRight">b191be4e1b07f9105e14b8449b4bcbf0</connection_alias_right>
+        <filter_condition table="sys_script_include">sys_scope=a39b8f3697816110b434f5f3a253af25^EQ<item display_table="sys_scope" display_value="Global Tools" endquery="false" field="sys_scope" goto="false" newquery="false" operator="=" or="false" value="a39b8f3697816110b434f5f3a253af25"/>
+            <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
+        </filter_condition>
+        <key_fields>f55982121b1231105e14b8449b4bcbeb,355982121b1231105e14b8449b4bcbf2</key_fields>
+        <key_type>sys_id</key_type>
+        <number>CMPCFG_DEMO_0000004</number>
+        <output_fields>f55982121b1231105e14b8449b4bcbeb,0f3902121b1231105e14b8449b4bcb66,c33902121b1231105e14b8449b4bcb67,f95982121b1231105e14b8449b4bcbee</output_fields>
+        <output_filter>diff</output_filter>
+        <output_format>screen</output_format>
+        <record_left/>
+        <record_right/>
+        <snapshot_left>current</snapshot_left>
+        <snapshot_right>latest</snapshot_right>
+        <status>complete</status>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2023-12-12 11:29:18</sys_created_on>
+        <sys_id>9d5a7a391bc7b9105e14b8449b4bcb32</sys_id>
+        <sys_mod_count>75</sys_mod_count>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-01-04 19:11:34</sys_updated_on>
+        <table_history_show_count>false</table_history_show_count>
+        <table_left>sys_script_include</table_left>
+        <table_right>sys_script_include</table_right>
+        <type>local_remote_list</type>
+    </x_snc_compare_tool_config>
+</record_update>
+]]></payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-01-05 08:56:22</sys_created_on>
+        <sys_id>b4bdf9a91ba339505e14b8449b4bcb39</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>CMPCFG_DEMO_0000004</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_update_name>sys_metadata_link_b4bdf9a91ba339505e14b8449b4bcb39</sys_update_name>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-01-05 08:56:22</sys_updated_on>
+        <tablename>x_snc_compare_tool_config</tablename>
+    </sys_metadata_link>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</application>
+        <file_path/>
+        <instance_id>164357081b640ad4a43dcb7b234bcb48</instance_id>
+        <instance_name>empthauri</instance_name>
+        <name>sys_metadata_link_b4bdf9a91ba339505e14b8449b4bcb39</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_metadata_link"&gt;&lt;sys_metadata_link action="DELETE"&gt;&lt;directory&gt;unload&lt;/directory&gt;&lt;documentkey&gt;9d5a7a391bc7b9105e14b8449b4bcb32&lt;/documentkey&gt;&lt;payload&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_compare_tool_config"&gt;
+    &lt;x_snc_compare_tool_config action="INSERT_OR_UPDATE"&gt;
+        &lt;connection_alias_left/&gt;
+        &lt;connection_alias_right display_value="x_snc_compare_tool.ConnectionRight"&gt;b191be4e1b07f9105e14b8449b4bcbf0&lt;/connection_alias_right&gt;
+        &lt;filter_condition table="sys_script_include"&gt;sys_scope=a39b8f3697816110b434f5f3a253af25^EQ&lt;item display_table="sys_scope" display_value="Global Tools" endquery="false" field="sys_scope" goto="false" newquery="false" operator="=" or="false" value="a39b8f3697816110b434f5f3a253af25"/&gt;
+            &lt;item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/&gt;
+        &lt;/filter_condition&gt;
+        &lt;key_fields&gt;f55982121b1231105e14b8449b4bcbeb,355982121b1231105e14b8449b4bcbf2&lt;/key_fields&gt;
+        &lt;key_type&gt;sys_id&lt;/key_type&gt;
+        &lt;number&gt;CMPCFG_DEMO_0000004&lt;/number&gt;
+        &lt;output_fields&gt;f55982121b1231105e14b8449b4bcbeb,0f3902121b1231105e14b8449b4bcb66,c33902121b1231105e14b8449b4bcb67,f95982121b1231105e14b8449b4bcbee&lt;/output_fields&gt;
+        &lt;output_filter&gt;diff&lt;/output_filter&gt;
+        &lt;output_format&gt;screen&lt;/output_format&gt;
+        &lt;record_left/&gt;
+        &lt;record_right/&gt;
+        &lt;snapshot_left&gt;current&lt;/snapshot_left&gt;
+        &lt;snapshot_right&gt;latest&lt;/snapshot_right&gt;
+        &lt;status&gt;complete&lt;/status&gt;
+        &lt;sys_created_by&gt;tom.hauri&lt;/sys_created_by&gt;
+        &lt;sys_created_on&gt;2023-12-12 11:29:18&lt;/sys_created_on&gt;
+        &lt;sys_id&gt;9d5a7a391bc7b9105e14b8449b4bcb32&lt;/sys_id&gt;
+        &lt;sys_mod_count&gt;75&lt;/sys_mod_count&gt;
+        &lt;sys_updated_by&gt;tom.hauri&lt;/sys_updated_by&gt;
+        &lt;sys_updated_on&gt;2024-01-04 19:11:34&lt;/sys_updated_on&gt;
+        &lt;table_history_show_count&gt;false&lt;/table_history_show_count&gt;
+        &lt;table_left&gt;sys_script_include&lt;/table_left&gt;
+        &lt;table_right&gt;sys_script_include&lt;/table_right&gt;
+        &lt;type&gt;local_remote_list&lt;/type&gt;
+    &lt;/x_snc_compare_tool_config&gt;
+&lt;/record_update&gt;
+]]&gt;&lt;/payload&gt;&lt;sys_class_name&gt;sys_metadata_link&lt;/sys_class_name&gt;&lt;sys_created_by&gt;tom.hauri&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2024-01-05 08:56:22&lt;/sys_created_on&gt;&lt;sys_id&gt;b4bdf9a91ba339505e14b8449b4bcb39&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_name&gt;CMPCFG_DEMO_0000004&lt;/sys_name&gt;&lt;sys_package display_value="Compare Tool" source="x_snc_compare_tool"&gt;0cf1f6ed1b0b79105e14b8449b4bcb5c&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Compare Tool"&gt;0cf1f6ed1b0b79105e14b8449b4bcb5c&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_metadata_link_b4bdf9a91ba339505e14b8449b4bcb39&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;tom.hauri&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2024-01-05 08:56:22&lt;/sys_updated_on&gt;&lt;tablename&gt;x_snc_compare_tool_config&lt;/tablename&gt;&lt;/sys_metadata_link&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1446249751</payload_hash>
+        <record_name>CMPCFG_DEMO_0000004</record_name>
+        <reverted_from/>
+        <source>001cbb641b60821004bab8449b4bcb4a</source>
+        <source_table>sys_update_set</source_table>
+        <state>current</state>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-23 14:50:24</sys_created_on>
+        <sys_id>bca4e3d51b20461004bab8449b4bcbfb</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>18dd672320e0000001</sys_recorded_at>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-02-23 14:50:24</sys_updated_on>
+        <type>Metadata Snapshot</type>
+        <update_guid>b4a4e3d5d720461000ee273a769f77fb</update_guid>
+        <update_guid_history>b4a4e3d5d720461000ee273a769f77fb:-683006154,38a4e3d59c204610d56f76774e2da6f8:1878485003</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-27 15:57:08</sys_created_on>
+        <sys_db_object display_value="" name="sys_metadata_link">sys_metadata_link</sys_db_object>
+        <sys_id>1dc1f45d029a41c597037cb78042fb99</sys_id>
+        <sys_metadata>b4bdf9a91ba339505e14b8449b4bcb39</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>CMPCFG_DEMO_0000004</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_scope_delete display_value="">26243eee7f0842588d168c68389a4a10</sys_scope_delete>
+        <sys_update_name>sys_metadata_link_b4bdf9a91ba339505e14b8449b4bcb39</sys_update_name>
+        <sys_update_version display_value="sys_metadata_link_b4bdf9a91ba339505e14b8449b4bcb39">bca4e3d51b20461004bab8449b4bcbfb</sys_update_version>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-02-27 15:57:08</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>
