@@ -15,7 +15,8 @@
         <condition/>
         <description/>
         <execute_function>false</execute_function>
-        <filter_condition table="x_snc_compare_tool_config">table_left=x_snc_compare_tool_config^EQ<item endquery="false" field="table_left" goto="false" newquery="false" operator="=" or="false" value="x_snc_compare_tool_config"/>
+        <filter_condition table="x_snc_compare_tool_config">table_left=x_snc_compare_tool_config^ORnameISEMPTY^EQ<item endquery="false" field="table_left" goto="false" newquery="false" operator="=" or="false" value="x_snc_compare_tool_config"/>
+            <item endquery="false" field="name" goto="false" newquery="false" operator="ISEMPTY" or="true" value=""/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </filter_condition>
         <is_rest>false</is_rest>
@@ -40,7 +41,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>ab60a9ed1b2339505e14b8449b4bcb7e</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>4</sys_mod_count>
         <sys_name>CompareToolBeforeSave</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -48,7 +49,7 @@
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_ab60a9ed1b2339505e14b8449b4bcb7e</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-05 07:03:44</sys_updated_on>
+        <sys_updated_on>2024-03-28 06:53:18</sys_updated_on>
         <template/>
         <when>before</when>
     </sys_script>

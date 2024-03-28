@@ -10,10 +10,11 @@ ServiceNow Customer Outcomes, Tom Hauri</description>
         <name>CompareTool</name>
         <script><![CDATA[var CompareTool = Class.create();
 CompareTool.prototype = {
-	initialize: function (sCompareId, sNumber, sType, sOutputFormat, sOutputFilter, sRecordLeftId, sRecordRightId, sKeyType, sKeyFields, sOutputFields, sTableLeft, sTableRight, sConnectionAliasLeftId, sConnectionAliasRightId, sFilterCondition, sSnapshotLeft, sSnapshotRight, sTableHistoryShowCount, sStatus, sAction, sParentWorkerId) {
+	initialize: function (sCompareId, sNumber, sName, sType, sOutputFormat, sOutputFilter, sRecordLeftId, sRecordRightId, sKeyType, sKeyFields, sOutputFields, sTableLeft, sTableRight, sConnectionAliasLeftId, sConnectionAliasRightId, sFilterCondition, sSnapshotLeft, sSnapshotRight, sTableHistoryShowCount, sStatus, sAction, sParentWorkerId) {
 		this.bShowCompareCharCodeInLog = false;
 		this.sCompareId = sCompareId;
 		this.sNumber = sNumber;
+		this.sName = sName;
 		this.sType = sType; // local_local_one, local_local_list, local_history, local_remote_one, local_remote_list, local_remote_count, remote_remote_one, remote_remote_list, remote_remote_count
 		this.aType = sType.split('_');
 		if (this.aType.length == 2) {
@@ -231,7 +232,7 @@ CompareTool.prototype = {
 
 	_childRunner: function () {
 		gs.debug(this.sLogPrefix + 'childRunner START (Worker: ' + this.sWorkerId + ')');
-		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_childrunner');
+		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_childrunner', this.sName);
 		var iTotalChildren = 0;
 		var sQuery = this._gtRecordRead.combineQueries('table_left!=x_snc_compare_tool_config^type=' + this.sType, this.sFilterCondition);
 		var grCompare = new GlideRecord('x_snc_compare_tool_config');
@@ -318,7 +319,7 @@ CompareTool.prototype = {
 	}, // function childRunner
 
 	_compareHistory: function () {
-		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_history');
+		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_history', this.sName);
 		var sSnapshotRight = this.sSnapshotRight;
 		if (sSnapshotRight == 'latest') {
 			var aSnapshots = this._getSnapshots();
@@ -548,7 +549,7 @@ CompareTool.prototype = {
 	}, // function _getSnapshotAttachmentHistory
 
 	_compareOne: function () {
-		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_one');
+		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_one', this.sName);
 		var grRecordLeft;
 		var grRecordRight;
 		if (this.aType[0] == 'local') {
@@ -601,7 +602,7 @@ CompareTool.prototype = {
 	}, // function _compareOne
 
 	_compareList: function () {
-		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_list');
+		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_list', this.sName);
 		var aKeys = (this.sKeyFields) ? this._parseFields(this.sKeyFields) : ['sys_id'];
 		var aFields = (this.sOutputFields) ? this._parseFields(this.sOutputFields) : this._gtTable.getFields(this.sTableLeft);
 		var sQuery = (this.sFilterCondition) ? this.sFilterCondition + '^ORDERBY' + aFields[0] : 'ORDERBY' + aFields[0];
@@ -726,7 +727,7 @@ CompareTool.prototype = {
 	}, // function _convertStringToCode
 
 	_compareCount: function () {
-		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_count');
+		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_count', this.sName);
 		var sReturn = '';
 		var oLeft = {};
 		var oRight = {};
@@ -920,13 +921,13 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>339</sys_mod_count>
+        <sys_mod_count>340</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-02-23 07:30:05</sys_updated_on>
+        <sys_updated_on>2024-03-28 07:27:50</sys_updated_on>
     </sys_script_include>
 </record_update>
