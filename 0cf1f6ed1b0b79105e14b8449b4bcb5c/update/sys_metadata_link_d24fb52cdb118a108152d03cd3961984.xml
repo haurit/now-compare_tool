@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
     <sys_metadata_link action="INSERT_OR_UPDATE">
-        <directory>unload</directory>
+        <directory>update</directory>
         <documentkey>84df28801b2775504422dc61ab4bcb57</documentkey>
         <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_compare_tool_config">
     <x_snc_compare_tool_config action="INSERT_OR_UPDATE">
-        <connection_alias_left display_value="x_snc_compare_tool.ConnectionLeft">0461fa4e1b07f9105e14b8449b4bcb60</connection_alias_left>
-        <connection_alias_right display_value="x_snc_compare_tool.ConnectionRight">b191be4e1b07f9105e14b8449b4bcbf0</connection_alias_right>
+        <connection_alias_left/>
+        <connection_alias_right/>
+        <description>Running multiple compares at the same time and combine the output. Only available if the table is Compare Configuration [x_snc_compare_tool].</description>
         <filter_condition table="x_snc_compare_tool_config">table_left!=sys_db_object^table_left!=x_snc_compare_tool_config^type=local_history^numberSTARTSWITHCMPCFG_DEMO_<item endquery="false" field="table_left" goto="false" newquery="false" operator="!=" or="false" value="sys_db_object"/>
             <item endquery="false" field="table_left" goto="false" newquery="false" operator="!=" or="false" value="x_snc_compare_tool_config"/>
             <item display_value="Local (History)" endquery="false" field="type" goto="false" newquery="false" operator="=" or="false" value="local_history"/>
@@ -13,6 +14,7 @@
         </filter_condition>
         <key_fields/>
         <key_type>sys_id</key_type>
+        <name>Local (History) Compare Configuration</name>
         <number>CMPCFG_DEMO_0000011</number>
         <output_fields/>
         <output_filter>all</output_filter>
@@ -25,9 +27,9 @@
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-31 11:26:04</sys_created_on>
         <sys_id>84df28801b2775504422dc61ab4bcb57</sys_id>
-        <sys_mod_count>90</sys_mod_count>
+        <sys_mod_count>93</sys_mod_count>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-02-22 13:35:06</sys_updated_on>
+        <sys_updated_on>2024-03-29 06:16:06</sys_updated_on>
         <table_history_show_count>false</table_history_show_count>
         <table_left>x_snc_compare_tool_config</table_left>
         <table_right>x_snc_compare_tool_config</table_right>
@@ -76,16 +78,16 @@
 ]]></payload>
         <sys_class_name>sys_metadata_link</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
-        <sys_created_on>2024-02-23 07:39:49</sys_created_on>
-        <sys_id>dd120ed11ba8061004bab8449b4bcbac</sys_id>
-        <sys_mod_count>1</sys_mod_count>
+        <sys_created_on>2024-03-29 06:19:15</sys_created_on>
+        <sys_id>d24fb52cdb118a108152d03cd3961984</sys_id>
+        <sys_mod_count>0</sys_mod_count>
         <sys_name>CMPCFG_DEMO_0000011</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
-        <sys_update_name>sys_metadata_link_dd120ed11ba8061004bab8449b4bcbac</sys_update_name>
+        <sys_update_name>sys_metadata_link_d24fb52cdb118a108152d03cd3961984</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-02-27 15:57:18</sys_updated_on>
+        <sys_updated_on>2024-03-29 06:19:15</sys_updated_on>
         <tablename>x_snc_compare_tool_config</tablename>
     </sys_metadata_link>
 </record_update>

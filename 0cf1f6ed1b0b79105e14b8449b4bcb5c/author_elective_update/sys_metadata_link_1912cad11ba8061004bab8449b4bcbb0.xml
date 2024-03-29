@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
+    <sys_metadata_link action="DELETE">
+        <directory>unload</directory>
+        <documentkey>107226f11b87b9105e14b8449b4bcb9f</documentkey>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_compare_tool_config">
+    <x_snc_compare_tool_config action="INSERT_OR_UPDATE">
+        <connection_alias_left/>
+        <connection_alias_right display_value="x_snc_compare_tool.ConnectionRight">b191be4e1b07f9105e14b8449b4bcbf0</connection_alias_right>
+        <filter_condition/>
+        <key_fields/>
+        <key_type>sys_id</key_type>
+        <number>CMPCFG_DEMO_0000002</number>
+        <output_fields/>
+        <output_filter>diff</output_filter>
+        <output_format>screen</output_format>
+        <record_left>f31ccf7697816110b434f5f3a253afaa</record_left>
+        <record_right/>
+        <snapshot_left>current</snapshot_left>
+        <snapshot_right>latest</snapshot_right>
+        <status>complete</status>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2023-12-12 09:44:12</sys_created_on>
+        <sys_id>107226f11b87b9105e14b8449b4bcb9f</sys_id>
+        <sys_mod_count>19</sys_mod_count>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-02-22 15:27:06</sys_updated_on>
+        <table_history_show_count>false</table_history_show_count>
+        <table_left>sys_script_include</table_left>
+        <table_right>sys_script_include</table_right>
+        <type>local_remote_one</type>
+    </x_snc_compare_tool_config>
+</record_update>
+]]></payload>
+        <sys_class_name>sys_metadata_link</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-23 07:39:49</sys_created_on>
+        <sys_id>1912cad11ba8061004bab8449b4bcbb0</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>CMPCFG_DEMO_0000002</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_update_name>sys_metadata_link_1912cad11ba8061004bab8449b4bcbb0</sys_update_name>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-02-27 15:57:18</sys_updated_on>
+        <tablename>x_snc_compare_tool_config</tablename>
+    </sys_metadata_link>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</application>
+        <file_path/>
+        <instance_id>164357081b640ad4a43dcb7b234bcb48</instance_id>
+        <instance_name>empthauri</instance_name>
+        <name>sys_metadata_link_1912cad11ba8061004bab8449b4bcbb0</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_metadata_link"&gt;&lt;sys_metadata_link action="INSERT_OR_UPDATE"&gt;&lt;directory&gt;unload&lt;/directory&gt;&lt;documentkey&gt;107226f11b87b9105e14b8449b4bcb9f&lt;/documentkey&gt;&lt;payload&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="x_snc_compare_tool_config"&gt;
+    &lt;x_snc_compare_tool_config action="INSERT_OR_UPDATE"&gt;
+        &lt;connection_alias_left/&gt;
+        &lt;connection_alias_right display_value="x_snc_compare_tool.ConnectionRight"&gt;b191be4e1b07f9105e14b8449b4bcbf0&lt;/connection_alias_right&gt;
+        &lt;filter_condition/&gt;
+        &lt;key_fields/&gt;
+        &lt;key_type&gt;sys_id&lt;/key_type&gt;
+        &lt;number&gt;CMPCFG_DEMO_0000002&lt;/number&gt;
+        &lt;output_fields/&gt;
+        &lt;output_filter&gt;diff&lt;/output_filter&gt;
+        &lt;output_format&gt;screen&lt;/output_format&gt;
+        &lt;record_left&gt;f31ccf7697816110b434f5f3a253afaa&lt;/record_left&gt;
+        &lt;record_right/&gt;
+        &lt;snapshot_left&gt;current&lt;/snapshot_left&gt;
+        &lt;snapshot_right&gt;latest&lt;/snapshot_right&gt;
+        &lt;status&gt;complete&lt;/status&gt;
+        &lt;sys_created_by&gt;tom.hauri&lt;/sys_created_by&gt;
+        &lt;sys_created_on&gt;2023-12-12 09:44:12&lt;/sys_created_on&gt;
+        &lt;sys_id&gt;107226f11b87b9105e14b8449b4bcb9f&lt;/sys_id&gt;
+        &lt;sys_mod_count&gt;19&lt;/sys_mod_count&gt;
+        &lt;sys_updated_by&gt;tom.hauri&lt;/sys_updated_by&gt;
+        &lt;sys_updated_on&gt;2024-02-22 15:27:06&lt;/sys_updated_on&gt;
+        &lt;table_history_show_count&gt;false&lt;/table_history_show_count&gt;
+        &lt;table_left&gt;sys_script_include&lt;/table_left&gt;
+        &lt;table_right&gt;sys_script_include&lt;/table_right&gt;
+        &lt;type&gt;local_remote_one&lt;/type&gt;
+    &lt;/x_snc_compare_tool_config&gt;
+&lt;/record_update&gt;
+]]&gt;&lt;/payload&gt;&lt;sys_class_name&gt;sys_metadata_link&lt;/sys_class_name&gt;&lt;sys_created_by&gt;tom.hauri&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2024-02-23 07:39:49&lt;/sys_created_on&gt;&lt;sys_id&gt;1912cad11ba8061004bab8449b4bcbb0&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;CMPCFG_DEMO_0000002&lt;/sys_name&gt;&lt;sys_package display_value="Compare Tool" source="x_snc_compare_tool"&gt;0cf1f6ed1b0b79105e14b8449b4bcb5c&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Compare Tool"&gt;0cf1f6ed1b0b79105e14b8449b4bcb5c&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_metadata_link_1912cad11ba8061004bab8449b4bcbb0&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;tom.hauri&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2024-02-27 15:57:18&lt;/sys_updated_on&gt;&lt;tablename&gt;x_snc_compare_tool_config&lt;/tablename&gt;&lt;/sys_metadata_link&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>1640482722</payload_hash>
+        <record_name>CMPCFG_DEMO_0000002</record_name>
+        <reverted_from/>
+        <source>001cbb641b60821004bab8449b4bcb4a</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-02-27 15:57:18</sys_created_on>
+        <sys_id>7f4a98f21ba08a1004bab8449b4bcbc4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>18deb48e0820000001</sys_recorded_at>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-02-27 15:57:18</sys_updated_on>
+        <type>Metadata Snapshot</type>
+        <update_guid>374a98f299a08a10d496d53cb9866ec4</update_guid>
+        <update_guid_history>374a98f299a08a10d496d53cb9866ec4:1640482722,18a4e3d5b32046101f2ac8f6bd692d83:1122410450,9512cad18ea806103c688ed743f25bb2:-380972648</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2024-03-29 06:19:50</sys_created_on>
+        <sys_db_object display_value="" name="sys_metadata_link">sys_metadata_link</sys_db_object>
+        <sys_id>5354c81990eb4b4082fa2c645dc91000</sys_id>
+        <sys_metadata>1912cad11ba8061004bab8449b4bcbb0</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>CMPCFG_DEMO_0000002</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_scope_delete display_value="">26243eee7f0842588d168c68389a4a10</sys_scope_delete>
+        <sys_update_name>sys_metadata_link_1912cad11ba8061004bab8449b4bcbb0</sys_update_name>
+        <sys_update_version display_value="sys_metadata_link_1912cad11ba8061004bab8449b4bcbb0">7f4a98f21ba08a1004bab8449b4bcbc4</sys_update_version>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2024-03-29 06:19:50</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>
