@@ -5,7 +5,7 @@
         <api_name>x_snc_compare_tool.CompareTool</api_name>
         <caller_access/>
         <client_callable>false</client_callable>
-        <description>Compare Tool&#13;
+        <description>Compare Tool
 ServiceNow Customer Outcomes, Tom Hauri</description>
         <name>CompareTool</name>
         <script><![CDATA[var CompareTool = Class.create();
@@ -57,7 +57,7 @@ CompareTool.prototype = {
 			this.bConnectionLeft = this._CompareToolAPI.bConnectionLeft;
 			this.bConnectionRight = this._CompareToolAPI.bConnectionRight;
 		} // if connection alias
-		//gs.debug('x_snc_compare_tool.CompareTool.initialize sCompareId: ' + this.sCompareId + ' sNumber: ' + this.sNumber + ' sType: ' + this.sType + ' sOutputFormat: ' + this.sOutputFormat + ' sOutputFilter: ' + this.sOutputFilter + ' sRecordLeftId: ' + this.sRecordLeftId + ' sRecordRightId: ' + this.sRecordRightId + ' sKeyType: ' + this.sKeyType + ' sKeyFields: ' + this.sKeyFields + ' sOutputFields: ' + this.sOutputFields + ' sTableLeft: ' + this.sTableLeft + ' sTableRight: ' + this.sTableRight + ' sConnectionAliasLeftId: ' + this.sConnectionAliasLeftId + ' sConnectionAliasRightId: ' + this.sConnectionAliasRightId + ' bConnectionLeft: ' + this.bConnectionLeft + ' bConnectionRight: ' + this.bConnectionRight + ' sFilterCondition: ' + this.sFilterCondition + ' sSnapshotLeft: ' + this.sSnapshotLeft + ' sSnapshotRight: ' + this.sSnapshotRight + ' bTableHistoryShowCount: ' + this.bTableHistoryShowCount + ' sStatus: ' + this.sStatus + ' sAction: ' + this.sAction + ' sParentWorkerId: ' + this.sParentWorkerId + ' current scope: ' + gs.getCurrentScopeName() + ' caller scope: ' + gs.getCallerScopeName());
+		//gs.debug('x_snc_compare_tool.CompareTool.initialize sCompareId: ' + this.sCompareId + ' sNumber: ' + this.sNumber + ' sName: ' + this.sName +  ' sType: ' + this.sType + ' sOutputFormat: ' + this.sOutputFormat + ' sOutputFilter: ' + this.sOutputFilter + ' sRecordLeftId: ' + this.sRecordLeftId + ' sRecordRightId: ' + this.sRecordRightId + ' sKeyType: ' + this.sKeyType + ' sKeyFields: ' + this.sKeyFields + ' sOutputFields: ' + this.sOutputFields + ' sTableLeft: ' + this.sTableLeft + ' sTableRight: ' + this.sTableRight + ' sConnectionAliasLeftId: ' + this.sConnectionAliasLeftId + ' sConnectionAliasRightId: ' + this.sConnectionAliasRightId + ' bConnectionLeft: ' + this.bConnectionLeft + ' bConnectionRight: ' + this.bConnectionRight + ' sFilterCondition: ' + this.sFilterCondition + ' sSnapshotLeft: ' + this.sSnapshotLeft + ' sSnapshotRight: ' + this.sSnapshotRight + ' bTableHistoryShowCount: ' + this.bTableHistoryShowCount + ' sStatus: ' + this.sStatus + ' sAction: ' + this.sAction + ' sParentWorkerId: ' + this.sParentWorkerId + ' current scope: ' + gs.getCurrentScopeName() + ' caller scope: ' + gs.getCallerScopeName());
 		this._gt = new global.GlobalTools();
 		this._gtArray = new global.GlobalToolsArray();
 		this._gtObject = new global.GlobalToolsObject();
@@ -341,15 +341,23 @@ CompareTool.prototype = {
 				} // while record
 			} else {
 				oVersionHistory = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, this.sSnapshotLeft + '_VersionHistory.json', true, false, true);
-				Object.keys(oVersionHistory[this.sTableLeft]).forEach(function (sKey) {
-					this._gtObject.setValue(sKey + '/left', this._gtObject.getValue(this.sTableLeft + '/' + sKey, '', oVersionHistory), oLeft);
-				}, this); // each key
+				if ((oVersionHistory) && (oVersionHistory.hasOwnProperty(this.sTableLeft))) {
+					Object.keys(oVersionHistory[this.sTableLeft]).forEach(function (sKey) {
+						this._gtObject.setValue(sKey + '/left', this._gtObject.getValue(this.sTableLeft + '/' + sKey, '', oVersionHistory), oLeft);
+					}, this); // each key
+				} else {
+					return this._setError('snapshot_left');
+				} // if obj has table left
 			} // if version history left
 			if (sSnapshotRight) {
 				oVersionHistory = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, sSnapshotRight + '_VersionHistory.json', true, false, true);
-				Object.keys(oVersionHistory[this.sTableLeft]).forEach(function (sKey) {
-					this._gtObject.setValue(sKey + '/right', this._gtObject.getValue(this.sTableLeft + '/' + sKey, '', oVersionHistory), oRight);
-				}, this); // each key
+				if ((oVersionHistory) && (oVersionHistory.hasOwnProperty(this.sTableLeft))) {
+					Object.keys(oVersionHistory[this.sTableLeft]).forEach(function (sKey) {
+						this._gtObject.setValue(sKey + '/right', this._gtObject.getValue(this.sTableLeft + '/' + sKey, '', oVersionHistory), oRight);
+					}, this); // each key
+				} else {
+					return this._setError('snapshot_right');
+				} // if obj has table right
 			} // if version history
 			this._gExecutionTracker.incrementPercentComplete(50);
 		} else {
@@ -681,14 +689,7 @@ CompareTool.prototype = {
 
 	_getLocalList: function (sTable, sQuery, aKeys, aFields, sSource) {
 		var oLocalListResult = {};
-		var sValue = '', sDisplayValue = '';
-		var _parseKeys = function (aKeys, grRecord) {
-			var aKeyValues = [];
-			aKeys.forEach(function (sKey) {
-				aKeyValues.push(grRecord.getValue(sKey));
-			}, this); // each key
-			return aKeyValues.join('_');
-		}; // function _parseKeys
+		var sField = '', sValue = '', sDisplayValue = '', aKeyValues = [], sKeyValue = '';
 		var grRecord = new GlideRecord(sTable);
 		if (sQuery) {
 			grRecord.addEncodedQuery(sQuery);
@@ -698,8 +699,13 @@ CompareTool.prototype = {
 			this._setError('local_list');
 		} // if valid record
 		while (grRecord._next()) {
-			var sKeyValue = _parseKeys(aKeys, grRecord);
-			aFields.forEach(function (sField) {
+			aKeyValues = [];
+			aKeys.forEach(function (sKey) {
+				aKeyValues.push(grRecord.getValue(sKey));
+			}, this); // each key
+			sKeyValue = aKeyValues.join('_');
+			for (var i = 0; i < aFields.length; i++) { // --> aFields.forEach caused "this" confusion and stopped progress bar from working
+				sField = aFields[i];
 				sValue = grRecord.getValue(sField);
 				sDisplayValue = grRecord.getDisplayValue(sField);
 				sDisplayValue = ((sDisplayValue) && (sDisplayValue != 'null') && (sDisplayValue != 'unknown')) ? sDisplayValue : grRecord[sField].getDisplayValue();
@@ -713,7 +719,7 @@ CompareTool.prototype = {
 				if ((sDisplayValue) && (sValue != sDisplayValue)) {
 					this._gtObject.setValue(sKeyValue + '/' + sField + '/' + sSource + '/display_value', sDisplayValue, oLocalListResult);
 				} // if display value and not same as value
-			}, this); // each field
+			} // for each field --> aFields.forEach caused "this" confusion and stopped progress bar from working	
 		} // while records
 		return oLocalListResult;
 	}, // function _getLocalList
@@ -921,13 +927,13 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>340</sys_mod_count>
+        <sys_mod_count>361</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-03-28 07:27:50</sys_updated_on>
+        <sys_updated_on>2024-03-29 08:00:35</sys_updated_on>
     </sys_script_include>
 </record_update>
