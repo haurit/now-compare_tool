@@ -10,33 +10,43 @@ ServiceNow Customer Outcomes, Tom Hauri</description>
         <name>CompareBR</name>
         <script><![CDATA[var CompareBR = Class.create();
 CompareBR.prototype = {
-    initialize: function() {
+	initialize: function () {
 		this._gtRecordRead = new global.GlobalToolsRecordRead();
-    }, // function initialize
+	}, // function initialize
 
 	runBeforeSave: function (grCompare, grCompareOld) {
-		var sQuery = grCompare.getValue('filter_condition');
-		var sCombinedQuery = this._gtRecordRead.combineQueries('table_left!=x_snc_compare_tool_config^type=' + current.getValue('type'), sQuery);
-		grCompare.setValue('filter_condition', sCombinedQuery);		
+		if (!grCompare.getValue('name')) {
+			var sTableName = '';
+			if (!grCompare.table_left.nil()) {
+				var grTemp = new GlideRecord(grCompare.getValue('table_left'));	
+				sTableName = ' ' + grTemp.getClassDisplayValue();
+			} // if table left
+			grCompare.setValue('name', grCompare.getDisplayValue('type') + sTableName);
+		} // if name is empty
+		if (grCompare.getValue('table_left') == 'x_snc_compare_tool_config') {
+			var sQuery = grCompare.getValue('filter_condition');
+			var sCombinedQuery = this._gtRecordRead.combineQueries('table_left!=x_snc_compare_tool_config^type=' + current.getValue('type'), sQuery);
+			grCompare.setValue('filter_condition', sCombinedQuery);
+		} // if table left is compare tool
 	}, // function runBeforeSave
 
-    type: 'CompareBR',
-	version: '1.0.0',
+	type: 'CompareBR',
+	version: '1.0.4',
 	author: 'Tom Hauri',
 	email: 'tom@hauri.biz'
-	
+
 };]]></script>
         <sys_class_name>sys_script_include</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2024-01-05 06:54:32</sys_created_on>
         <sys_id>9551e5211b6339505e14b8449b4bcba4</sys_id>
-        <sys_mod_count>1</sys_mod_count>
+        <sys_mod_count>6</sys_mod_count>
         <sys_name>CompareBR</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_9551e5211b6339505e14b8449b4bcba4</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-05 07:03:32</sys_updated_on>
+        <sys_updated_on>2024-03-28 07:24:23</sys_updated_on>
     </sys_script_include>
 </record_update>

@@ -2,6 +2,7 @@
     <element db_object_id="c9c63e251b4b79105e14b8449b4bcb0d" label="Compare Configuration" max_length="40" name="x_snc_compare_tool_config" type="collection">
         <element default="0461fa4e1b07f9105e14b8449b4bcb60" label="Connection Alias (Left)" max_length="32" name="connection_alias_left" reference="sys_alias" reference_qual="connection_type=http_connection^type=connection^EQ" reference_qual_condition="connection_type=http_connection^type=connection^EQ" type="reference"/>
         <element default="b191be4e1b07f9105e14b8449b4bcbf0" label="Connection Alias (Right)" max_length="32" name="connection_alias_right" reference="sys_alias" reference_qual="connection_type=http_connection^type=connection^EQ" reference_qual_condition="connection_type=http_connection^type=connection^EQ" type="reference"/>
+        <element label="Description" max_length="4000" name="description" type="string"/>
         <element attributes="condition_builder=v2,show_condition_count=true" dependent="table_left" dependent_on_field="table_left" label="Filter Condition" max_length="4000" name="filter_condition" type="conditions" use_dependent_field="true"/>
         <element attributes="no_sort=true,slushbucket_ref_no_expand=true" dependent="table_left" dependent_on_field="table_left" label="Key (Fields)" max_length="4000" name="key_fields" reference="sys_dictionary" reference_qual="javascript:'sys_idIN' + new global.GlobalToolsTable().getFields(current.getValue('table_left'), false, true) + '^ORDERBYcolumn_label'" type="glide_list" use_dependent_field="true" use_reference_qualifier="advanced"/>
         <element choice="3" default="sys_id" label="Key (Type)" max_length="40" name="key_type" type="choice">
@@ -11,6 +12,7 @@
                 <element inactive_on_update="false" label="Key Fields" sequence="300" value="key_fields"/>
             </choice>
         </element>
+        <element label="Name" max_length="255" name="name" type="string"/>
         <element default="javascript:global.getNextObjNumberPadded();" display="true" label="Number" max_length="40" name="number" read_only="true" type="string"/>
         <element attributes="no_sort=true,slushbucket_ref_no_expand=true,maintain_order=true" dependent="table_left" dependent_on_field="table_left" label="Output (Fields)" max_length="4000" name="output_fields" reference="sys_dictionary" reference_qual="javascript:'sys_idIN' + new global.GlobalToolsTable().getFields(current.getValue('table_left'), false, true) + '^ORDERBYcolumn_label'" type="glide_list" use_dependent_field="true" use_reference_qualifier="advanced"/>
         <element choice="3" default="diff" label="Output (Filter)" max_length="40" name="output_filter" type="choice">

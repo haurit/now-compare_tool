@@ -61,8 +61,9 @@ function cleanupSnapshot() {
 	gdwProgress.setTitle(getMessage('CompareTool_progress'));
 	gdwProgress.setPreference('sysparm_renderer_progress_title', getMessage('CompareTool_progress'));
 	gdwProgress.setPreference('sysparm_ajax_processor', 'x_snc_compare_tool.CompareAJAX');
-	gdwProgress.setPreference('sysparm_ajax_processor_sys_id', g_form.getUniqueValue());
 	gdwProgress.setPreference('sysparm_ajax_processor_function', 'cleanupSnapshot');
+	gdwProgress.setPreference('sysparm_ajax_processor_sys_id', g_form.getUniqueValue());
+	gdwProgress.setPreference('sysparm_ajax_processor_displayname', g_form.getValue('name'));
 	['number', 'type', 'output_format', 'output_filter', 'record_left', 'record_right', 'key_type', 'key_fields', 'output_fields', 'table_left', 'table_right', 'connection_alias_left', 'connection_alias_right', 'filter_condition', 'snapshot_left', 'snapshot_right', 'table_history_show_count', 'status'].forEach(function (sArgument) {
 		gdwProgress.setPreference('sysparm_ajax_processor_' + sArgument, g_form.getValue(sArgument));
 	}); // each argument
@@ -99,7 +100,7 @@ function reloadPage() {
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>1b35ddcb1bd771504422dc61ab4bcb95</sys_id>
-        <sys_mod_count>15</sys_mod_count>
+        <sys_mod_count>16</sys_mod_count>
         <sys_name>Cleanup Snapshots</sys_name>
         <sys_overrides/>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
@@ -107,7 +108,7 @@ function reloadPage() {
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_ui_action_1b35ddcb1bd771504422dc61ab4bcb95</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-02-21 19:07:09</sys_updated_on>
+        <sys_updated_on>2024-03-28 07:39:59</sys_updated_on>
         <table>x_snc_compare_tool_config</table>
         <ui11_compatible>true</ui11_compatible>
         <ui16_compatible>true</ui16_compatible>

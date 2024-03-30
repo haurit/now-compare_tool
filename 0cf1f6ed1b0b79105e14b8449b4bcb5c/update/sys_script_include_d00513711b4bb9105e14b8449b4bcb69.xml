@@ -16,11 +16,11 @@ CompareAJAX.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
 		try {
 			var sFunction = this.getParameter('sysparm_ajax_processor_function');
 			var gsHierarchicalWorker = new GlideScriptedHierarchicalWorker();
-			gsHierarchicalWorker.setProgressName(gs.getMessage('CompareTool_progress_' + sFunction) + ' ' + this.getParameter('sysparm_ajax_processor_number'));
+			gsHierarchicalWorker.setProgressName(gs.getMessage('CompareTool_progress_' + sFunction) + ' ' + this.getParameter('sysparm_ajax_processor_number') + ' ' + this.getParameter('sysparm_ajax_processor_displayname'));
 			gsHierarchicalWorker.setScriptIncludeName('x_snc_compare_tool.CompareTool');
 			gsHierarchicalWorker.setScriptIncludeMethod(sFunction);
-			var aVariables = ['sCompareId', 'sNumber', 'sType', 'sOutputFormat', 'sOutputFilter', 'sRecordLeftId', 'sRecordRightId', 'sKeyType', 'sKeyFields', 'sOutputFields', 'sTableLeft', 'sTableRight', 'sConnectionAliasLeftId', 'sConnectionAliasRightId', 'sFilterCondition', 'sSnapshotLeft', 'sSnapshotRight', 'sTableHistoryShowCount', 'sStatus'];
-			['sys_id', 'number', 'type', 'output_format', 'output_filter', 'record_left', 'record_right', 'key_type', 'key_fields', 'output_fields', 'table_left', 'table_right', 'connection_alias_left', 'connection_alias_right', 'filter_condition', 'snapshot_left', 'snapshot_right', 'table_history_show_count', 'status'].forEach(function (sArgument, i) {
+			var aVariables = ['sCompareId', 'sNumber', 'sName', 'sType', 'sOutputFormat', 'sOutputFilter', 'sRecordLeftId', 'sRecordRightId', 'sKeyType', 'sKeyFields', 'sOutputFields', 'sTableLeft', 'sTableRight', 'sConnectionAliasLeftId', 'sConnectionAliasRightId', 'sFilterCondition', 'sSnapshotLeft', 'sSnapshotRight', 'sTableHistoryShowCount', 'sStatus'];
+			['sys_id', 'number', 'displayname', 'type', 'output_format', 'output_filter', 'record_left', 'record_right', 'key_type', 'key_fields', 'output_fields', 'table_left', 'table_right', 'connection_alias_left', 'connection_alias_right', 'filter_condition', 'snapshot_left', 'snapshot_right', 'table_history_show_count', 'status'].forEach(function (sArgument, i) {
 				gsHierarchicalWorker.putConstructorArg(aVariables[i], this.getParameter('sysparm_ajax_processor_' + sArgument));
 			}, this); // each argument
 			gsHierarchicalWorker.putConstructorArg('sAction', sFunction);
@@ -65,7 +65,7 @@ CompareAJAX.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
 	}, // function getSnapshots
 
 	type: 'CompareAJAX',
-	version: '1.0.3',
+	version: '1.0.4',
 	author: 'Tom Hauri',
 	email: 'tom@hauri.biz'
 });]]></script>
@@ -73,13 +73,13 @@ CompareAJAX.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:30:40</sys_created_on>
         <sys_id>d00513711b4bb9105e14b8449b4bcb69</sys_id>
-        <sys_mod_count>54</sys_mod_count>
+        <sys_mod_count>58</sys_mod_count>
         <sys_name>CompareAJAX</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_d00513711b4bb9105e14b8449b4bcb69</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-02-23 07:32:18</sys_updated_on>
+        <sys_updated_on>2024-03-30 06:06:55</sys_updated_on>
     </sys_script_include>
 </record_update>

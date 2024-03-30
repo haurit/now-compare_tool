@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sys_metadata_link">
     <sys_metadata_link action="INSERT_OR_UPDATE">
-        <directory>unload</directory>
-        <documentkey>406ddabd1b47b9105e14b8449b4bcb3b</documentkey>
+        <directory>update</directory>
+        <documentkey>b7d464261b4b3d105e14b8449b4bcb26</documentkey>
         <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="x_snc_compare_tool_config">
     <x_snc_compare_tool_config action="INSERT_OR_UPDATE">
         <connection_alias_left display_value="x_snc_compare_tool.ConnectionLeft">0461fa4e1b07f9105e14b8449b4bcb60</connection_alias_left>
         <connection_alias_right display_value="x_snc_compare_tool.ConnectionRight">b191be4e1b07f9105e14b8449b4bcbf0</connection_alias_right>
-        <filter_condition table="sys_db_object">super_class.name=task<item endquery="false" field="super_class.name" goto="false" newquery="false" operator="=" or="false" value="task"/>
+        <description>Compare a record between remote instances.</description>
+        <filter_condition table="sys_script_include">name=GlobalTools<item endquery="false" field="name" goto="false" newquery="false" operator="=" or="false" value="GlobalTools"/>
         </filter_condition>
         <key_fields/>
         <key_type>sys_id</key_type>
-        <number>CMPCFG_DEMO_0000007</number>
+        <name>Remote to Remote (One) Script Include</name>
+        <number>CMPCFG_DEMO_0000003</number>
         <output_fields/>
-        <output_filter>all</output_filter>
+        <output_filter>diff</output_filter>
         <output_format>screen</output_format>
         <record_left/>
         <record_right/>
@@ -20,30 +22,30 @@
         <snapshot_right>latest</snapshot_right>
         <status>complete</status>
         <sys_created_by>tom.hauri</sys_created_by>
-        <sys_created_on>2023-12-12 09:22:11</sys_created_on>
-        <sys_id>406ddabd1b47b9105e14b8449b4bcb3b</sys_id>
-        <sys_mod_count>34</sys_mod_count>
+        <sys_created_on>2023-12-14 08:32:15</sys_created_on>
+        <sys_id>b7d464261b4b3d105e14b8449b4bcb26</sys_id>
+        <sys_mod_count>43</sys_mod_count>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-04 19:53:48</sys_updated_on>
+        <sys_updated_on>2024-03-29 06:12:02</sys_updated_on>
         <table_history_show_count>false</table_history_show_count>
-        <table_left>sys_db_object</table_left>
-        <table_right>alm_asset</table_right>
-        <type>remote_remote_count</type>
+        <table_left>sys_script_include</table_left>
+        <table_right>sys_script_include</table_right>
+        <type>remote_remote_one</type>
     </x_snc_compare_tool_config>
 </record_update>
 ]]></payload>
         <sys_class_name>sys_metadata_link</sys_class_name>
         <sys_created_by>tom.hauri</sys_created_by>
-        <sys_created_on>2024-02-23 07:39:49</sys_created_on>
-        <sys_id>d112cad11ba8061004bab8449b4bcbb6</sys_id>
-        <sys_mod_count>1</sys_mod_count>
-        <sys_name>CMPCFG_DEMO_0000007</sys_name>
+        <sys_created_on>2024-03-29 06:19:15</sys_created_on>
+        <sys_id>1a4fb52cdb118a108152d03cd3961988</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>CMPCFG_DEMO_0000003</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
-        <sys_update_name>sys_metadata_link_d112cad11ba8061004bab8449b4bcbb6</sys_update_name>
+        <sys_update_name>sys_metadata_link_1a4fb52cdb118a108152d03cd3961988</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-02-27 15:57:18</sys_updated_on>
+        <sys_updated_on>2024-03-29 06:19:15</sys_updated_on>
         <tablename>x_snc_compare_tool_config</tablename>
     </sys_metadata_link>
 </record_update>
