@@ -7,10 +7,12 @@
         <client_callable>false</client_callable>
         <description>Compare Tool API Handler&#13;
 ServiceNow Customer Outcomes, Tom Hauri</description>
+        <mobile_callable>false</mobile_callable>
         <name>CompareAPI</name>
+        <sandbox_callable>false</sandbox_callable>
         <script><![CDATA[var CompareAPI = Class.create();
 CompareAPI.prototype = {
-	initialize: function (sConnectionAliasLeftId, sConnectionAliasRightId, sCompareId, oReturn) {
+	initialize: function (sConnectionAliasLeftId, sConnectionAliasRightId, sCompareId, oReturn, gtCache, gtDateTime) {
 		this.iRemoteRecordsChunkSize = 2000;
 		this.sCompareId = sCompareId;
 		this.oReturn = oReturn;
@@ -21,15 +23,32 @@ CompareAPI.prototype = {
 		this.sConnectionAliasLeftId = sConnectionAliasLeftId;
 		this.sConnectionAliasRightId = sConnectionAliasRightId;
 		this.bConnectionLeft = false;
+		this.sRemoteInstanceLeft = '';
 		this.bConnectionRight = false;
+		this.sRemoteInstanceRight = '';
 		this.sLogPrefix = 'x_snc_compare_tool.CompareAPI.';
 		var oResult = {};
+		if ((gtCache) && (gtCache instanceof global.GlobalToolsCache)) {
+			this._gtCache = gtCache;
+		} else {
+			this._gtCache = new global.GlobalToolsCache();
+		} // if cache
+		this.bTimer = ((gtDateTime) && (gtDateTime instanceof global.GlobalToolsDateTime)) ? true : false;
+		if (this.bTimer) {
+			this._gtDateTime = gtDateTime;
+			this._sTimerPrefix = 'ctapi/';
+			this._gtTable = new global.GlobalToolsTable(this._gtCache, this._gtDateTime);
+			this._gtDateTime.startTimer(this._sTimerPrefix + 'initialize');
+		} else {
+			this._gtTable = new global.GlobalToolsTable(this._gtCache);
+		} // initialize timer
 		if (this.sConnectionAliasLeftId) {
 			try {
 				this._gtRESTAPILeft = new global.GlobalToolsRESTAPI(this.sConnectionAliasLeftId);
 				if ((this._gtRESTAPILeft) && (this._gtRESTAPILeft.bValidConnectionConfig)) {
 					oResult = this._gtRESTAPILeft.testNOWConnection();
 					this.bConnectionLeft = ((oResult) && (oResult.hasOwnProperty('success')) && (oResult['success'] == true)) ? true : false;
+					this.sRemoteInstanceLeft = this._gtRESTAPILeft.sHostName;
 				} // if api
 			} catch (oEx) {
 				this._setError('remote_initialize_left', String(oEx));
@@ -42,6 +61,7 @@ CompareAPI.prototype = {
 				if ((this._gtRESTAPIRight) && (this._gtRESTAPIRight.bValidConnectionConfig)) {
 					oResult = this._gtRESTAPIRight.testNOWConnection();
 					this.bConnectionRight = ((oResult) && (oResult.hasOwnProperty('success')) && (oResult['success'] == true)) ? true : false;
+					this.sRemoteInstanceRight = this._gtRESTAPIRight.sHostName;
 				} // if api
 			} catch (oEx) {
 				this._setError('remote_initialize_right', String(oEx));
@@ -51,19 +71,23 @@ CompareAPI.prototype = {
 		this._gt = new global.GlobalTools();
 		this._gtArray = new global.GlobalToolsArray();
 		this._gtObject = new global.GlobalToolsObject();
-		this._gtTable = new global.GlobalToolsTable();
 		this._gtRecordWrite = new global.GlobalToolsRecordWrite();
 		this._gtAttachment = new global.GlobalToolsAttachment();
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'initialize'); }
 	}, // function initialize
 
 	getRemoteRecordLeft: function (sTable, sQuery) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'getRemoteRecordLeft'); }
 		try {
 			var oCount = this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery);
 			var sResultType = this._gt.getType(oCount);
 			if ((sResultType == 'number') && (oCount == 1)) {
+				if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteRecordLeft'); }
 				return this._gtRESTAPILeft.getRemoteRecord(sTable, sQuery);
 			} else if ((sResultType == 'number') && (oCount > 1)) {
 				this._setError('remote_record_left_multiple');
+			} else if ((sResultType == 'number') && (oCount == 0)) {
+				this._setError('remote_record_left', gs.getMessage('no records found.'));
 			} else if ((sResultType == 'object') && (oCount.hasOwnProperty('message'))) {
 				this._setError('remote_record_left', oCount['message']);
 			} else {
@@ -73,16 +97,21 @@ CompareAPI.prototype = {
 			this._setError('remote_record_left', String(oEx));
 			gs.error(this.sLogPrefix + 'getRemoteRecordLeft Error getting remote record: ' + String(oEx));
 		} // try
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteRecordLeft'); }
 	}, // function getRemoteRecordLeft
 
 	getRemoteRecordRight: function (sTable, sQuery) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'getRemoteRecordRight'); }
 		try {
 			var oCount = this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery);
 			var sResultType = this._gt.getType(oCount);
 			if ((sResultType == 'number') && (oCount == 1)) {
+				if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteRecordRight'); }
 				return this._gtRESTAPIRight.getRemoteRecord(sTable, sQuery);
 			} else if ((sResultType == 'number') && (oCount > 1)) {
 				this._setError('remote_record_right_multiple');
+			} else if ((sResultType == 'number') && (oCount == 0)) {
+				this._setError('remote_record_right', gs.getMessage('no records found.'));
 			} else if ((sResultType == 'object') && (oCount.hasOwnProperty('message'))) {
 				this._setError('remote_record_right', oCount['message']);
 			} else {
@@ -92,9 +121,11 @@ CompareAPI.prototype = {
 			this._setError('remote_record_right', String(oEx));
 			gs.error(this.sLogPrefix + 'getRemoteRecordRight Error getting remote record: ' + String(oEx));
 		} // try
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteRecordRight'); }
 	}, // function getRemoteRecordRight
 
 	getRemoteListLeft: function (sTable, sQuery, aKeys, aFields) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'getRemoteListLeft'); }
 		try {
 			var aRESTAPIResult = [];
 			var aAllFields = this._gtArray.mergeArray(aKeys, aFields);
@@ -113,7 +144,10 @@ CompareAPI.prototype = {
 					} // each chunk
 					aRESTAPIResult = this._parseAttachment();
 				} // if remote count
-				return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'left');
+				if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteListLeft'); }
+				return this.parseAPIResult(sTable, aRESTAPIResult, aKeys, aFields, 'left');
+			} else if ((sResultType == 'number') && (oCount == 0)) {
+				this._setError('remote_list_left', gs.getMessage('no records found.'));
 			} else if ((sResultType == 'object') && (oCount.hasOwnProperty('message'))) {
 				this._setError('remote_list_left', oCount['message']);
 			} else {
@@ -123,9 +157,11 @@ CompareAPI.prototype = {
 			this._setError('remote_list_left', String(oEx));
 			gs.error(this.sLogPrefix + 'getRemoteListLeft Error getting remote list: ' + String(oEx));
 		} // try
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteListLeft'); }
 	}, // function getRemoteListLeft
 
 	getRemoteListRight: function (sTable, sQuery, aKeys, aFields) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'getRemoteListRight'); }
 		try {
 			var aRESTAPIResult = [];
 			var aAllFields = this._gtArray.mergeArray(aKeys, aFields);
@@ -144,7 +180,10 @@ CompareAPI.prototype = {
 					} // each chunk
 					aRESTAPIResult = this._parseAttachment();
 				} // if remote count
-				return this.parseAPIResult(aRESTAPIResult, aKeys, aFields, 'right');
+				if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteListRight'); }
+				return this.parseAPIResult(sTable, aRESTAPIResult, aKeys, aFields, 'right');
+			} else if ((sResultType == 'number') && (oCount == 0)) {
+				this._setError('remote_list_right', gs.getMessage('no records found.'));
 			} else if ((sResultType == 'object') && (oCount.hasOwnProperty('message'))) {
 				this._setError('remote_list_right', oCount['message']);
 			} else {
@@ -154,11 +193,17 @@ CompareAPI.prototype = {
 			this._setError('remote_list_right', String(oEx));
 			gs.error(this.sLogPrefix + 'getRemoteListRight Error getting remote list: ' + String(oEx));
 		} // try
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteListRight'); }
 	}, // function getRemoteListRight
 
-	parseAPIResult: function (aRESTAPIResult, aKeys, aFields, sSource) {
+	parseAPIResult: function (sTable, aRESTAPIResult, aKeys, aFields, sSource) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'parseAPIResult'); }
 		var oRESTAPIResult = {};
-		var sValue = '', sDisplayValue = '';
+		var grRecord = new GlideRecord(sTable); // workaround to determine field type
+		grRecord.setLimit(1);
+		grRecord.query();
+		grRecord.next();
+		var sValue = '', sDisplayValue = '', sType = '';
 		var _parseKeys = function (aKeys, oResult) {
 			var aKeyValues = [];
 			aKeys.forEach(function (sKey) {
@@ -172,9 +217,15 @@ CompareAPI.prototype = {
 			aRESTAPIResult.forEach(function (oResult) {
 				var sKeyValue = _parseKeys(aKeys, oResult);
 				aFields.forEach(function (sField) {
-					sValue = this._gtObject.getValue(sField + '/value', '', oResult);
+					sType = this._gtTable.getInternalType(grRecord, sField);
+					if ((sType) && ((sType.indexOf('date') != -1) || (sType.indexOf('time') != -1))) {
+						sValue = this._gtObject.getValue(sField + '/display_value', '', oResult);
+						sDisplayValue = '';
+					} else {
+						sValue = this._gtObject.getValue(sField + '/value', '', oResult);
+						sDisplayValue = this._gtObject.getValue(sField + '/display_value', '', oResult);
+					} // if time or date
 					this._gtObject.setValue(sKeyValue + '/' + sField + '/' + sSource + '/value', sValue.replace(/\r/gm, ''), oRESTAPIResult); // remove cr (13)
-					sDisplayValue = this._gtObject.getValue(sField + '/display_value', '', oResult);
 					if ((sDisplayValue) && (sValue != sDisplayValue)) {
 						this._gtObject.setValue(sKeyValue + '/' + sField + '/' + sSource + '/display_value', sDisplayValue, oRESTAPIResult);
 					} // if display value and not same as value
@@ -187,10 +238,12 @@ CompareAPI.prototype = {
 			} // if api result is not successful
 			this._setError('parse_api', sErrorMessage);
 		} // if valid array
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'parseAPIResult'); }
 		return oRESTAPIResult;
 	}, // function parseAPIResult
 
 	_parseAttachment: function () {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + '_parseAttachment'); }
 		try {
 			var sResposeBody = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, 'remote_record_', false, true);
 			if (sResposeBody) {
@@ -198,6 +251,7 @@ CompareAPI.prototype = {
 				try {
 					var oResposeBody = JSON.parse(sResposeBody);
 					this._gtRecordWrite.deleteMultiple('sys_attachment', 'table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId + '^file_nameSTARTSWITHremote_record_');
+					if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + '_parseAttachment'); }
 					return oResposeBody['result'];
 				} catch (oEx) {
 					this._setError('parse_chunks', String(oEx));
@@ -209,27 +263,35 @@ CompareAPI.prototype = {
 			gs.error(this.sLogPrefix + '_parseAttachment Error parsing attachments: ' + String(oEx));
 		} // try remote call
 		this._gtRecordWrite.deleteMultiple('sys_attachment', 'table_name=x_snc_compare_tool_config^table_sys_id=' + this.sCompareId + '^file_nameSTARTSWITHremote_record_');
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + '_parseAttachment'); }
 	}, // function _parseAttachment
 
 	getRemoteCountLeft: function (sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'getRemoteCountLeft'); }
 		try {
+			if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteCountLeft'); }
 			return this._gtRESTAPILeft.doNOWRESTCount(sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue);
 		} catch (oEx) {
 			this._setError('remote_count_left', String(oEx));
 			gs.error(this.sLogPrefix + 'getRemoteCountLeft Error getting remote count: ' + String(oEx));
 		} // try
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteCountLeft'); }
 	}, // function getRemoteCountLeft
 
 	getRemoteCountRight: function (sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'getRemoteCountRight'); }
 		try {
+			if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteCountRight'); }
 			return this._gtRESTAPIRight.doNOWRESTCount(sTable, sQuery, sGroupByField, bOrderByCount, sDisplayValue);
 		} catch (oEx) {
 			this._setError('remote_count_right', String(oEx));
 			gs.error(this.sLogPrefix + 'getRemoteCountRight Error getting remote record: ' + String(oEx));
 		} // try
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteCountRight'); }
 	}, // function getRemoteCountRight
 
 	getRemoteCountObjectLeft: function (sQuery) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'getRemoteCountObjectLeft'); }
 		var oCountResult = {};
 		try {
 			var sTable = '', sCount = '';
@@ -252,10 +314,12 @@ CompareAPI.prototype = {
 			this._setError('remote_count_object_left', String(oEx));
 			gs.error(this.sLogPrefix + 'getRemoteCountObjectLeft Error getting remote object: ' + String(oEx));
 		} // try
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteCountObjectLeft'); }
 		return oCountResult;
 	}, // function getRemoteCountObjectRight
 
 	getRemoteCountObjectRight: function (sQuery) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'getRemoteCountObjectRight'); }
 		var oCountResult = {};
 		try {
 			var sTable = '', sCount = '';
@@ -278,10 +342,12 @@ CompareAPI.prototype = {
 			this._setError('remote_count_object_right', String(oEx));
 			gs.error(this.sLogPrefix + 'getRemoteCountObjectRight Error getting remote object: ' + String(oEx));
 		} // try
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getRemoteCountObjectRight'); }
 		return oCountResult;
 	}, // function getRemoteCountObjectRight
 
 	_setError: function (sMessage) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + '_setError'); }
 		if (this.oReturn['bValid'] != false) {
 			var aArguments = [];
 			for (var i = 1; i < arguments.length; i++) {
@@ -293,11 +359,12 @@ CompareAPI.prototype = {
 			this.oReturn['bValid'] = false;
 			this.oReturn['sMessage'] = gs.getMessage('CompareTool_error_' + sMessage, aArguments);
 		} // if already has an error, don't overwrite
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + '_setError'); }
 		return false;
 	}, // function _setError
 
 	type: 'CompareAPI',
-	version: '1.0.4',
+	version: '1.0.5',
 	author: 'Tom Hauri',
 	email: 'tom@hauri.biz'
 };]]></script>
@@ -305,13 +372,24 @@ CompareAPI.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-14 06:42:23</sys_created_on>
         <sys_id>2f0c002e1bc73d105e14b8449b4bcb15</sys_id>
-        <sys_mod_count>109</sys_mod_count>
+        <sys_mod_count>140</sys_mod_count>
         <sys_name>CompareAPI</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy/>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_2f0c002e1bc73d105e14b8449b4bcb15</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-03-30 06:07:50</sys_updated_on>
+        <sys_updated_on>2025-01-06 14:22:16</sys_updated_on>
     </sys_script_include>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>2f0c002e1bc73d105e14b8449b4bcb15</id>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2025-01-04 12:26:23</sys_created_on>
+        <sys_id>c81ad24bc3bade909ebe8d8dc0013153</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2025-01-04 12:26:23</sys_updated_on>
+        <table>sys_script_include</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
 </record_update>

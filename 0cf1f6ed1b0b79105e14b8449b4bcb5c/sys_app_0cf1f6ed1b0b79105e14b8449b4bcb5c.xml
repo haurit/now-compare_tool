@@ -16,6 +16,7 @@
         <logo>01f176ed1b0b79105e14b8449b4bcbf6</logo>
         <menu/>
         <name>Compare Tool</name>
+        <package_json/>
         <private>false</private>
         <restrict_table_access>false</restrict_table_access>
         <runtime_access_tracking>permissive</runtime_access_tracking>
@@ -31,16 +32,16 @@
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-11 16:13:13</sys_created_on>
         <sys_id>0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_id>
-        <sys_mod_count>5</sys_mod_count>
+        <sys_mod_count>6</sys_mod_count>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-02-23 08:00:13</sys_updated_on>
+        <sys_updated_on>2025-01-06 18:05:14</sys_updated_on>
         <template/>
         <trackable>true</trackable>
         <uninstall_blocked>false</uninstall_blocked>
         <user_role/>
         <vendor/>
         <vendor_prefix/>
-        <version>1.0.4</version>
+        <version>1.0.5</version>
     </sys_app>
     <sys_translated_text action="delete_multiple" query="documentkey=0cf1f6ed1b0b79105e14b8449b4bcb5c"/>
     <sys_attachment action="INSERT_OR_UPDATE">
@@ -48,6 +49,7 @@
         <chunk_size_bytes>700000</chunk_size_bytes>
         <compressed>true</compressed>
         <content_type>image/jpeg</content_type>
+        <encryption_context/>
         <file_name>complogo.JPG</file_name>
         <hash>6760e9cacffe3027ff65f9f18286670dee9835e8467fa820d8db69da5d0fee01</hash>
         <image_height>226</image_height>
