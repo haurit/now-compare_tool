@@ -14,6 +14,7 @@ ServiceNow Customer Outcomes, Tom Hauri</description>
 CompareTool.prototype = {
 	initialize: function (sCompareId, sNumber, sName, sType, sOutputFormat, sOutputFilter, sRecordLeftId, sRecordRightId, sKeyType, sKeyFields, sOutputFields, sTableLeft, sTableRight, sConnectionAliasLeftId, sConnectionAliasRightId, sFilterCondition, sSnapshotLeft, sSnapshotRight, sTableHistoryShowCount, sStatus, sAction, sParentWorkerId) {
 		this.bShowCompareCharCodeInLog = false;
+		this.bLog = false;
 		this.bTimer = false;
 		this.sCompareId = sCompareId;
 		this.sNumber = sNumber;
@@ -82,7 +83,7 @@ CompareTool.prototype = {
 			this.sRemoteInstanceLeft = this._CompareToolAPI.sRemoteInstanceLeft;
 			this.sRemoteInstanceRight = this._CompareToolAPI.sRemoteInstanceRight;
 		} // if connection alias
-		//gs.debug('x_snc_compare_tool.CompareTool.initialize sCompareId: ' + this.sCompareId + ' sNumber: ' + this.sNumber + ' sName: ' + this.sName +  ' sType: ' + this.sType + ' sOutputFormat: ' + this.sOutputFormat + ' sOutputFilter: ' + this.sOutputFilter + ' sRecordLeftId: ' + this.sRecordLeftId + ' sRecordRightId: ' + this.sRecordRightId + ' sKeyType: ' + this.sKeyType + ' sKeyFields: ' + this.sKeyFields + ' sOutputFields: ' + this.sOutputFields + ' sTableLeft: ' + this.sTableLeft + ' sTableRight: ' + this.sTableRight + ' sConnectionAliasLeftId: ' + this.sConnectionAliasLeftId + ' sConnectionAliasRightId: ' + this.sConnectionAliasRightId + ' bConnectionLeft: ' + this.bConnectionLeft + ' bConnectionRight: ' + this.bConnectionRight + ' sFilterCondition: ' + this.sFilterCondition + ' sSnapshotLeft: ' + this.sSnapshotLeft + ' sSnapshotRight: ' + this.sSnapshotRight + ' bTableHistoryShowCount: ' + this.bTableHistoryShowCount + ' sStatus: ' + this.sStatus + ' sAction: ' + this.sAction + ' sParentWorkerId: ' + this.sParentWorkerId + ' current scope: ' + gs.getCurrentScopeName() + ' caller scope: ' + gs.getCallerScopeName());
+		if (this.bLog) { gs.info('x_snc_compare_tool.CompareTool.initialize sCompareId: ' + this.sCompareId + ' sNumber: ' + this.sNumber + ' sName: ' + this.sName + ' sType: ' + this.sType + ' sOutputFormat: ' + this.sOutputFormat + ' sOutputFilter: ' + this.sOutputFilter + ' sRecordLeftId: ' + this.sRecordLeftId + ' sRecordRightId: ' + this.sRecordRightId + ' sKeyType: ' + this.sKeyType + ' sKeyFields: ' + this.sKeyFields + ' sOutputFields: ' + this.sOutputFields + ' sTableLeft: ' + this.sTableLeft + ' sTableRight: ' + this.sTableRight + ' sConnectionAliasLeftId: ' + this.sConnectionAliasLeftId + ' sConnectionAliasRightId: ' + this.sConnectionAliasRightId + ' bConnectionLeft: ' + this.bConnectionLeft + ' bConnectionRight: ' + this.bConnectionRight + ' sFilterCondition: ' + this.sFilterCondition + ' sSnapshotLeft: ' + this.sSnapshotLeft + ' sSnapshotRight: ' + this.sSnapshotRight + ' bTableHistoryShowCount: ' + this.bTableHistoryShowCount + ' sStatus: ' + this.sStatus + ' sAction: ' + this.sAction + ' sParentWorkerId: ' + this.sParentWorkerId + ' current scope: ' + gs.getCurrentScopeName() + ' caller scope: ' + gs.getCallerScopeName()); }
 		if (this.sParentWorkerId) {
 			this._gExecutionTrackerParent = this._gt.getExecutionTrackerbyId(this.sParentWorkerId);
 			this._gExecutionTracker = this._gExecutionTrackerParent.createChildIfAbsent(this.sNumber);
@@ -97,7 +98,7 @@ CompareTool.prototype = {
 
 	compareAction: function () {
 		if (this.bTimer) { this._gtDateTime.startTimer('compareAction'); }
-		gs.debug(this.sLogPrefix + 'compareAction START (Worker: ' + this.sWorkerId + ')');
+		if (this.bLog) { gs.info(this.sLogPrefix + 'compareAction START (Worker: ' + this.sWorkerId + ')'); }
 		try {
 			var grCompare = new GlideRecord('x_snc_compare_tool_config');
 			if (this.sCompareId) {
@@ -160,13 +161,13 @@ CompareTool.prototype = {
 			this._gExecutionTracker.updateResult(this.oReturn);
 		} // if parent worker
 		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
-		gs.debug(this.sLogPrefix + 'compareAction END (Worker: ' + this.sWorkerId + ')'); // oReturn: ' + JSON.stringify(this.oReturn));
+		if (this.bLog) { gs.info(this.sLogPrefix + 'compareAction END (Worker: ' + this.sWorkerId + ')'); } // oReturn: ' + JSON.stringify(this.oReturn));
 		if (this.bTimer) { this._gtDateTime.stopTimer('compareAction'); this._writeTimer(); }
 	}, // function compareAction
 
 	takeSnapshot: function (sSnapshot) {
 		if (this.bTimer) { this._gtDateTime.startTimer('takeSnapshot'); }
-		gs.debug(this.sLogPrefix + 'takeSnapshot START (Worker: ' + this.sWorkerId + ')');
+		if (this.bLog) { gs.info(this.sLogPrefix + 'takeSnapshot START (Worker: ' + this.sWorkerId + ')'); }
 		try {
 			var bIsChildRunner = false;
 			this.sSnapshot = (sSnapshot) ? sSnapshot : String(new GlideDateTime().getDisplayValueInternal()).replaceAll(' ', '_').replaceAll(':', '-');
@@ -219,13 +220,13 @@ CompareTool.prototype = {
 			this._gExecutionTracker.updateResult(this.oReturn);
 		} // if parent worker
 		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
-		gs.debug(this.sLogPrefix + 'takeSnapshot END (Worker: ' + this.sWorkerId + ')');
+		if (this.bLog) { gs.info(this.sLogPrefix + 'takeSnapshot END (Worker: ' + this.sWorkerId + ')'); }
 		if (this.bTimer) { this._gtDateTime.stopTimer('takeSnapshot'); this._writeTimer(); }
 	}, // function takeSnapshot
 
 	cleanupSnapshot: function () {
 		if (this.bTimer) { this._gtDateTime.startTimer('cleanupSnapshot'); }
-		gs.debug(this.sLogPrefix + 'cleanupSnapshot START (Worker: ' + this.sWorkerId + ')');
+		if (this.bLog) { gs.info(this.sLogPrefix + 'cleanupSnapshot START (Worker: ' + this.sWorkerId + ')'); }
 		try {
 			if ((this.sTableLeft == 'x_snc_compare_tool_config') && (this.aType[2] != 'one')) {
 				this._childRunner();
@@ -266,14 +267,52 @@ CompareTool.prototype = {
 			this._gExecutionTracker.updateResult(this.oReturn);
 		} // if parent worker
 		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
-		gs.debug(this.sLogPrefix + 'cleanupSnapshot END (Worker: ' + this.sWorkerId + ')');
+		if (this.bLog) { gs.info(this.sLogPrefix + 'cleanupSnapshot END (Worker: ' + this.sWorkerId + ')'); }
 		if (this.bTimer) { this._gtDateTime.stopTimer('cleanupSnapshot'); this._writeTimer(); }
 	}, // function cleanupSnapshot
 
+	getAttachmentSize: function () {
+		if (this.bTimer) { this._gtDateTime.startTimer('getAttachmentSize'); }
+		if (this.bLog) { gs.info(this.sLogPrefix + 'getAttachmentSize START (Worker: ' + this.sWorkerId + ')'); }
+		try {
+			if ((this.sTableLeft == 'x_snc_compare_tool_config') && (this.aType[2] != 'one')) {
+				this._childRunner();
+			} else {
+				this._gExecutionTracker.incrementPercentComplete(20);
+				this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_attachmentsize', this.sName);
+				this._CompareOutputBuilder.addTable('', [gs.getMessage('CompareTool_field_comparecfgtitle'), gs.getMessage('CompareTool_field_attachmentsize')], gs.getMessage('CompareTool_field_comparecfgnumber'));
+				var sAttachmentSize = this._gtAttachment.getAttachmentSizePerRecord('x_snc_compare_tool_config', this.sCompareId, '', '', '', true);
+				var aRow = [];
+				aRow.push({ 'sClass': 'fields', 'sValue': this.sNumber });
+				aRow.push({ 'sClass': 'fields', 'sValue': this.sName });
+				aRow.push({ 'sClass': 'fields', 'sValue': sAttachmentSize });
+				this._CompareOutputBuilder.addRow(aRow);
+				this._gExecutionTracker.incrementPercentComplete(90);
+				if (this.sOutputFormat == 'screen') {
+					this.oReturn['sHTML'] = this._CompareOutputBuilder.getTable();
+				} else {
+					this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', this._CompareOutputBuilder.getTable());
+				} // if output to screen
+			} // if child runner
+		} catch (oEx) {
+			this._setError('catch', String(oEx));
+			gs.error(this.sLogPrefix + 'cleanupSnapshot catched error: ' + String(oEx));
+		} // try
+		if (this.sParentWorkerId) {
+			if (this.sOutputFormat == 'screen') {
+				this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'ChildWorkerResult_Parent_' + this.sParentWorkerId + '_' + this.sWorkerId + '.json', JSON.stringify(this.oReturn), '', false, true);
+			} // if output to screen
+		} else {
+			this._gExecutionTracker.updateResult(this.oReturn);
+		} // if parent worker
+		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
+		if (this.bLog) { gs.info(this.sLogPrefix + 'getAttachmentSize END (Worker: ' + this.sWorkerId + ')'); }
+		if (this.bTimer) { this._gtDateTime.stopTimer('getAttachmentSize'); this._writeTimer(); }
+	}, // function getAttachmentSize
+
 	_childRunner: function () {
 		if (this.bTimer) { this._gtDateTime.startTimer('_childRunner'); }
-		gs.debug(this.sLogPrefix + 'childRunner START (Worker: ' + this.sWorkerId + ')');
-		gs.error(this.sLogPrefix + 'childRunner START (Worker: ' + this.sWorkerId + ')');
+		if (this.bLog) { gs.info(this.sLogPrefix + 'childRunner START (Worker: ' + this.sWorkerId + ')'); }
 		try {
 			this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_childrunner', this.sName);
 			var iTotalChildren = 0;
@@ -306,7 +345,7 @@ CompareTool.prototype = {
 					} // if completed
 					grCompare.query();
 					while (grCompare.next()) {
-						if (this.sAction == 'compareAction') {
+						if ((this.sAction == 'compareAction') || (this.sAction == 'getAttachmentSize')) {
 							if (this.sOutputFormat == 'screen') {
 								aAttachments = this._gtAttachment.getAttachmentsStartWithFilename('x_snc_compare_tool_config', grCompare.getUniqueValue(), 'ChildWorkerResult_Parent_' + this.sWorkerId, 'filename', true);
 								if (this._gtArray.isValidArray(aAttachments)) {
@@ -348,7 +387,7 @@ CompareTool.prototype = {
 						} // each but first line
 					} // if screen
 				} // each but first result
-				sResult = sResult.replaceAll('</tbody></table></body>', '') + '</tbody></table></body>';
+				sResult = sResult.replaceAll('</tbody></table></div></body>', '') + '</tbody></table></div></body>';
 			} // if valid result
 			if (sResult) {
 				if (this.sOutputFormat == 'screen') {
@@ -361,7 +400,7 @@ CompareTool.prototype = {
 		} catch (oEx) {
 			gs.error(this.sLogPrefix + 'childRunner catched error: ' + String(oEx));
 		} // try
-		gs.debug(this.sLogPrefix + 'childRunner END (Worker: ' + this.sWorkerId + ')');
+		if (this.bLog) { gs.info(this.sLogPrefix + 'childRunner END (Worker: ' + this.sWorkerId + ')'); }
 		if (this.bTimer) { this._gtDateTime.stopTimer('_childRunner'); }
 	}, // function childRunner
 
@@ -423,7 +462,7 @@ CompareTool.prototype = {
 			} // if snapshot right
 		} // if has version history
 		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
-		//gs.debug(this.sLogPrefix + '_compareHistory oMerged: ' + JSON.stringify(oMerged));
+		if (this.bLog) { gs.info(this.sLogPrefix + '_compareHistory oMerged: ' + JSON.stringify(oMerged)); }
 		if ((this.sTableLeft == 'sys_db_object') && (this.bTableHistoryShowCount)) {
 			this._CompareOutputBuilder.addTable('', ['CompareTool_field_table', 'CompareTool_field_count_left', 'CompareTool_field_count_right', gs.getMessage('CompareTool_field_url_left', [this.sSnapshotLeft]), gs.getMessage('CompareTool_field_url_right', [this.sSnapshotRight])]);
 		} else if (this.sTableLeft == 'sys_db_object') {
@@ -552,7 +591,7 @@ CompareTool.prototype = {
 			if (grVersionHistory) {
 				oVersionHistoryEntry['version_id'] = grVersionHistory.getUniqueValue();
 			} else {
-				gs.debug(this.sLogPrefix + '_getCurrentVersionHistory could not find current version history for: ' + sTableRealClass + ' SysId: ' + sSysId);
+				if (this.bLog) { gs.info(this.sLogPrefix + '_getCurrentVersionHistory could not find current version history for: ' + sTableRealClass + ' SysId: ' + sSysId); }
 			} // if current version
 			if ((this.sTableLeft == 'sys_db_object') && (this.bTableHistoryShowCount)) {
 				var iTableCount = Number(this._gtRecordRead.countRecords(grRecordRealClass.getValue('name'), '', '', false, false, true));
@@ -701,7 +740,7 @@ CompareTool.prototype = {
 		this._gExecutionTracker.incrementPercentComplete(60);
 		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
 		this._gExecutionTracker.incrementPercentComplete(70);
-		//gs.debug(this.sLogPrefix + '_compareList oMerged: ' + JSON.stringify(oMerged));
+		if (this.bLog) { gs.info(this.sLogPrefix + '_compareList oMerged: ' + JSON.stringify(oMerged)); }
 		this._CompareOutputBuilder.addTable(this.sTableLeft, aFields);
 		var aAllKeys = Object.keys(oMerged);
 		aAllKeys.sort();
@@ -732,7 +771,7 @@ CompareTool.prototype = {
 					bIsEqual = this._gt.isEqual(sValueLeft, sValueRight);
 					if (['same', 'diff'].indexOf(sStatus) != -1) {
 						if (!bIsEqual) {
-							if (this.bShowCompareCharCodeInLog) { gs.debug(this.sLogPrefix + '_compareList char compare field: ' + sField + ' left: ' + this._convertStringToCode(sValueLeft) + ' right: ' + this._convertStringToCode(sValueRight)); }
+							if (this.bShowCompareCharCodeInLog) { gs.info(this.sLogPrefix + '_compareList char compare field: ' + sField + ' left: ' + this._convertStringToCode(sValueLeft) + ' right: ' + this._convertStringToCode(sValueRight)); }
 							sStatus = 'diff';
 							sValueLeft = (sValueLeft) ? sValueLeft : '[empty]';
 							sValueRight = (sValueRight) ? sValueRight : '[empty]';
@@ -841,7 +880,7 @@ CompareTool.prototype = {
 		oRight = this._getCount('right');
 		this._gExecutionTracker.incrementPercentComplete(60);
 		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
-		//gs.debug(this.sLogPrefix + '_compareCount oMerged: ' + JSON.stringify(oMerged));
+		if (this.bLog) { gs.info(this.sLogPrefix + '_compareCount oMerged: ' + JSON.stringify(oMerged)); }
 		this._CompareOutputBuilder.addTable('', ['CompareTool_field_count_left', 'CompareTool_field_count_right'], 'Table name');
 		var aAllKeys = Object.keys(oMerged);
 		aAllKeys.sort();
@@ -1045,14 +1084,14 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>464</sys_mod_count>
+        <sys_mod_count>474</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2025-01-06 18:04:40</sys_updated_on>
+        <sys_updated_on>2025-01-07 07:50:03</sys_updated_on>
     </sys_script_include>
     <sys_es_latest_script action="INSERT_OR_UPDATE">
         <id>c26617b11b4bb9105e14b8449b4bcb17</id>

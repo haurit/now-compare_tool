@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ui_message">
+    <sys_ui_message action="INSERT_OR_UPDATE">
+        <application/>
+        <code/>
+        <commented_message/>
+        <key>CompareTool_title_attachmentsize</key>
+        <language>en</language>
+        <message>Compare total attachment size</message>
+        <sys_class_name>sys_ui_message</sys_class_name>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2025-01-07 06:58:08</sys_created_on>
+        <sys_id>54aba4c4c3c356109ebe8d8dc001315a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>CompareTool_title_attachmentsize</sys_name>
+        <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
+        <sys_update_name>sys_ui_message_54aba4c4c3c356109ebe8d8dc001315a</sys_update_name>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2025-01-07 06:58:08</sys_updated_on>
+    </sys_ui_message>
+</record_update>
