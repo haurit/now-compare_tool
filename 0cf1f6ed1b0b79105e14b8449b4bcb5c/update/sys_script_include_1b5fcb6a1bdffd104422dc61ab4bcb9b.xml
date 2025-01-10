@@ -7,26 +7,44 @@
         <client_callable>false</client_callable>
         <description>Compare Tool Output Builder&#13;
 ServiceNow Customer Outcomes, Tom Hauri</description>
+        <mobile_callable>false</mobile_callable>
         <name>CompareOutputBuilder</name>
+        <sandbox_callable>false</sandbox_callable>
         <script><![CDATA[var CompareOutputBuilder = Class.create();
 CompareOutputBuilder.prototype = {
-	initialize: function (sOutputFormat) {
+	initialize: function (sOutputFormat, gtCache, gtDateTime) {
 		this.sOutputFormat = sOutputFormat;
 		this.aReturn = [];
 		this._gt = new global.GlobalTools();
 		this._gtArray = new global.GlobalToolsArray();
 		this._gtObject = new global.GlobalToolsObject();
-		this._gtTable = new global.GlobalToolsTable();
+		this._gtRecordRead = new global.GlobalToolsRecordRead();
+		if ((gtCache) && (gtCache instanceof global.GlobalToolsCache)) {
+			this._gtCache = gtCache;
+		} else {
+			this._gtCache = new global.GlobalToolsCache();
+		} // if cache
+		this.bTimer = ((gtDateTime) && (gtDateTime instanceof global.GlobalToolsDateTime)) ? true : false;
+		if (this.bTimer) {
+			this._gtDateTime = gtDateTime;
+			this._sTimerPrefix = 'ctob/';
+			this._gtTable = new global.GlobalToolsTable(this._gtCache, this._gtDateTime);
+			this._gtDateTime.startTimer(this._sTimerPrefix + 'initialize');
+		} else {
+			this._gtTable = new global.GlobalToolsTable(this._gtCache);
+		} // initialize timer
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'initialize'); }
 	}, // function initialize
 
 	addTable: function (sTable, aFields, sFirstHeader) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'addTable'); }
 		sFirstHeader = (sFirstHeader) ? gs.getMessage(sFirstHeader) : gs.getMessage('CompareTool_field_status');
-		var sReturn = (this.sOutputFormat == 'screen') ? '<body><table cellpadding="0" cellspacing="0" width="100%" class="diff"><thead><tr><th width="10%" class="texttitle">' + sFirstHeader + '</th>' : sFirstHeader + ';';
+		var sReturn = (this.sOutputFormat == 'screen') ? '<head><style>.gb_body_wrapper {overflow: hidden;}</style></head><body><div style="overflow-y:auto;height:100%;"><table cellpadding="0" cellspacing="0" width="100%" class="diff" ><thead style="position:sticky;top:0;"><tr><th width="10%" class="texttitle" style="position:sticky;top:0; border-right:2px solid Gainsboro; border-bottom:2px solid Gainsboro; line-height: 100%;">' + sFirstHeader + '</th>' : sFirstHeader + ';';
 		if ((sTable) && (this._gtTable.isValidTable(sTable))) {
 			var grRecordTitle = new GlideRecord(sTable);
 			aFields.forEach(function (sField) {
 				if (this.sOutputFormat == 'screen') {
-					sReturn += '<th class="texttitle">' + grRecordTitle.getElement(sField).getLabel() + '</th>';
+					sReturn += '<th class="texttitle" style="position:sticky;top:0; border-right:2px solid Gainsboro; border-bottom:2px solid Gainsboro; line-height: 100%;">' + grRecordTitle.getElement(sField).getLabel() + '</th>';
 				} else if (this.sOutputFormat == 'attach_csv') {
 					sReturn += grRecordTitle.getElement(sField).getLabel() + ';';
 				} else {
@@ -37,7 +55,7 @@ CompareOutputBuilder.prototype = {
 		} else {
 			aFields.forEach(function (sField) {
 				if (this.sOutputFormat == 'screen') {
-					sReturn += '<th class="texttitle">' + gs.getMessage(sField) + '</th>';
+					sReturn += '<th class="texttitle" style="position:sticky;top:0; border-right:2px solid Gainsboro; border-bottom:2px solid Gainsboro;">' + gs.getMessage(sField) + '</th>';
 				} else if (this.sOutputFormat == 'attach_csv') {
 					sReturn += gs.getMessage(sField) + ';';
 				} else {
@@ -48,9 +66,11 @@ CompareOutputBuilder.prototype = {
 		} // if table
 		sReturn += (this.sOutputFormat == 'screen') ? '</tr></thead><tbody>' : '';
 		this.aReturn.push(sReturn);
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'addTable'); }
 	}, // function addTableHeader
 
 	addRow: function (aRow) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'addRow'); }
 		var sReturn = '';
 		if (this._gtArray.isValidArray(aRow)) {
 			aRow.forEach(function (sColumn, iIndex) {
@@ -70,11 +90,11 @@ CompareOutputBuilder.prototype = {
 				sValue2 = String(sValue2);
 				if (this.sOutputFormat == 'screen') {
 					if (sValue2) {
-						sReturn += '<td style="width:auto;" ' + sClass + '><div style="color:darkgreen;"><b>' + sValue + '</b></div><div style="color:darkred;"><b>' + sValue2 + '</b></div></td>';
+						sReturn += '<td style="width:auto; border-right:2px solid Gainsboro; border-bottom:2px solid Gainsboro;" ' + sClass + '><div style="color:darkgreen;"><b>' + sValue + '</b></div><div style="color:darkred;"><b>' + sValue2 + '</b></div></td>';
 					} else if (sColor) {
-						sReturn += '<td style="width:auto;" ' + sClass + '><div style="color:' + sColor + ';"><b>' + sValue + '</b></div></td>';
+						sReturn += '<td style="width:auto; border-right:2px solid Gainsboro; border-bottom:2px solid Gainsboro;" ' + sClass + '><div style="color:' + sColor + ';"><b>' + sValue + '</b></div></td>';
 					} else {
-						sReturn += '<td style="width:auto;" ' + sClass + '>' + sValue + '</td>';
+						sReturn += '<td style="width:auto; border-right:2px solid Gainsboro; border-bottom:2px solid Gainsboro;" ' + sClass + '>' + sValue + '</td>';
 					} // if two values
 				} else {
 					if (this.sOutputFormat == 'attach_csv') {
@@ -101,39 +121,55 @@ CompareOutputBuilder.prototype = {
 			} // if screen
 			this.aReturn.push(sReturn);
 		} // if valid array
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'addRow'); }
 	}, // function 
 
 	getTable: function () {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'getTable'); }
 		if (this.sOutputFormat == 'screen') {
-			this.aReturn.push('</tbody></table></body>');
+			this.aReturn.push('</tbody></table></div></body>');
 		} // if screen
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getTable'); }
 		return this.aReturn.join('\n');
 	}, // function getTable
 
 	_parseCSV: function (sValue) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + '_parseCSV'); }
 		if ((!sValue) || (String(sValue) == 'null') || (String(sValue) == 'unknown')) {
 			sValue = '';
 		} // if empty
 		sValue = String(sValue).replace(/\n|\r|/g, ''); // replace newline
 		sValue = String(sValue).replace(/"/g, '""'); // replace quotes
 		sValue = String(sValue).replace(/;/g, ''); // replace semicolon
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + '_parseCSV'); }
 		return '"' + sValue + '";';
 	}, // function _parseCSV
 
 	getUrl: function (sSide, sStatus, oConfig, sType) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + 'getUrl'); }
 		var sUrl = '', sId = '';
 		sType = (sType) ? sType : this._gtObject.getValue('type', '', oConfig);
 		var sTable = this._gtObject.getValue('record_table', '', oConfig);
 		sTable = sTable.replace(/(^.*\[|\].*$)/g, '');
+		var sSysId = this._gtObject.getValue('record_id', '', oConfig);
 		if ((sSide == 'left') && (sStatus == 'right')) {
-			sId = this._gtObject.getValue('record_id', '', oConfig);
-			if ((sId) && (sTable)) {
-				sUrl = this._getAuditDeleteLink(sTable, sId);
+			if ((sSysId) && (sTable)) {
+				sUrl = this._getAuditDeleteLink(sTable, sSysId);
 				sType = 'delete';
 			} // if id and table
+		} else if (sType == 'list') {
+			sUrl = this._getListLink(sTable);
 		} else {
 			if (sType == 'version') {
 				sId = this._gtObject.getValue('version_id', '', oConfig);
+				if (sId == 'initial') {
+					var grVersionHistory = this._gtRecordRead.getRecords('sys_update_version', 'name=' + sTable + '_' + sSysId + '^state!=current', ['sys_created_on'], 1, false, false, false, true);
+					if (grVersionHistory.next()) {
+						sId = grVersionHistory.getUniqueValue();
+					} else {
+						sId = '';
+					} // if history
+				} // if initial id fetch oldest history
 				sTable = 'sys_update_version';
 			} else if (sType == 'attachment') {
 				sId = this._gtObject.getValue('attach_id', '', oConfig);
@@ -148,15 +184,19 @@ CompareOutputBuilder.prototype = {
 		var sValue = gs.getMessage('CompareTool_value_url_' + sSide, [gs.getMessage('CompareTool_value_url_type_' + sType)]);
 		if ((sValue) && (sUrl)) {
 			if (this.sOutputFormat == 'screen') {
+				if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getUrl'); }
 				return '<a href="' + sUrl + '" target="_blank">' + sValue + '</a>';
 			} else {
+				if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getUrl'); }
 				return sUrl;
 			} // if screen
 		} // if value and url
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + 'getUrl'); }
 		return '';
 	}, // function getUrl
 
 	_getAuditDeleteLink: function (sTable, sId) {
+		if (this.bTimer) { this._gtDateTime.startTimer(this._sTimerPrefix + '_getAuditDeleteLink'); }
 		var grAuditDelete = new GlideRecord('sys_audit_delete');
 		grAuditDelete.addEncodedQuery('tablename=' + sTable + '^documentkey=' + sId);
 		grAuditDelete.orderByDesc('sys_created_on');
@@ -165,10 +205,13 @@ CompareOutputBuilder.prototype = {
 		if (grAuditDelete.next()) {
 			var grMetaDataDelete = new GlideRecord('sys_metadata_delete');
 			if (grMetaDataDelete.get('sys_audit_delete', grAuditDelete.getUniqueValue())) {
+				if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + '_getAuditDeleteLink'); }
 				return this._getRecordLink('sys_metadata_delete', grMetaDataDelete.getUniqueValue());
 			} // if metadata del
+			if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + '_getAuditDeleteLink'); }
 			return this._getRecordLink('sys_audit_delete', grAuditDelete.getUniqueValue());
 		} // if delete record found
+		if (this.bTimer) { this._gtDateTime.stopTimer(this._sTimerPrefix + '_getAuditDeleteLink'); }
 		return '';
 	}, // function _getAuditDeleteLink
 
@@ -176,8 +219,12 @@ CompareOutputBuilder.prototype = {
 		return gs.getProperty('glide.servlet.uri') + 'now/nav/ui/classic/params/target/' + encodeURIComponent(sTable + '.do?sys_id=' + sId);
 	}, // function _getRecordLink
 
+	_getListLink: function (sTable) {
+		return gs.getProperty('glide.servlet.uri') + 'now/nav/ui/classic/params/target/' + encodeURIComponent(sTable + '_list.do');
+	}, // function _getRecordLink
+
 	type: 'CompareOutputBuilder',
-	version: '1.0.0',
+	version: '1.0.5',
 	author: 'Tom Hauri',
 	email: 'tom@hauri.biz'
 };]]></script>
@@ -185,13 +232,24 @@ CompareOutputBuilder.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-27 07:22:57</sys_created_on>
         <sys_id>1b5fcb6a1bdffd104422dc61ab4bcb9b</sys_id>
-        <sys_mod_count>21</sys_mod_count>
+        <sys_mod_count>42</sys_mod_count>
         <sys_name>CompareOutputBuilder</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_1b5fcb6a1bdffd104422dc61ab4bcb9b</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-01-09 06:30:14</sys_updated_on>
+        <sys_updated_on>2025-01-10 15:16:42</sys_updated_on>
     </sys_script_include>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>1b5fcb6a1bdffd104422dc61ab4bcb9b</id>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2025-01-04 11:37:15</sys_created_on>
+        <sys_id>98de4283c37ade909ebe8d8dc0013185</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2025-01-04 11:37:15</sys_updated_on>
+        <table>sys_script_include</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
 </record_update>

@@ -7,11 +7,15 @@
         <client_callable>false</client_callable>
         <description>Compare Tool
 ServiceNow Customer Outcomes, Tom Hauri</description>
+        <mobile_callable>false</mobile_callable>
         <name>CompareTool</name>
+        <sandbox_callable>false</sandbox_callable>
         <script><![CDATA[var CompareTool = Class.create();
 CompareTool.prototype = {
 	initialize: function (sCompareId, sNumber, sName, sType, sOutputFormat, sOutputFilter, sRecordLeftId, sRecordRightId, sKeyType, sKeyFields, sOutputFields, sTableLeft, sTableRight, sConnectionAliasLeftId, sConnectionAliasRightId, sFilterCondition, sSnapshotLeft, sSnapshotRight, sTableHistoryShowCount, sStatus, sAction, sParentWorkerId) {
 		this.bShowCompareCharCodeInLog = false;
+		this.bLog = false;
+		this.bTimer = true;
 		this.sCompareId = sCompareId;
 		this.sNumber = sNumber;
 		this.sName = sName;
@@ -51,20 +55,35 @@ CompareTool.prototype = {
 		this.oReturn['sTitle'] = '';
 		this.oReturn['bRefresh'] = false;
 		this.sLogPrefix = 'x_snc_compare_tool.CompareTool.';
-		this._CompareOutputBuilder = new x_snc_compare_tool.CompareOutputBuilder(this.sOutputFormat);
-		if ((this.sConnectionAliasLeftId) || (this.sConnectionAliasRightId)) {
-			this._CompareToolAPI = new x_snc_compare_tool.CompareAPI(this.sConnectionAliasLeftId, this.sConnectionAliasRightId, this.sCompareId, this.oReturn);
-			this.bConnectionLeft = this._CompareToolAPI.bConnectionLeft;
-			this.bConnectionRight = this._CompareToolAPI.bConnectionRight;
-		} // if connection alias
-		//gs.debug('x_snc_compare_tool.CompareTool.initialize sCompareId: ' + this.sCompareId + ' sNumber: ' + this.sNumber + ' sName: ' + this.sName +  ' sType: ' + this.sType + ' sOutputFormat: ' + this.sOutputFormat + ' sOutputFilter: ' + this.sOutputFilter + ' sRecordLeftId: ' + this.sRecordLeftId + ' sRecordRightId: ' + this.sRecordRightId + ' sKeyType: ' + this.sKeyType + ' sKeyFields: ' + this.sKeyFields + ' sOutputFields: ' + this.sOutputFields + ' sTableLeft: ' + this.sTableLeft + ' sTableRight: ' + this.sTableRight + ' sConnectionAliasLeftId: ' + this.sConnectionAliasLeftId + ' sConnectionAliasRightId: ' + this.sConnectionAliasRightId + ' bConnectionLeft: ' + this.bConnectionLeft + ' bConnectionRight: ' + this.bConnectionRight + ' sFilterCondition: ' + this.sFilterCondition + ' sSnapshotLeft: ' + this.sSnapshotLeft + ' sSnapshotRight: ' + this.sSnapshotRight + ' bTableHistoryShowCount: ' + this.bTableHistoryShowCount + ' sStatus: ' + this.sStatus + ' sAction: ' + this.sAction + ' sParentWorkerId: ' + this.sParentWorkerId + ' current scope: ' + gs.getCurrentScopeName() + ' caller scope: ' + gs.getCallerScopeName());
+		this._gtCache = new global.GlobalToolsCache();
+		if (this.bTimer) {
+			this._gtDateTime = new global.GlobalToolsDateTime('ct', this._gtCache);
+			this._gtDateTime.startTimer('initialize');
+			this._gtTable = new global.GlobalToolsTable(this._gtCache, this._gtDateTime);
+			this._CompareOutputBuilder = new x_snc_compare_tool.CompareOutputBuilder(this.sOutputFormat, this._gtCache, this._gtDateTime);
+			if ((this.sConnectionAliasLeftId) || (this.sConnectionAliasRightId)) {
+				this._CompareToolAPI = new x_snc_compare_tool.CompareAPI(this.sConnectionAliasLeftId, this.sConnectionAliasRightId, this.sCompareId, this.oReturn, this._gtCache, this._gtDateTime);
+			} // if connection alias
+		} else {
+			this._gtTable = new global.GlobalToolsTable(this._gtCache);
+			this._CompareOutputBuilder = new x_snc_compare_tool.CompareOutputBuilder(this.sOutputFormat, this._gtCache);
+			if ((this.sConnectionAliasLeftId) || (this.sConnectionAliasRightId)) {
+				this._CompareToolAPI = new x_snc_compare_tool.CompareAPI(this.sConnectionAliasLeftId, this.sConnectionAliasRightId, this.sCompareId, this.oReturn);
+			} // if connection alias
+		} // if timer
 		this._gt = new global.GlobalTools();
 		this._gtArray = new global.GlobalToolsArray();
 		this._gtObject = new global.GlobalToolsObject();
-		this._gtTable = new global.GlobalToolsTable();
 		this._gtRecordRead = new global.GlobalToolsRecordRead();
 		this._gtRecordWrite = new global.GlobalToolsRecordWrite();
 		this._gtAttachment = new global.GlobalToolsAttachment();
+		if ((this.sConnectionAliasLeftId) || (this.sConnectionAliasRightId)) {
+			this.bConnectionLeft = this._CompareToolAPI.bConnectionLeft;
+			this.bConnectionRight = this._CompareToolAPI.bConnectionRight;
+			this.sRemoteInstanceLeft = this._CompareToolAPI.sRemoteInstanceLeft;
+			this.sRemoteInstanceRight = this._CompareToolAPI.sRemoteInstanceRight;
+		} // if connection alias
+		if (this.bLog) { gs.info('x_snc_compare_tool.CompareTool.initialize sCompareId: ' + this.sCompareId + ' sNumber: ' + this.sNumber + ' sName: ' + this.sName + ' sType: ' + this.sType + ' sOutputFormat: ' + this.sOutputFormat + ' sOutputFilter: ' + this.sOutputFilter + ' sRecordLeftId: ' + this.sRecordLeftId + ' sRecordRightId: ' + this.sRecordRightId + ' sKeyType: ' + this.sKeyType + ' sKeyFields: ' + this.sKeyFields + ' sOutputFields: ' + this.sOutputFields + ' sTableLeft: ' + this.sTableLeft + ' sTableRight: ' + this.sTableRight + ' sConnectionAliasLeftId: ' + this.sConnectionAliasLeftId + ' sConnectionAliasRightId: ' + this.sConnectionAliasRightId + ' bConnectionLeft: ' + this.bConnectionLeft + ' bConnectionRight: ' + this.bConnectionRight + ' sFilterCondition: ' + this.sFilterCondition + ' sSnapshotLeft: ' + this.sSnapshotLeft + ' sSnapshotRight: ' + this.sSnapshotRight + ' bTableHistoryShowCount: ' + this.bTableHistoryShowCount + ' sStatus: ' + this.sStatus + ' sAction: ' + this.sAction + ' sParentWorkerId: ' + this.sParentWorkerId + ' current scope: ' + gs.getCurrentScopeName() + ' caller scope: ' + gs.getCallerScopeName()); }
 		if (this.sParentWorkerId) {
 			this._gExecutionTrackerParent = this._gt.getExecutionTrackerbyId(this.sParentWorkerId);
 			this._gExecutionTracker = this._gExecutionTrackerParent.createChildIfAbsent(this.sNumber);
@@ -74,10 +93,12 @@ CompareTool.prototype = {
 		} // if parent
 		this.sWorkerId = this._gExecutionTracker.getSysID();
 		this._gdDigest = new GlideDigest();
+		if (this.bTimer) { this._gtDateTime.stopTimer('initialize'); }
 	}, // function initialize
 
 	compareAction: function () {
-		gs.debug(this.sLogPrefix + 'compareAction START (Worker: ' + this.sWorkerId + ')');
+		if (this.bTimer) { this._gtDateTime.startTimer('compareAction'); }
+		if (this.bLog) { gs.info(this.sLogPrefix + 'compareAction START (Worker: ' + this.sWorkerId + ')'); }
 		try {
 			var grCompare = new GlideRecord('x_snc_compare_tool_config');
 			if (this.sCompareId) {
@@ -88,17 +109,32 @@ CompareTool.prototype = {
 				} // if compare
 			} // if compare cfg
 			if ((!this._gtTable.isValidTable(this.sTableLeft)) || ((this.aType[1] == 'local') && (!this._gtTable.isValidTable(this.sTableRight)))) {
+				if (this.bTimer) { this._gtDateTime.stopTimer('compareAction'); this._writeTimer(); }
 				return this._returnError('invalid_table');
 			} // if table not valid
 			if ((this.sTableLeft == 'x_snc_compare_tool_config') && (this.aType[2] != 'one')) {
 				this._childRunner();
 			} else {
-				if ((this.aType[0] == 'remote') && (!this.bConnectionLeft)) {
-					return this._returnError('remoteconnection_left');
-				} // if no remote left
-				if ((this.aType[1] == 'remote') && (!this.bConnectionRight)) {
-					return this._returnError('remoteconnection_right');
-				} // if no remote right
+				if (this.aType[0] == 'remote') {
+					if (this.bConnectionLeft) {
+						this.sTitleLeft = this.sRemoteInstanceLeft;
+					} else {
+						if (this.bTimer) { this._gtDateTime.stopTimer('compareAction'); this._writeTimer(); }
+						return this._returnError('remoteconnection_left');
+					} // if remote left
+				} else {
+					this.sTitleLeft = gs.getMessage('local');
+				} // if left remote
+				if (this.aType[1] == 'remote') {
+					if (this.bConnectionRight) {
+						this.sTitleRight = this.sRemoteInstanceRight;
+					} else {
+						if (this.bTimer) { this._gtDateTime.stopTimer('compareAction'); this._writeTimer(); }
+						return this._returnError('remoteconnection_right');
+					} // if remote right
+				} else {
+					this.sTitleRight = gs.getMessage('local');
+				} // if remote right
 				if (this.aType[1] == 'history') {
 					this._compareHistory();
 				} else if (this.aType[2] == 'one') {
@@ -125,11 +161,13 @@ CompareTool.prototype = {
 			this._gExecutionTracker.updateResult(this.oReturn);
 		} // if parent worker
 		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
-		gs.debug(this.sLogPrefix + 'compareAction END (Worker: ' + this.sWorkerId + ')'); // oReturn: ' + JSON.stringify(this.oReturn));
+		if (this.bLog) { gs.info(this.sLogPrefix + 'compareAction END (Worker: ' + this.sWorkerId + ')'); } // oReturn: ' + JSON.stringify(this.oReturn));
+		if (this.bTimer) { this._gtDateTime.stopTimer('compareAction'); this._writeTimer(); }
 	}, // function compareAction
 
 	takeSnapshot: function (sSnapshot) {
-		gs.debug(this.sLogPrefix + 'takeSnapshot START (Worker: ' + this.sWorkerId + ')');
+		if (this.bTimer) { this._gtDateTime.startTimer('takeSnapshot'); }
+		if (this.bLog) { gs.info(this.sLogPrefix + 'takeSnapshot START (Worker: ' + this.sWorkerId + ')'); }
 		try {
 			var bIsChildRunner = false;
 			this.sSnapshot = (sSnapshot) ? sSnapshot : String(new GlideDateTime().getDisplayValueInternal()).replaceAll(' ', '_').replaceAll(':', '-');
@@ -146,6 +184,7 @@ CompareTool.prototype = {
 			oSnapshotSummary['aSnapshots'] = aSnapshots;
 			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'SnapshotSummary.json', JSON.stringify(oSnapshotSummary), '', false, true);
 			if (!bIsChildRunner) {
+				if (this.bTimer) { this._gtDateTime.startTimer('takeSnapshot/getrecords'); }
 				var oVersionHistory = {};
 				var iAttachmentCounter = 0;
 				if (gs.tableExists(this.sTableLeft)) {
@@ -164,6 +203,8 @@ CompareTool.prototype = {
 				} else {
 					gs.error(this.sLogPrefix + 'takeSnapshot Error table does not exist: ' + this.sTableLeft);
 				} // if table exists
+				if (this.bTimer) { this._gtDateTime.stopTimer('takeSnapshot/getrecords'); }
+				if (this.bTimer) { this._gtDateTime.startTimer('takeSnapshot/doattachments'); }
 				this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, this.sSnapshot + '_VersionHistory.json', JSON.stringify(oVersionHistory), '', false, true);
 				if (!this.sParentWorkerId) {
 					var sAttachmentSize = this._gtAttachment.getAttachmentSizePerRecord('x_snc_compare_tool_config', this.sCompareId, '', '', '', true);
@@ -171,22 +212,27 @@ CompareTool.prototype = {
 						this._setMessage('snapshot_attachmentsize', sAttachmentSize);
 					} // if attachment size
 				} // if not parent worker
+				if (this.bTimer) { this._gtDateTime.stopTimer('takeSnapshot/doattachments'); }
 			} // if not child runner
 		} catch (oEx) {
 			this._setError('catch', String(oEx));
 			gs.error(this.sLogPrefix + 'takeSnapshot catched error: ' + String(oEx));
 		} // try
+		if (this.bTimer) { this._gtDateTime.startTimer('takeSnapshot/updatetracker'); }
 		if (this.sParentWorkerId) {
 			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'ChildWorkerResult_Parent_' + this.sParentWorkerId + '_' + this.sWorkerId + '.json', JSON.stringify(this.oReturn), '', false, true);
 		} else {
 			this._gExecutionTracker.updateResult(this.oReturn);
 		} // if parent worker
 		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
-		gs.debug(this.sLogPrefix + 'takeSnapshot END (Worker: ' + this.sWorkerId + ')');
+		if (this.bTimer) { this._gtDateTime.stopTimer('takeSnapshot/updatetracker'); }
+		if (this.bLog) { gs.info(this.sLogPrefix + 'takeSnapshot END (Worker: ' + this.sWorkerId + ')'); }
+		if (this.bTimer) { this._gtDateTime.stopTimer('takeSnapshot'); this._writeTimer(); }
 	}, // function takeSnapshot
 
 	cleanupSnapshot: function () {
-		gs.debug(this.sLogPrefix + 'cleanupSnapshot START (Worker: ' + this.sWorkerId + ')');
+		if (this.bTimer) { this._gtDateTime.startTimer('cleanupSnapshot'); }
+		if (this.bLog) { gs.info(this.sLogPrefix + 'cleanupSnapshot START (Worker: ' + this.sWorkerId + ')'); }
 		try {
 			if ((this.sTableLeft == 'x_snc_compare_tool_config') && (this.aType[2] != 'one')) {
 				this._childRunner();
@@ -227,98 +273,145 @@ CompareTool.prototype = {
 			this._gExecutionTracker.updateResult(this.oReturn);
 		} // if parent worker
 		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
-		gs.debug(this.sLogPrefix + 'cleanupSnapshot END (Worker: ' + this.sWorkerId + ')');
+		if (this.bLog) { gs.info(this.sLogPrefix + 'cleanupSnapshot END (Worker: ' + this.sWorkerId + ')'); }
+		if (this.bTimer) { this._gtDateTime.stopTimer('cleanupSnapshot'); this._writeTimer(); }
 	}, // function cleanupSnapshot
 
+	getAttachmentSize: function () {
+		if (this.bTimer) { this._gtDateTime.startTimer('getAttachmentSize'); }
+		if (this.bLog) { gs.info(this.sLogPrefix + 'getAttachmentSize START (Worker: ' + this.sWorkerId + ')'); }
+		try {
+			if ((this.sTableLeft == 'x_snc_compare_tool_config') && (this.aType[2] != 'one')) {
+				this._childRunner();
+			} else {
+				this._gExecutionTracker.incrementPercentComplete(20);
+				this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_attachmentsize', this.sName);
+				this._CompareOutputBuilder.addTable('', [gs.getMessage('CompareTool_field_comparecfgtitle'), gs.getMessage('CompareTool_field_attachmentsize')], gs.getMessage('CompareTool_field_comparecfgnumber'));
+				var sAttachmentSize = this._gtAttachment.getAttachmentSizePerRecord('x_snc_compare_tool_config', this.sCompareId, '', '', '', true);
+				var aRow = [];
+				aRow.push({ 'sClass': 'fields', 'sValue': this.sNumber });
+				aRow.push({ 'sClass': 'fields', 'sValue': this.sName });
+				aRow.push({ 'sClass': 'fields', 'sValue': sAttachmentSize });
+				this._CompareOutputBuilder.addRow(aRow);
+				this._gExecutionTracker.incrementPercentComplete(90);
+				if (this.sOutputFormat == 'screen') {
+					this.oReturn['sHTML'] = this._CompareOutputBuilder.getTable();
+				} else {
+					this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', this._CompareOutputBuilder.getTable());
+				} // if output to screen
+			} // if child runner
+		} catch (oEx) {
+			this._setError('catch', String(oEx));
+			gs.error(this.sLogPrefix + 'cleanupSnapshot catched error: ' + String(oEx));
+		} // try
+		if (this.sParentWorkerId) {
+			if (this.sOutputFormat == 'screen') {
+				this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'ChildWorkerResult_Parent_' + this.sParentWorkerId + '_' + this.sWorkerId + '.json', JSON.stringify(this.oReturn), '', false, true);
+			} // if output to screen
+		} else {
+			this._gExecutionTracker.updateResult(this.oReturn);
+		} // if parent worker
+		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
+		if (this.bLog) { gs.info(this.sLogPrefix + 'getAttachmentSize END (Worker: ' + this.sWorkerId + ')'); }
+		if (this.bTimer) { this._gtDateTime.stopTimer('getAttachmentSize'); this._writeTimer(); }
+	}, // function getAttachmentSize
+
 	_childRunner: function () {
-		gs.debug(this.sLogPrefix + 'childRunner START (Worker: ' + this.sWorkerId + ')');
-		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_childrunner', this.sName);
-		var iTotalChildren = 0;
-		var sQuery = this._gtRecordRead.combineQueries('table_left!=x_snc_compare_tool_config^type=' + this.sType, this.sFilterCondition);
-		var grCompare = new GlideRecord('x_snc_compare_tool_config');
-		grCompare.addEncodedQuery(sQuery);
-		grCompare.query();
-		var iCountFilterCondition = this._gtRecordRead.countRecords('x_snc_compare_tool_config', this.sFilterCondition);
-		var iCountQuery = this._gtRecordRead.countRecords('x_snc_compare_tool_config', sQuery);
-		if (iCountFilterCondition > iCountQuery) {
-			this._setMessage('childrunner_multipletypes_or_comparetable', grCompare.getRowCount());
-		} // if multiple types or compare table
-		var aFunctionArguments = [];
-		if (this.sAction == 'takeSnapshot') {
-			aFunctionArguments.push(this.sSnapshot);
-		} // if take snapshot do the definition
-		while (grCompare.next()) {
-			this._gt.scheduleScript('x_snc_compare_tool.CompareTool', this.sAction, 0, aFunctionArguments, [grCompare.getUniqueValue(), grCompare.getValue('number'), grCompare.getValue('type'), this.sOutputFormat, this.sOutputFilter, '', '', '', grCompare.getValue('key_fields'), grCompare.getValue('output_fields'), grCompare.getValue('table_left'), grCompare.getValue('table_right'), grCompare.getValue('connection_alias_left'), grCompare.getValue('connection_alias_right'), grCompare.getValue('filter_condition'), this.sSnapshotLeft, this.sSnapshotRight, grCompare.getValue('table_history_show_count'), grCompare.getValue('status'), this.sAction, this.sWorkerId], 'CompareTool_Child_' + grCompare.getValue('number'));
-			iTotalChildren++;
-		} // while child records
-		this._gExecutionTracker.incrementPercentComplete(10);
-		if (iTotalChildren > 0) {
-			var iMaxIterations = 60, iIterations = 0, aChildrenCompleted = [], oResult = {}, aResults = [], aAttachments = [];
-			do {
-				iIterations++;
-				grCompare = new GlideRecord('x_snc_compare_tool_config');
-				grCompare.addEncodedQuery(sQuery);
-				if (this._gtArray.isValidArray(aChildrenCompleted)) {
-					grCompare.addEncodedQuery('sys_idNOT IN' + aChildrenCompleted.join(','));
-				} // if completed
-				grCompare.query();
-				while (grCompare.next()) {
-					if (this.sAction == 'compareAction') {
-						if (this.sOutputFormat == 'screen') {
+		if (this.bTimer) { this._gtDateTime.startTimer('_childRunner'); }
+		if (this.bLog) { gs.info(this.sLogPrefix + 'childRunner START (Worker: ' + this.sWorkerId + ')'); }
+		try {
+			this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_childrunner', this.sName);
+			var iTotalChildren = 0;
+			var sQuery = this._gtRecordRead.combineQueries('table_left!=x_snc_compare_tool_config^type=' + this.sType, this.sFilterCondition);
+			var grCompare = new GlideRecord('x_snc_compare_tool_config');
+			grCompare.addEncodedQuery(sQuery);
+			grCompare.query();
+			var iCountFilterCondition = this._gtRecordRead.countRecords('x_snc_compare_tool_config', this.sFilterCondition);
+			var iCountQuery = this._gtRecordRead.countRecords('x_snc_compare_tool_config', sQuery);
+			if (iCountFilterCondition > iCountQuery) {
+				this._setMessage('childrunner_multipletypes_or_comparetable', grCompare.getRowCount());
+			} // if multiple types or compare table
+			var aFunctionArguments = [];
+			if (this.sAction == 'takeSnapshot') {
+				aFunctionArguments.push(this.sSnapshot);
+			} // if take snapshot do the definition
+			while (grCompare.next()) {
+				this._gt.scheduleScript('x_snc_compare_tool.CompareTool', this.sAction, 0, aFunctionArguments, [grCompare.getUniqueValue(), grCompare.getValue('number'), grCompare.getValue('name'), grCompare.getValue('type'), this.sOutputFormat, this.sOutputFilter, '', '', '', grCompare.getValue('key_fields'), grCompare.getValue('output_fields'), grCompare.getValue('table_left'), grCompare.getValue('table_right'), grCompare.getValue('connection_alias_left'), grCompare.getValue('connection_alias_right'), grCompare.getValue('filter_condition'), this.sSnapshotLeft, this.sSnapshotRight, grCompare.getValue('table_history_show_count'), grCompare.getValue('status'), this.sAction, this.sWorkerId], 'CompareTool_Child_' + grCompare.getValue('number'));
+				iTotalChildren++;
+			} // while child records
+			this._gExecutionTracker.incrementPercentComplete(10);
+			if (iTotalChildren > 0) {
+				var iMaxIterations = 60, iIterations = 0, aChildrenCompleted = [], oResult = {}, aResults = [], aAttachments = [];
+				do {
+					iIterations++;
+					grCompare = new GlideRecord('x_snc_compare_tool_config');
+					grCompare.addEncodedQuery(sQuery);
+					if (this._gtArray.isValidArray(aChildrenCompleted)) {
+						grCompare.addEncodedQuery('sys_idNOT IN' + aChildrenCompleted.join(','));
+					} // if completed
+					grCompare.query();
+					while (grCompare.next()) {
+						if ((this.sAction == 'compareAction') || (this.sAction == 'getAttachmentSize')) {
+							if (this.sOutputFormat == 'screen') {
+								aAttachments = this._gtAttachment.getAttachmentsStartWithFilename('x_snc_compare_tool_config', grCompare.getUniqueValue(), 'ChildWorkerResult_Parent_' + this.sWorkerId, 'filename', true);
+								if (this._gtArray.isValidArray(aAttachments)) {
+									oResult = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', grCompare.getUniqueValue(), aAttachments[0], true, true, true);
+									aResults.push(oResult['sHTML']);
+									aChildrenCompleted.push(grCompare.getUniqueValue());
+								} // if attachment
+							} else {
+								aAttachments = this._gtAttachment.getAttachmentsStartWithFilename('x_snc_compare_tool_config', grCompare.getUniqueValue(), 'Compare_' + grCompare.getValue('number') + '_', 'filename', false);
+								if (this._gtArray.isValidArray(aAttachments)) {
+									aResults.push(this._gtAttachment.combineAttachments('x_snc_compare_tool_config', grCompare.getUniqueValue(), aAttachments[0], false, false, false));
+									aChildrenCompleted.push(grCompare.getUniqueValue());
+								} // if attachment
+							} // if screen
+						} else {
 							aAttachments = this._gtAttachment.getAttachmentsStartWithFilename('x_snc_compare_tool_config', grCompare.getUniqueValue(), 'ChildWorkerResult_Parent_' + this.sWorkerId, 'filename', true);
 							if (this._gtArray.isValidArray(aAttachments)) {
 								oResult = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', grCompare.getUniqueValue(), aAttachments[0], true, true, true);
-								aResults.push(oResult['sHTML']);
-								aChildrenCompleted.push(grCompare.getUniqueValue());
+								if (oResult) {
+									aChildrenCompleted.push(grCompare.getUniqueValue());
+								} // if result
 							} // if attachment
-						} else {
-							aAttachments = this._gtAttachment.getAttachmentsStartWithFilename('x_snc_compare_tool_config', grCompare.getUniqueValue(), 'Compare_' + grCompare.getValue('number') + '_', 'filename', false);
-							if (this._gtArray.isValidArray(aAttachments)) {
-								aResults.push(this._gtAttachment.combineAttachments('x_snc_compare_tool_config', grCompare.getUniqueValue(), aAttachments[0], false, false, false));
-								aChildrenCompleted.push(grCompare.getUniqueValue());
-							} // if attachment
-						} // if screen
+						} // if action compare
+					} // while child records
+					this._gt.sleep(2000);
+				} while ((aChildrenCompleted.length < iTotalChildren) && (iIterations < iMaxIterations));
+			} // if children
+			var sResult = '';
+			if (this._gtArray.isValidArray(aResults)) {
+				sResult = String(aResults[0]);
+				for (iResult = 1; iResult < aResults.length; iResult++) {
+					if (this.sOutputFormat == 'screen') {
+						var iIndex = String(aResults[iResult]).indexOf('<tbody>');
+						sResult += String(aResults[iResult]).substring(iIndex);
 					} else {
-						aAttachments = this._gtAttachment.getAttachmentsStartWithFilename('x_snc_compare_tool_config', grCompare.getUniqueValue(), 'ChildWorkerResult_Parent_' + this.sWorkerId, 'filename', true);
-						if (this._gtArray.isValidArray(aAttachments)) {
-							oResult = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', grCompare.getUniqueValue(), aAttachments[0], true, true, true);
-							if (oResult) {
-								aChildrenCompleted.push(grCompare.getUniqueValue());
-							} // if result
-						} // if attachment
-					} // if action compare
-				} // while child records
-				this._gt.sleep(2000);
-			} while ((aChildrenCompleted.length < iTotalChildren) && (iIterations < iMaxIterations));
-		} // if children
-		var sResult = '';
-		if (this._gtArray.isValidArray(aResults)) {
-			sResult = String(aResults[0]);
-			for (iResult = 1; iResult < aResults.length; iResult++) {
+						var aLines = aResults[iResult].split('\n');
+						for (iLine = 1; iLine < aLines.length; iLine++) {
+							sResult += aLines[iLine];
+						} // each but first line
+					} // if screen
+				} // each but first result
+				sResult = sResult.replaceAll('</tbody></table></div></body>', '') + '</tbody></table></div></body>';
+			} // if valid result
+			if (sResult) {
 				if (this.sOutputFormat == 'screen') {
-					var iIndex = String(aResults[iResult]).indexOf('<tbody>');
-					sResult += String(aResults[iResult]).substring(iIndex);
+					this.oReturn['sHTML'] = sResult;
 				} else {
-					var aLines = aResults[iResult].split('\n');
-					for (iLine = 1; iLine < aLines.length; iLine++) {
-						sResult += aLines[iLine];
-					} // each but first line
+					this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'Compare_' + this.sNumber + '_' + this.sType + '.csv', sResult);
 				} // if screen
-			} // each but first result
-			sResult = sResult.replaceAll('</tbody></table></body>', '') + '</tbody></table></body>';
-		} // if valid result
-		if (sResult) {
-			if (this.sOutputFormat == 'screen') {
-				this.oReturn['sHTML'] = sResult;
-			} else {
-				this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'Compare_' + this.sNumber + '_' + this.sType + '.csv', sResult);
-			} // if screen
-		} // if csv
-		this._gExecutionTracker.incrementPercentComplete(90);
-		gs.debug(this.sLogPrefix + 'childRunner END (Worker: ' + this.sWorkerId + ')');
+			} // if csv
+			this._gExecutionTracker.incrementPercentComplete(90);
+		} catch (oEx) {
+			gs.error(this.sLogPrefix + 'childRunner catched error: ' + String(oEx));
+		} // try
+		if (this.bLog) { gs.info(this.sLogPrefix + 'childRunner END (Worker: ' + this.sWorkerId + ')'); }
+		if (this.bTimer) { this._gtDateTime.stopTimer('_childRunner'); }
 	}, // function childRunner
 
 	_compareHistory: function () {
+		if (this.bTimer) { this._gtDateTime.startTimer('_compareHistory'); }
 		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_history', this.sName);
 		var sSnapshotRight = this.sSnapshotRight;
 		if (sSnapshotRight == 'latest') {
@@ -326,6 +419,7 @@ CompareTool.prototype = {
 			if (aSnapshots) {
 				sSnapshotRight = aSnapshots[aSnapshots.length - 1];
 			} else {
+				if (this.bTimer) { this._gtDateTime.stopTimer('_compareHistory'); }
 				return this._setError('snapshot_right');
 			} // if snapshots
 		} // if latest
@@ -346,6 +440,7 @@ CompareTool.prototype = {
 						this._gtObject.setValue(sKey + '/left', this._gtObject.getValue(this.sTableLeft + '/' + sKey, '', oVersionHistory), oLeft);
 					}, this); // each key
 				} else {
+					if (this.bTimer) { this._gtDateTime.stopTimer('_compareHistory'); }
 					return this._setError('snapshot_left');
 				} // if obj has table left
 			} // if version history left
@@ -356,6 +451,7 @@ CompareTool.prototype = {
 						this._gtObject.setValue(sKey + '/right', this._gtObject.getValue(this.sTableLeft + '/' + sKey, '', oVersionHistory), oRight);
 					}, this); // each key
 				} else {
+					if (this.bTimer) { this._gtDateTime.stopTimer('_compareHistory'); }
 					return this._setError('snapshot_right');
 				} // if obj has table right
 			} // if version history
@@ -372,13 +468,13 @@ CompareTool.prototype = {
 			} // if snapshot right
 		} // if has version history
 		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
-		//gs.debug(this.sLogPrefix + '_compareHistory oMerged: ' + JSON.stringify(oMerged));
+		if (this.bLog) { gs.info(this.sLogPrefix + '_compareHistory oMerged: ' + JSON.stringify(oMerged)); }
 		if ((this.sTableLeft == 'sys_db_object') && (this.bTableHistoryShowCount)) {
-			this._CompareOutputBuilder.addTable('', ['CompareTool_field_table', 'CompareTool_field_count_left', 'CompareTool_field_count_right', 'CompareTool_field_url_left', 'CompareTool_field_url_right']);
+			this._CompareOutputBuilder.addTable('', ['CompareTool_field_table', 'CompareTool_field_count_left', 'CompareTool_field_count_right', gs.getMessage('CompareTool_field_url_left', [this.sSnapshotLeft]), gs.getMessage('CompareTool_field_url_right', [this.sSnapshotRight])]);
 		} else if (this.sTableLeft == 'sys_db_object') {
-			this._CompareOutputBuilder.addTable('', ['CompareTool_field_table', 'CompareTool_field_url_left', 'CompareTool_field_url_right']);
+			this._CompareOutputBuilder.addTable('', ['CompareTool_field_table', gs.getMessage('CompareTool_field_url_left', [this.sSnapshotLeft]), gs.getMessage('CompareTool_field_url_right', [this.sSnapshotRight])]);
 		} else {
-			this._CompareOutputBuilder.addTable('', ['CompareTool_field_record', 'CompareTool_field_table', 'CompareTool_field_url_left', 'CompareTool_field_url_right']);
+			this._CompareOutputBuilder.addTable('', ['CompareTool_field_record', 'CompareTool_field_table', gs.getMessage('CompareTool_field_url_left', [this.sSnapshotLeft]), gs.getMessage('CompareTool_field_url_right', [this.sSnapshotRight])]);
 		} // if table count
 		var aAllKeys = Object.keys(oMerged);
 		aAllKeys.sort();
@@ -439,7 +535,9 @@ CompareTool.prototype = {
 							aRow.push({ 'sClass': sClass, 'sValue': iCompareCountRight });
 						} // if left > right
 					} // if table count
-					if ((sType == 'version') && ((sStatus == 'same') || (String(this.sSnapshotLeft).toLowerCase() == 'current'))) {
+					if ((this.sTableLeft == 'sys_db_object') && (this.bTableHistoryShowCount)) {
+						sUrl = this._CompareOutputBuilder.getUrl('left', sStatus, this._gtObject.getValue(sKey + '/left', '', oMerged), 'list');
+					} else if ((sType == 'version') && ((sStatus == 'same') || (String(this.sSnapshotLeft).toLowerCase() == 'current'))) {
 						sUrl = this._CompareOutputBuilder.getUrl('left', sStatus, this._gtObject.getValue(sKey + '/left', '', oMerged), 'record');
 					} else {
 						sUrl = this._CompareOutputBuilder.getUrl('left', sStatus, this._gtObject.getValue(sKey + '/left', '', oMerged));
@@ -460,20 +558,25 @@ CompareTool.prototype = {
 		} else {
 			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', this._CompareOutputBuilder.getTable());
 		} // if output to screen
+		if (this.bTimer) { this._gtDateTime.stopTimer('_compareHistory'); }
 	}, // function _compareHistory
 
 	_getSnapshots: function (bDelete) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_getSnapshots'); }
 		var oSnapshotSummary = this._gtAttachment.combineAttachments('x_snc_compare_tool_config', this.sCompareId, 'SnapshotSummary.json', true, bDelete, true);
 		var aSnapshots = [];
 		if (oSnapshotSummary) {
 			aSnapshots = this._gtObject.getValue('aSnapshots', [], oSnapshotSummary);
 		} // if summary old
 		if (this._gtArray.isValidArray(aSnapshots)) {
+			if (this.bTimer) { this._gtDateTime.stopTimer('_getSnapshots'); }
 			return aSnapshots;
 		} // if valid array
+		if (this.bTimer) { this._gtDateTime.stopTimer('_getSnapshots'); }
 	}, // function _getSnapshots
 
 	_getCurrentVersionHistory: function (grRecord, sTable, sSysId) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_getCurrentVersionHistory'); }
 		var oVersionHistoryEntry = {};
 		if (grRecord) {
 			sTable = grRecord.getTableName();
@@ -494,7 +597,8 @@ CompareTool.prototype = {
 			if (grVersionHistory) {
 				oVersionHistoryEntry['version_id'] = grVersionHistory.getUniqueValue();
 			} else {
-				gs.debug(this.sLogPrefix + '_getCurrentVersionHistory could not find current version history for: ' + sTableRealClass + ' SysId: ' + sSysId);
+				oVersionHistoryEntry['version_id'] = 'initial';
+				//if (this.bLog) { gs.info(this.sLogPrefix + '_getCurrentVersionHistory could not find current version history for: ' + sTableRealClass + ' SysId: ' + sSysId); }
 			} // if current version
 			if ((this.sTableLeft == 'sys_db_object') && (this.bTableHistoryShowCount)) {
 				var iTableCount = Number(this._gtRecordRead.countRecords(grRecordRealClass.getValue('name'), '', '', false, false, true));
@@ -507,10 +611,12 @@ CompareTool.prototype = {
 		} else {
 			gs.warn(this.sLogPrefix + '_getCurrentVersionHistory warning could not find real record for: ' + sTable + ' SysId: ' + sSysId);
 		} // if record real class
+		if (this.bTimer) { this._gtDateTime.stopTimer('_getCurrentVersionHistory'); }
 		return oVersionHistoryEntry;
 	}, // function _getCurrentVersionHistory
 
 	_getCurrentAttachmentHistory: function (oLeft) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_getCurrentAttachmentHistory'); }
 		var grRecord = this._gtRecordRead.getRecords(this.sTableLeft, this.sFilterCondition, '', '', '', true, true, true);
 		while (grRecord._next()) {
 			var grRecordRealClass = this._gtRecordRead.getRecord(this._gtTable.getRecordClass(grRecord), grRecord.getUniqueValue());
@@ -522,9 +628,11 @@ CompareTool.prototype = {
 			oCurrentInfo['record_name'] = grRecordRealClass.getDisplayValue();
 			this._gtObject.setValue(grRecordRealClass.getUniqueValue() + '/left', oCurrentInfo, oLeft);
 		} // while record
+		if (this.bTimer) { this._gtDateTime.stopTimer('_getCurrentAttachmentHistory'); }
 	}, // function _getCurrentVersionHistory
 
 	_getSnapshotAttachmentHistory: function (sSide, sSnapshot, oReturnObject) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_getSnapshotAttachmentHistory'); }
 		var aAttachmentInfos = [], sRecordTable = '', sDisplayField = '', sXMLRecord, xmlRecord, oCurrentInfo = {}, oAttachmentInfo = {}, i = 0;
 		grRecord = new GlideRecord(this.sTableLeft);
 		aAttachmentInfos = this._gtAttachment.getAttachmentsStartWithFilename('x_snc_compare_tool_config', this.sCompareId, sSnapshot, 'object', true);
@@ -554,15 +662,18 @@ CompareTool.prototype = {
 				} // if xml string
 			} // if not version history file
 		} // each attachment
+		if (this.bTimer) { this._gtDateTime.stopTimer('_getSnapshotAttachmentHistory'); }
 	}, // function _getSnapshotAttachmentHistory
 
 	_compareOne: function () {
+		if (this.bTimer) { this._gtDateTime.startTimer('_compareOne'); }
 		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_one', this.sName);
 		var grRecordLeft;
 		var grRecordRight;
 		if (this.aType[0] == 'local') {
 			grRecordLeft = this._gtRecordRead.getRecord(this.sTableLeft, this.sRecordLeftId);
 			if ((!grRecordLeft) || (!grRecordLeft.isValidRecord())) {
+				if (this.bTimer) { this._gtDateTime.stopTimer('_compareOne'); }
 				return this._setError('record_left');
 			} // if valid record
 		} else {
@@ -570,6 +681,7 @@ CompareTool.prototype = {
 			if (this.oReturn['bValid'] == false) {
 				return;
 			} else if (!this._gt.getType(grRecordLeft) == 'gliderecord') {
+				if (this.bTimer) { this._gtDateTime.stopTimer('_compareOne'); }
 				return this._setError('record_left');
 			} // if valid record
 		} // if local left
@@ -577,6 +689,7 @@ CompareTool.prototype = {
 		if (this.aType[1] == 'local') {
 			grRecordRight = this._gtRecordRead.getRecord(this.sTableRight, this.sRecordRightId);
 			if ((!grRecordRight) || (!grRecordRight.isValidRecord())) {
+				if (this.bTimer) { this._gtDateTime.stopTimer('_compareOne'); }
 				return this._setError('record_right');
 			} // if valid record
 		} else {
@@ -593,24 +706,28 @@ CompareTool.prototype = {
 			if (this.oReturn['bValid'] == false) {
 				return;
 			} else if (!this._gt.getType(grRecordRight) == 'gliderecord') {
+				if (this.bTimer) { this._gtDateTime.stopTimer('_compareOne'); }
 				return this._setError('record_right');
 			} // if valid record
 		} // if local right
 		this._gExecutionTracker.incrementPercentComplete(60);
 		var sXMLLeft = this._gtRecordRead.convertGRtoXML(grRecordLeft);
 		var sXMLRight = this._gtRecordRead.convertGRtoXML(grRecordRight);
-		var sHTMLDiff = this._gt.getHTMLDiffFromXML(sXMLLeft, sXMLRight, 'CompareTool_title_left', 'CompareTool_title_right');
+		var sHTMLDiff = this._gt.getHTMLDiffFromXML(sXMLLeft, sXMLRight, gs.getMessage('CompareTool_title_left', ' ' + this.sTitleLeft), gs.getMessage('CompareTool_title_right', ' ' + this.sTitleRight));
 		this._gExecutionTracker.incrementPercentComplete(90);
 		if (sHTMLDiff == null) {
+			if (this.bTimer) { this._gtDateTime.stopTimer('_compareOne'); }
 			return this._setError('diff_one');
 		} else {
 			this.oReturn['sHTML'] = sHTMLDiff;
 		} // if diff failed
+		if (this.bTimer) { this._gtDateTime.stopTimer('_compareOne'); }
 		return true;
 	}, // function _compareOne
 
 	_compareList: function () {
-		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_list', this.sName);
+		if (this.bTimer) { this._gtDateTime.startTimer('_compareList'); }
+		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_list', this.sName) + ' (' + gs.getMessage('CompareTool_green') + ': ' + this.sTitleLeft + ' | ' + gs.getMessage('CompareTool_red') + ': ' + this.sTitleRight + ')';
 		var aKeys = (this.sKeyFields) ? this._parseFields(this.sKeyFields) : ['sys_id'];
 		var aFields = (this.sOutputFields) ? this._parseFields(this.sOutputFields) : this._gtTable.getFields(this.sTableLeft);
 		var sQuery = (this.sFilterCondition) ? this.sFilterCondition + '^ORDERBY' + aFields[0] : 'ORDERBY' + aFields[0];
@@ -630,7 +747,7 @@ CompareTool.prototype = {
 		this._gExecutionTracker.incrementPercentComplete(60);
 		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
 		this._gExecutionTracker.incrementPercentComplete(70);
-		//gs.debug(this.sLogPrefix + '_compareList oMerged: ' + JSON.stringify(oMerged));
+		if (this.bLog) { gs.info(this.sLogPrefix + '_compareList oMerged: ' + JSON.stringify(oMerged)); }
 		this._CompareOutputBuilder.addTable(this.sTableLeft, aFields);
 		var aAllKeys = Object.keys(oMerged);
 		aAllKeys.sort();
@@ -661,16 +778,18 @@ CompareTool.prototype = {
 					bIsEqual = this._gt.isEqual(sValueLeft, sValueRight);
 					if (['same', 'diff'].indexOf(sStatus) != -1) {
 						if (!bIsEqual) {
-							if (this.bShowCompareCharCodeInLog) { gs.debug(this.sLogPrefix + '_compareList char compare left: ' + this._convertStringToCode(sValueLeft) + ' right: ' + this._convertStringToCode(sValueRight)); }
+							if (this.bShowCompareCharCodeInLog) { gs.info(this.sLogPrefix + '_compareList char compare field: ' + sField + ' left: ' + this._convertStringToCode(sValueLeft) + ' right: ' + this._convertStringToCode(sValueRight)); }
 							sStatus = 'diff';
+							sValueLeft = (sValueLeft) ? sValueLeft : '[empty]';
+							sValueRight = (sValueRight) ? sValueRight : '[empty]';
 							aRow.push({ 'sClass': 'empty', 'sValue': [sValueLeft + sDisplayValueLeft, sValueRight + sDisplayValueRight] });
 						} else {
 							aRow.push({ 'sClass': 'equals', 'sValue': sValueLeft + sDisplayValueLeft });
 						} // if is not equal
 					} else if (sStatus == 'left') {
-						aRow.push({ 'sClass': 'delete', 'sValue': sValueLeft + sDisplayValueLeft });
+						aRow.push({ 'sClass': 'insert', 'sValue': sValueLeft + sDisplayValueLeft });
 					} else if (sStatus == 'right') {
-						aRow.push({ 'sClass': 'insert', 'sValue': sValueRight + sDisplayValueRight });
+						aRow.push({ 'sClass': 'delete', 'sValue': sValueRight + sDisplayValueRight });
 					} // if status same or diff and values are diff
 				}, this); // each field
 				if (((this.sOutputFilter == 'all') && (sStatus == 'same')) || (sStatus != 'same')) {
@@ -685,11 +804,13 @@ CompareTool.prototype = {
 		} else {
 			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', this._CompareOutputBuilder.getTable());
 		} // if output to screen
+		if (this.bTimer) { this._gtDateTime.stopTimer('_compareList'); }
 	}, // function _compareList
 
 	_getLocalList: function (sTable, sQuery, aKeys, aFields, sSource) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_getLocalList'); }
 		var oLocalListResult = {};
-		var sField = '', sValue = '', sDisplayValue = '', aKeyValues = [], sKeyValue = '';
+		var sField = '', bNil = true, sType = '', sValue = '', sDisplayValue = '', aKeyValues = [], sKeyValue = '';
 		var grRecord = new GlideRecord(sTable);
 		if (sQuery) {
 			grRecord.addEncodedQuery(sQuery);
@@ -705,36 +826,60 @@ CompareTool.prototype = {
 			}, this); // each key
 			sKeyValue = aKeyValues.join('_');
 			for (var i = 0; i < aFields.length; i++) { // --> aFields.forEach caused "this" confusion and stopped progress bar from working
+				sValue = '';
+				sDisplayValue = '';
+				sType = '';
+				bNil = true;
 				sField = aFields[i];
-				sValue = grRecord.getValue(sField);
-				sDisplayValue = grRecord.getDisplayValue(sField);
-				sDisplayValue = ((sDisplayValue) && (sDisplayValue != 'null') && (sDisplayValue != 'unknown')) ? sDisplayValue : grRecord[sField].getDisplayValue();
-				sDisplayValue = ((sDisplayValue == 'null') || (sDisplayValue == 'unknown')) ? '' : sDisplayValue;
-				sValue = ((sValue == 'null') || (sValue == 'unknown')) ? '' : sValue;
-				sValue = ((sValue == '1') && (sDisplayValue == 'true')) ? 'true' : sValue;
-				sValue = ((sValue == '0') && (sDisplayValue == 'false')) ? 'false' : sValue;
-				sValue = ((!sValue) && (sDisplayValue == 'false')) ? 'false' : sValue;
-				sValue = (sValue) ? sValue.replace(/\r/gm, '') : sValue; // remove cr (13)
+				try {
+					sValue = grRecord.getValue(sField);
+					sDisplayValue = grRecord.getDisplayValue(sField);
+					sType = this._gtTable.getInternalType(grRecord, sField);
+					bNil = ((!sValue) && ((sDisplayValue == 'true') || (sDisplayValue == 'false'))) ? false : grRecord[sField].nil(); // workaround for empty true/false fields with a default value
+				} catch (oEx) {
+					bNil = ((sValue) || (sValue == '0') || (sValue == 'false') || (sValue === false) || (sDisplayValue == 'false')) ? false : true;
+				} // workaround for empty fields named query, next, size, get, operation etc. that cause errors otherwise
+				if (!bNil) {
+					if ((sType) && (String(sType) != 'undefined') && ((sType.indexOf('date') != -1) || (sType.indexOf('time') != -1))) {
+						sDisplayValue = '';
+						sValue = grRecord[sField].getDisplayValue();
+					} else if ((String(sValue) == '1') && (String(sDisplayValue) == 'true')) {
+						sValue = 'true';
+					} else if (((String(sValue) == '0') || (!sValue)) && (String(sDisplayValue) == 'false')) {
+						sValue = 'false';
+					} else {
+						sDisplayValue = ((sDisplayValue) && (sDisplayValue != 'null') && (sDisplayValue != 'unknown')) ? sDisplayValue : grRecord[sField].getDisplayValue();
+						sDisplayValue = ((sDisplayValue == 'null') || (sDisplayValue == 'unknown')) ? '' : sDisplayValue;
+						sValue = ((sValue == 'null') || (sValue == 'unknown')) ? '' : sValue;
+						sValue = (sValue) ? sValue.replace(/\r/gm, '') : sValue; // remove cr (13)
+					} // if date or time
+				} else {
+					sValue = '';
+					sDisplayValue = '';
+				} // if element
 				this._gtObject.setValue(sKeyValue + '/' + sField + '/' + sSource + '/value', sValue, oLocalListResult);
 				if ((sDisplayValue) && (sValue != sDisplayValue)) {
 					this._gtObject.setValue(sKeyValue + '/' + sField + '/' + sSource + '/display_value', sDisplayValue, oLocalListResult);
 				} // if display value and not same as value
 			} // for each field --> aFields.forEach caused "this" confusion and stopped progress bar from working	
 		} // while records
+		if (this.bTimer) { this._gtDateTime.stopTimer('_getLocalList'); }
 		return oLocalListResult;
 	}, // function _getLocalList
 
 	_convertStringToCode: function (sString) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_convertStringToCode'); }
 		var aResult = [];
 		for (var i = 0; i < sString.length; i++) {
 			aResult.push(sString.charCodeAt(i));
 		} // each char
+		if (this.bTimer) { this._gtDateTime.stopTimer('_convertStringToCode'); }
 		return aResult.join(',');
 	}, // function _convertStringToCode
 
 	_compareCount: function () {
-		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_count', this.sName);
-		var sReturn = '';
+		if (this.bTimer) { this._gtDateTime.startTimer('_compareCount'); }
+		this.oReturn['sTitle'] = gs.getMessage('CompareTool_title_count', this.sName) + ' (' + gs.getMessage('CompareTool_green') + ': ' + this.sTitleLeft + ' | ' + gs.getMessage('CompareTool_red') + ': ' + this.sTitleRight + ')';
 		var oLeft = {};
 		var oRight = {};
 		oLeft = this._getCount(this.aType[0]);
@@ -742,7 +887,7 @@ CompareTool.prototype = {
 		oRight = this._getCount('right');
 		this._gExecutionTracker.incrementPercentComplete(60);
 		var oMerged = this._gtObject.deepMerge(oLeft, oRight);
-		//gs.debug(this.sLogPrefix + '_compareCount oMerged: ' + JSON.stringify(oMerged));
+		if (this.bLog) { gs.info(this.sLogPrefix + '_compareCount oMerged: ' + JSON.stringify(oMerged)); }
 		this._CompareOutputBuilder.addTable('', ['CompareTool_field_count_left', 'CompareTool_field_count_right'], 'Table name');
 		var aAllKeys = Object.keys(oMerged);
 		aAllKeys.sort();
@@ -821,9 +966,11 @@ CompareTool.prototype = {
 		} else {
 			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'Compare_' + this.sNumber + '_' + this.sTableLeft + '.csv', this._CompareOutputBuilder.getTable());
 		} // if output to screen
+		if (this.bTimer) { this._gtDateTime.stopTimer('_compareCount'); }
 	}, // function _compareCount
 
 	_getCount: function (sType) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_getCount'); }
 		var oCountResult = {};
 		var sTable = '';
 		if (sType == 'local') {
@@ -846,10 +993,12 @@ CompareTool.prototype = {
 		} else {
 			oCountResult = this._CompareToolAPI.getRemoteCountObjectRight(this.sFilterCondition);
 		} // if local
+		if (this.bTimer) { this._gtDateTime.stopTimer('_getCount'); }
 		return oCountResult;
 	}, // function _getCount
 
 	_parseFields: function (aFieldIds, grRecord, oLine) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_parseFields'); }
 		aFieldIds = (Array.isArray(aFieldIds)) ? aFieldIds : aFieldIds.split(',');
 		var aReturn = [];
 		var grDict = new GlideRecord('sys_dictionary');
@@ -864,30 +1013,37 @@ CompareTool.prototype = {
 				} // if rec, line
 			} // if key
 		}, this); // each key
+		if (this.bTimer) { this._gtDateTime.stopTimer('_parseFields'); }
 		return aReturn;
 	}, // function _parseFields
 
 	_parseXML: function (sXML) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_parseXML'); }
 		try {
 			var xmlDoc = new XMLDocument2();
 			if (xmlDoc.parseXML(sXML)) {
+				if (this.bTimer) { this._gtDateTime.stopTimer('_parseXML'); }
 				return xmlDoc;
 			} // if xml doc			
 		} catch (oEx) {
 			// catch xml errors
 		} // if access problem
+		if (this.bTimer) { this._gtDateTime.stopTimer('_parseXML'); }
 	}, // function _parseXML
 
 	_setMessage: function (sMessage) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_setMessage'); }
 		var aArguments = [];
 		for (var i = 1; i < arguments.length; i++) {
 			aArguments.push(String(arguments[i]));
 		} // each argument after script and scope
 		this.oReturn['sMessage'] = gs.getMessage('CompareTool_info_' + sMessage, aArguments);
+		if (this.bTimer) { this._gtDateTime.stopTimer('_setMessage'); }
 		return false;
 	}, // function _setError
 
 	_setError: function (sMessage) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_setError'); }
 		if (this.oReturn['bValid'] != false) {
 			var aArguments = [];
 			for (var i = 1; i < arguments.length; i++) {
@@ -899,10 +1055,12 @@ CompareTool.prototype = {
 			this.oReturn['bValid'] = false;
 			this.oReturn['sMessage'] = gs.getMessage('CompareTool_error_' + sMessage, aArguments);
 		} // if already has an error, don't overwrite
+		if (this.bTimer) { this._gtDateTime.stopTimer('_setError'); }
 		return false;
 	}, // function _setError
 
 	_returnError: function (sMessage) {
+		if (this.bTimer) { this._gtDateTime.startTimer('_returnError'); }
 		if (this.oReturn['bValid'] != false) {
 			var aArguments = [];
 			for (var i = 1; i < arguments.length; i++) {
@@ -916,10 +1074,17 @@ CompareTool.prototype = {
 		} // if already has an error, don't overwrite
 		this._gExecutionTracker.updateResult(this.oReturn);
 		this._gExecutionTracker.fail(gs.getMessage('CompareTool_tracker_error'));
+		if (this.bTimer) { this._gtDateTime.stopTimer('_returnError'); }
 	}, // function _returnError
 
+	_writeTimer: function () {
+		var sTimerResult = this._gtDateTime.getTimer();
+		this._gtAttachment.deleteAttachmentsStartWithFilename('x_snc_compare_tool_config', this.sCompareId, 'compare_timer.json');
+		this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'compare_timer.json', sTimerResult, '', false, false);
+	}, // function _writeTimer
+
 	type: 'CompareTool',
-	version: '1.0.4',
+	version: '1.0.5',
 	author: 'Tom Hauri',
 	email: 'tom@hauri.biz'
 };]]></script>
@@ -927,13 +1092,24 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>362</sys_mod_count>
+        <sys_mod_count>478</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-03-30 06:06:44</sys_updated_on>
+        <sys_updated_on>2025-01-10 14:29:55</sys_updated_on>
     </sys_script_include>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>c26617b11b4bb9105e14b8449b4bcb17</id>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2025-01-03 13:01:13</sys_created_on>
+        <sys_id>6478dd76c33a169016a2269dc00131c4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2025-01-03 13:01:13</sys_updated_on>
+        <table>sys_script_include</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
 </record_update>

@@ -7,11 +7,13 @@
         <client_callable>true</client_callable>
         <description>Compare Tool, AJAX&#13;
 ServiceNow Customer Outcomes, Tom Hauri</description>
+        <mobile_callable>false</mobile_callable>
         <name>CompareAJAX</name>
+        <sandbox_callable>true</sandbox_callable>
         <script><![CDATA[var CompareAJAX = Class.create();
 CompareAJAX.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
 
-	// Called from UI Action: Compare
+	// Called from UI Actions
 	start: function () {
 		try {
 			var sFunction = this.getParameter('sysparm_ajax_processor_function');
@@ -65,7 +67,7 @@ CompareAJAX.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
 	}, // function getSnapshots
 
 	type: 'CompareAJAX',
-	version: '1.0.4',
+	version: '1.0.5',
 	author: 'Tom Hauri',
 	email: 'tom@hauri.biz'
 });]]></script>
@@ -73,13 +75,24 @@ CompareAJAX.prototype = Object.extendsObject(global.AbstractAjaxProcessor, {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:30:40</sys_created_on>
         <sys_id>d00513711b4bb9105e14b8449b4bcb69</sys_id>
-        <sys_mod_count>58</sys_mod_count>
+        <sys_mod_count>59</sys_mod_count>
         <sys_name>CompareAJAX</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_d00513711b4bb9105e14b8449b4bcb69</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2024-03-30 06:06:55</sys_updated_on>
+        <sys_updated_on>2025-01-04 11:18:23</sys_updated_on>
     </sys_script_include>
+    <sys_es_latest_script action="INSERT_OR_UPDATE">
+        <id>d00513711b4bb9105e14b8449b4bcb69</id>
+        <sys_created_by>tom.hauri</sys_created_by>
+        <sys_created_on>2025-01-04 11:18:22</sys_created_on>
+        <sys_id>b37ac28bc33ade909ebe8d8dc001314b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>tom.hauri</sys_updated_by>
+        <sys_updated_on>2025-01-04 11:18:22</sys_updated_on>
+        <table>sys_script_include</table>
+        <use_es_latest>true</use_es_latest>
+    </sys_es_latest_script>
 </record_update>
