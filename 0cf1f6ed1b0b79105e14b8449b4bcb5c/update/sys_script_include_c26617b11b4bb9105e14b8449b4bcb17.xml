@@ -15,7 +15,7 @@ CompareTool.prototype = {
 	initialize: function (sCompareId, sNumber, sName, sType, sOutputFormat, sOutputFilter, sRecordLeftId, sRecordRightId, sKeyType, sKeyFields, sOutputFields, sTableLeft, sTableRight, sConnectionAliasLeftId, sConnectionAliasRightId, sFilterCondition, sSnapshotLeft, sSnapshotRight, sTableHistoryShowCount, sStatus, sAction, sParentWorkerId) {
 		this.bShowCompareCharCodeInLog = false;
 		this.bLog = false;
-		this.bTimer = false;
+		this.bTimer = true;
 		this.sCompareId = sCompareId;
 		this.sNumber = sNumber;
 		this.sName = sName;
@@ -184,6 +184,7 @@ CompareTool.prototype = {
 			oSnapshotSummary['aSnapshots'] = aSnapshots;
 			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'SnapshotSummary.json', JSON.stringify(oSnapshotSummary), '', false, true);
 			if (!bIsChildRunner) {
+				if (this.bTimer) { this._gtDateTime.startTimer('takeSnapshot/getrecords'); }
 				var oVersionHistory = {};
 				var iAttachmentCounter = 0;
 				if (gs.tableExists(this.sTableLeft)) {
@@ -202,6 +203,8 @@ CompareTool.prototype = {
 				} else {
 					gs.error(this.sLogPrefix + 'takeSnapshot Error table does not exist: ' + this.sTableLeft);
 				} // if table exists
+				if (this.bTimer) { this._gtDateTime.stopTimer('takeSnapshot/getrecords'); }
+				if (this.bTimer) { this._gtDateTime.startTimer('takeSnapshot/doattachments'); }
 				this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, this.sSnapshot + '_VersionHistory.json', JSON.stringify(oVersionHistory), '', false, true);
 				if (!this.sParentWorkerId) {
 					var sAttachmentSize = this._gtAttachment.getAttachmentSizePerRecord('x_snc_compare_tool_config', this.sCompareId, '', '', '', true);
@@ -209,17 +212,20 @@ CompareTool.prototype = {
 						this._setMessage('snapshot_attachmentsize', sAttachmentSize);
 					} // if attachment size
 				} // if not parent worker
+				if (this.bTimer) { this._gtDateTime.stopTimer('takeSnapshot/doattachments'); }
 			} // if not child runner
 		} catch (oEx) {
 			this._setError('catch', String(oEx));
 			gs.error(this.sLogPrefix + 'takeSnapshot catched error: ' + String(oEx));
 		} // try
+		if (this.bTimer) { this._gtDateTime.startTimer('takeSnapshot/updatetracker'); }
 		if (this.sParentWorkerId) {
 			this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'ChildWorkerResult_Parent_' + this.sParentWorkerId + '_' + this.sWorkerId + '.json', JSON.stringify(this.oReturn), '', false, true);
 		} else {
 			this._gExecutionTracker.updateResult(this.oReturn);
 		} // if parent worker
 		this._gExecutionTracker.success(gs.getMessage('CompareTool_tracker_success'));
+		if (this.bTimer) { this._gtDateTime.stopTimer('takeSnapshot/updatetracker'); }
 		if (this.bLog) { gs.info(this.sLogPrefix + 'takeSnapshot END (Worker: ' + this.sWorkerId + ')'); }
 		if (this.bTimer) { this._gtDateTime.stopTimer('takeSnapshot'); this._writeTimer(); }
 	}, // function takeSnapshot
@@ -591,7 +597,8 @@ CompareTool.prototype = {
 			if (grVersionHistory) {
 				oVersionHistoryEntry['version_id'] = grVersionHistory.getUniqueValue();
 			} else {
-				if (this.bLog) { gs.info(this.sLogPrefix + '_getCurrentVersionHistory could not find current version history for: ' + sTableRealClass + ' SysId: ' + sSysId); }
+				oVersionHistoryEntry['version_id'] = 'initial';
+				//if (this.bLog) { gs.info(this.sLogPrefix + '_getCurrentVersionHistory could not find current version history for: ' + sTableRealClass + ' SysId: ' + sSysId); }
 			} // if current version
 			if ((this.sTableLeft == 'sys_db_object') && (this.bTableHistoryShowCount)) {
 				var iTableCount = Number(this._gtRecordRead.countRecords(grRecordRealClass.getValue('name'), '', '', false, false, true));
@@ -1072,6 +1079,7 @@ CompareTool.prototype = {
 
 	_writeTimer: function () {
 		var sTimerResult = this._gtDateTime.getTimer();
+		this._gtAttachment.deleteAttachmentsStartWithFilename('x_snc_compare_tool_config', this.sCompareId, 'compare_timer.json');
 		this._gtAttachment.writeAttachmentByTableId('x_snc_compare_tool_config', this.sCompareId, 'compare_timer.json', sTimerResult, '', false, false);
 	}, // function _writeTimer
 
@@ -1084,14 +1092,14 @@ CompareTool.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-12 13:41:54</sys_created_on>
         <sys_id>c26617b11b4bb9105e14b8449b4bcb17</sys_id>
-        <sys_mod_count>474</sys_mod_count>
+        <sys_mod_count>478</sys_mod_count>
         <sys_name>CompareTool</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_c26617b11b4bb9105e14b8449b4bcb17</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2025-01-07 07:50:03</sys_updated_on>
+        <sys_updated_on>2025-01-10 14:29:55</sys_updated_on>
     </sys_script_include>
     <sys_es_latest_script action="INSERT_OR_UPDATE">
         <id>c26617b11b4bb9105e14b8449b4bcb17</id>

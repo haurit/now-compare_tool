@@ -18,6 +18,7 @@ CompareOutputBuilder.prototype = {
 		this._gt = new global.GlobalTools();
 		this._gtArray = new global.GlobalToolsArray();
 		this._gtObject = new global.GlobalToolsObject();
+		this._gtRecordRead = new global.GlobalToolsRecordRead();
 		if ((gtCache) && (gtCache instanceof global.GlobalToolsCache)) {
 			this._gtCache = gtCache;
 		} else {
@@ -150,10 +151,10 @@ CompareOutputBuilder.prototype = {
 		sType = (sType) ? sType : this._gtObject.getValue('type', '', oConfig);
 		var sTable = this._gtObject.getValue('record_table', '', oConfig);
 		sTable = sTable.replace(/(^.*\[|\].*$)/g, '');
+		var sSysId = this._gtObject.getValue('record_id', '', oConfig);
 		if ((sSide == 'left') && (sStatus == 'right')) {
-			sId = this._gtObject.getValue('record_id', '', oConfig);
-			if ((sId) && (sTable)) {
-				sUrl = this._getAuditDeleteLink(sTable, sId);
+			if ((sSysId) && (sTable)) {
+				sUrl = this._getAuditDeleteLink(sTable, sSysId);
 				sType = 'delete';
 			} // if id and table
 		} else if (sType == 'list') {
@@ -161,6 +162,14 @@ CompareOutputBuilder.prototype = {
 		} else {
 			if (sType == 'version') {
 				sId = this._gtObject.getValue('version_id', '', oConfig);
+				if (sId == 'initial') {
+					var grVersionHistory = this._gtRecordRead.getRecords('sys_update_version', 'name=' + sTable + '_' + sSysId + '^state!=current', ['sys_created_on'], 1, false, false, false, true);
+					if (grVersionHistory.next()) {
+						sId = grVersionHistory.getUniqueValue();
+					} else {
+						sId = '';
+					} // if history
+				} // if initial id fetch oldest history
 				sTable = 'sys_update_version';
 			} else if (sType == 'attachment') {
 				sId = this._gtObject.getValue('attach_id', '', oConfig);
@@ -223,14 +232,14 @@ CompareOutputBuilder.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2023-12-27 07:22:57</sys_created_on>
         <sys_id>1b5fcb6a1bdffd104422dc61ab4bcb9b</sys_id>
-        <sys_mod_count>36</sys_mod_count>
+        <sys_mod_count>42</sys_mod_count>
         <sys_name>CompareOutputBuilder</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_1b5fcb6a1bdffd104422dc61ab4bcb9b</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2025-01-06 17:21:45</sys_updated_on>
+        <sys_updated_on>2025-01-10 15:16:42</sys_updated_on>
     </sys_script_include>
     <sys_es_latest_script action="INSERT_OR_UPDATE">
         <id>1b5fcb6a1bdffd104422dc61ab4bcb9b</id>
