@@ -6,7 +6,7 @@
         <caller_access/>
         <client_callable>false</client_callable>
         <description>Compare Tool BR Handler&#13;
-ServiceNow Customer Outcomes, Tom Hauri</description>
+Tom Hauri</description>
         <mobile_callable>false</mobile_callable>
         <name>CompareBR</name>
         <sandbox_callable>false</sandbox_callable>
@@ -53,14 +53,14 @@ CompareBR.prototype = {
         <sys_created_by>tom.hauri</sys_created_by>
         <sys_created_on>2024-01-05 06:54:32</sys_created_on>
         <sys_id>9551e5211b6339505e14b8449b4bcba4</sys_id>
-        <sys_mod_count>9</sys_mod_count>
+        <sys_mod_count>10</sys_mod_count>
         <sys_name>CompareBR</sys_name>
         <sys_package display_value="Compare Tool" source="x_snc_compare_tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Compare Tool">0cf1f6ed1b0b79105e14b8449b4bcb5c</sys_scope>
         <sys_update_name>sys_script_include_9551e5211b6339505e14b8449b4bcba4</sys_update_name>
         <sys_updated_by>tom.hauri</sys_updated_by>
-        <sys_updated_on>2025-01-06 10:52:21</sys_updated_on>
+        <sys_updated_on>2025-01-13 15:34:10</sys_updated_on>
     </sys_script_include>
     <sys_es_latest_script action="INSERT_OR_UPDATE">
         <id>9551e5211b6339505e14b8449b4bcba4</id>
